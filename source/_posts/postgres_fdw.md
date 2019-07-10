@@ -1,6 +1,6 @@
 ---
 title: PostgreSQL 外部表
-date: 2019-09-07 21:31:11
+date: 2018-09-07 21:31:11
 tags: [PostgreSQL, FDW, 外部表]
 ---
 
