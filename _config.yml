@@ -103,4 +103,4 @@ theme: Anisina
 deploy:
   type: git
   repo: https://github.com/blusewang/blog.git
-  branch: public
+  branch: s1
