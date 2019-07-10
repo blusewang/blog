@@ -69,7 +69,7 @@ create foreign table app_log (
 ```
 
 体验：
-```
+```sql
 select client_ip,create_at,request_cost,upstream_cost,pg_size_pretty(body_size::bigint) body_length,request from app_log where body_size>1024*1024;
   client_ip  |       create_at        | request_cost | upstream_cost | body_length |                           request
 -------------+------------------------+--------------+---------------+-------------+--------------------------------------------------------------
