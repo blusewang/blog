@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="...">
+    <meta name="keyword" content="undefined">
+    <meta name="theme-color" content="#000000"><!-- 600090 -->
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="Bluse" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        daemontools系列小工具｜Bluse
+        
+    </title>
+
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2017/06/17/daemontools/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/blog-style.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+</head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://www.sslcentral.com/wp-content/uploads/2014/09/sld1.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    Bluse
+                </span>
+                Programing Thinker
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">tags</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>daemontools系列小工具</h1>
+                    
+                    <span class="meta">
+                         作者 bluse wang
+                        <span>
+                          日期 2017-06-17
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#daemontool"
+                           title="daemontool">daemontool</a>
+                        
+                        <a class="tag" href="/tags/#FreeBSD"
+                           title="FreeBSD">FreeBSD</a>
+                        
+                        <a class="tag" href="/tags/#supervisord"
+                           title="supervisord">supervisord</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            daemontools系列小工具
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>为什么要讲一个如此”古老”的守护工具？为什么不用supervisord？</p>
+<p><code>supervisord</code> 有个问题疼死我了。一远程管理一下它守护下的进程，<a href="https://github.com/Supervisor/supervisor/issues/807" target="_blank" rel="external">CPU就会100%</a>。这个问题年久失修。</p>
+<p>它的supervisorctl里的指令，常reload一下会让所有的服务死了，自己也死了！也不重启，得手动重启。</p>
+<p>更让人揪心的是，当业务负载繁重时，这个工具就成了”仙人掌”，碰不得，前段时间发现一次半夜里无端地持续了2个多小时把CPU提到了100%。</p>
+<p>用了它可让阿里云破费了不少短信费。天天有警告！</p>
+<p>不得已再花些时间学习了一下其它的守护工具了。这个daemontools偏老，看上去更稳妥。</p>
+<p>以下实操基于FreeBSD11（Linux有systend，守护嘎嘎的！）</p>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p><a href="http://cr.yp.to/daemontools.html" target="_blank" rel="external">Daemontools</a>是管理Unix服务的工具，它提供一组工具来管理一系列用户进程，当进程由于某些原因down掉之后，daemontools会自动重启进程</p>
+<h1 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h1><ul>
+<li>被管理的进程不能以daemon形式运行，例如nginx.conf 必须关闭daemon， daemon off;</li>
+<li>不要在/var/service/建任何目录， /var/service/只存放一些symbol link</li>
+<li>只需要完成安装 、 配置两步即可</li>
+</ul>
+<h1 id="安装启动"><a href="#安装启动" class="headerlink" title="安装启动"></a>安装启动</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">pkg install daemontools</div><div class="line"><span class="built_in">echo</span> <span class="string">'svscan_enable="YES"'</span> &gt; /etc/rc.conf</div><div class="line">service svscan start</div></pre></td></tr></table></figure>
+<p>启动成功多出了2个进程：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root  7616   0.0  0.1   8344  1676  -  S    10:28     0:00.04 /usr/local/bin/svscan /var/service</div><div class="line">root  7617   0.0  0.1   6240  1616  -  I    10:28     0:00.00 /usr/local/bin/readproctitle service errors: ......................................................................</div></pre></td></tr></table></figure>
+<p><code>svscan</code>启动后监视<code>/var/service</code>目录，当这里有服务的软连接时，svscan会为每个服务主恸一个<code>supervise</code>服务。<br><code>supervise</code> 执行服务目录下的<code>run</code>，如果服务目录下还有<code>down</code>文件存在，就不会自动启动，需人工手动启动此服务。</p>
+<p><code>supervise</code>的状态信息以2进制的形式存放在服务目录的<code>supervise</code>下面，并且提供了下面的工具来操作：</p>
+<ul>
+<li>svstat： 读取状态信息</li>
+<li>svc： 启动/停止/挂起等</li>
+<li>svok： 检查是否运行成功</li>
+<li>svscan：可靠的启动/var/service目录下的服务。如果某个服务加入后，没有启动，可以调用此命令，强制启动。</li>
+</ul>
+<h1 id="添加服务"><a href="#添加服务" class="headerlink" title="添加服务"></a>添加服务</h1><h2 id="普通添加"><a href="#普通添加" class="headerlink" title="普通添加"></a>普通添加</h2><p>先创建一个测试用的需要被守护的项目。放到：<code>/var/server/testprocess/</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">root@freebsd:/var/server/testprocess # ll</div><div class="line">total 12</div><div class="line">-rwxr-xr-x  1 root  wheel  122 Jun 17 10:30 main.py*</div><div class="line">-rwxr-xr-x  1 root  wheel  333 Jun 17 10:47 run*</div><div class="line">root@freebsd:/var/server/testprocess # cat main.py</div><div class="line">#!/usr/local/bin/python2</div><div class="line">import time</div><div class="line">import logging</div><div class="line"></div><div class="line">while True:</div><div class="line">    time.sleep(1)</div><div class="line">    logging.warning(&quot;sleep 1 second&quot;)</div><div class="line"></div><div class="line">root@freebsd:/var/server/testprocess # cat run</div><div class="line">#!/bin/sh</div><div class="line">exec /usr/local/bin/python2 /var/server/testprocess/main.py &gt;&gt; /tmp/main.py.log 2&gt;&amp;1</div></pre></td></tr></table></figure></p>
+<p>然后在<code>/var/service</code>目录下建立软链接<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">root@freebsd:/var/server/testprocess <span class="comment"># ln -s /var/server/testprocess /var/service/testprocess</span></div></pre></td></tr></table></figure></p>
+<p>这个时候可以检查一下服务是否正在运行：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root  7618  0.0  0.1   6252  1632  -  I    10:28     0:00.00 supervise testprocess</div><div class="line">root  7747  0.0  0.4  39308  7416  -  S    10:48     0:00.72 /usr/local/bin/python2 /var/server/testprocess/main.py (python2.7)</div></pre></td></tr></table></figure></p>
+<p>上面这种方式的坏处是必须以root用户运行，如果想以其他用户运行，则需要做如下改进，假设用户为bluse，id为1001：</p>
+<h2 id="以指定用户身份运行"><a href="#以指定用户身份运行" class="headerlink" title="以指定用户身份运行"></a>以指定用户身份运行</h2><p>改进一下run的执行方式：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">root@freebsd:/var/server/testprocess # cat run</div><div class="line">#!/bin/sh</div><div class="line">who=`id -u`</div><div class="line">if [ $who -eq 0 ]; then</div><div class="line">    exec /usr/local/bin/setuidgid bluse /usr/local/bin/python2 /var/server/testprocess/main.py &gt;&gt; /tmp/main.py.log 2&gt;&amp;1</div><div class="line">elif [ $who -eq 1001 ]; then</div><div class="line">    exec /usr/local/bin/python2 /var/server/service/testprocess/main.py &gt;&gt; /tmp/main.py.log 2&gt;&amp;1</div><div class="line">else</div><div class="line">    echo &quot;neither root or bluse&quot;</div><div class="line">fi</div></pre></td></tr></table></figure></p>
+<p>就可以了</p>
+<h1 id="管理服务"><a href="#管理服务" class="headerlink" title="管理服务"></a>管理服务</h1><p>使用svstat来查看服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">root@freebsd:/var/server/testprocess # svstat /var/server/testprocess/</div><div class="line">/var/server/testprocess/: up (pid 7747) 2680 seconds</div></pre></td></tr></table></figure></p>
+<p>使用svc来管理服务<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line">NAME</div><div class="line">       svc - controls services monitored by supervise(8).</div><div class="line"></div><div class="line">SYNOPSIS</div><div class="line">       svc [ -udopchaitkx ] services</div><div class="line"></div><div class="line">DESCRIPTION</div><div class="line">       services consists of any number of arguments, each argument naming a</div><div class="line">       directory used by supervise(8).</div><div class="line"></div><div class="line">       svc applies all the options to each service in turn.</div><div class="line"></div><div class="line">OPTIONS</div><div class="line">       -u     Up. If the service is not running, start it. If the service</div><div class="line">              stops, restart it.</div><div class="line"></div><div class="line">       -d     Down. If the service is running, send it a TERM signal and then</div><div class="line">              a CONT signal. After it stops, do not restart it.</div><div class="line"></div><div class="line">       -o     Once. If the service is not running, start it. Do not restart it</div><div class="line">              if it stops.</div><div class="line"></div><div class="line">       -p     Pause. Send the service a STOP signal.</div><div class="line"></div><div class="line">       -c     Continue. Send the service a CONT signal.</div><div class="line"></div><div class="line">       -h     Hangup. Send the service a HUP signal.</div><div class="line"></div><div class="line">       -a     Alarm. Send the service an ALRM signal.</div><div class="line"></div><div class="line">       -i     Interrupt. Send the service an INT signal.</div><div class="line"></div><div class="line">       -t     Terminate. Send the service a TERM signal.</div><div class="line"></div><div class="line">       -k     Kill. Send the service a KILL signal.</div><div class="line"></div><div class="line">       -x     Exit.  supervise(8) will exit as soon as the service is down. If</div><div class="line">              you use this option on a stable system, you&apos;re doing something</div><div class="line">              wrong; supervise(8) is designed to run forever.</div></pre></td></tr></table></figure></p>
+<h1 id="daemontools-中的其它工具"><a href="#daemontools-中的其它工具" class="headerlink" title="daemontools 中的其它工具"></a>daemontools 中的其它工具</h1><p>log工具：</p>
+<ul>
+<li>The readproctitle program</li>
+<li>The multilog program</li>
+<li>The tai64n program</li>
+<li>The tai64nlocal program</li>
+</ul>
+<p>环境工具：</p>
+<ul>
+<li>The setuidgid program</li>
+<li>The envuidgid program</li>
+<li>The envdir program</li>
+<li>The softlimit program</li>
+<li>The setlock program</li>
+</ul>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2017/06/20/byebye-swoole/" data-toggle="tooltip" data-placement="top"
+                           title="PHP Swoole 从入门到放弃">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2017/06/12/truss-lsof-strace-ltrace/" data-toggle="tooltip" data-placement="top"
+                           title="truss lsof strace ltrace 让你知道系统运行中的进程正在干什么">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#介绍"><span class="toc-text">介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#注意"><span class="toc-text">注意</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#安装启动"><span class="toc-text">安装启动</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#添加服务"><span class="toc-text">添加服务</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#普通添加"><span class="toc-text">普通添加</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#以指定用户身份运行"><span class="toc-text">以指定用户身份运行</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#管理服务"><span class="toc-text">管理服务</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#daemontools-中的其它工具"><span class="toc-text">daemontools 中的其它工具</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a href="https://ruff.io/zh-cn/">ruff</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/blusewang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    &copy; 2019 Bluse
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> </span>
+                    备案号：京ICP备13038498号-1 Power by <a href="https://hexo.io" target="_blank">hexo</a> Theme by <a href="https://haojen.github.io/" target="_blank">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/blog.js"></script>
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.wangjunfeng.com.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','null','2.0.0');
+</script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://avatars0.githubusercontent.com/u/1764005?v=3&amp;s=460">
+</body>
+
+</html>

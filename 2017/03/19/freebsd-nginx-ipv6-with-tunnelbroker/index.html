@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="...">
+    <meta name="keyword" content="undefined">
+    <meta name="theme-color" content="#000000"><!-- 600090 -->
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="Bluse" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        FreeBSD上使用tunnelbroker隧道支持ipv6｜Bluse
+        
+    </title>
+
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2017/03/19/freebsd-nginx-ipv6-with-tunnelbroker/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/blog-style.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+</head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://www.sslcentral.com/wp-content/uploads/2014/09/sld1.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    Bluse
+                </span>
+                Programing Thinker
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">tags</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>FreeBSD上使用tunnelbroker隧道支持ipv6</h1>
+                    
+                    <span class="meta">
+                         作者 bluse wang
+                        <span>
+                          日期 2017-03-19
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#freebsd"
+                           title="freebsd">freebsd</a>
+                        
+                        <a class="tag" href="/tags/#nginx"
+                           title="nginx">nginx</a>
+                        
+                        <a class="tag" href="/tags/#ipv6"
+                           title="ipv6">ipv6</a>
+                        
+                        <a class="tag" href="/tags/#tunnelbroker"
+                           title="tunnelbroker">tunnelbroker</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            FreeBSD上使用tunnelbroker隧道支持ipv6
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <h1 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h1><p>IOS被拒，原因又是<code>IPV6 only</code>网络下访问异常！</p>
+<p>于是开始自检！</p>
+<p>先检查了代码，没有使用只能用于ipv4的代码。</p>
+<p>接口中也没有使用ipv4静态地址的请求。</p>
+<p>那就是网络问题了！</p>
+<p>先模拟了一下<code>ipv6</code>网络。成功配置了mac pro共享网络。访问了一下！没毛病！</p>
+<p>那就是<code>IPV6 only</code>网络至ipv4，且走国际线路，这个有些特别了！<br>找了一下发现不少人吐嘈这个事，文章中甚至扬言要投靠<code>Android</code>^_^。<br>且有公司已经把优化国内IPV4至苹果公司的ipv6-only的网络做成服务，当生意做了。</p>
+<p>这个问题自己解决就是给自己的服务器上加一个ipv6地址，就OK啦！<br>但现实太骨感，阿里云没有ipv6。只好通过其它途径了。比较合适的方案就是使用<a href="https://tunnelbroker.net/" target="_blank" rel="external">tunnelbroker</a>提供的ipv6隧道了。</p>
+<h1 id="动手"><a href="#动手" class="headerlink" title="动手"></a>动手</h1><ul>
+<li>注册账号</li>
+<li>验证邮箱<br>完成后，登录进去，在左侧的<code>User Functions</code>下<code>Create Regular Tunnel</code>创建一个常规的就好。</li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>创建完通道后，在<code>Tunnel Details</code>下有个<code>Example Configurations</code>标签，这里能按你的系统生成配置指令。<br>进去选择<code>Freebsd &gt; 4.4</code>，得到：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">ifconfig gif0 create</div><div class="line">ifconfig gif0 tunnel [我的IP] 209.51.161.14  #我服务器的IP 帮我转发的ipv4IP</div><div class="line">ifconfig gif0 inet6 2001:470:1f06:1458::2 2001:470:1f06:1458::1 prefixlen 128       # 出隧道后，我在公网上的ipv6地址 隧道方的服务ipv6地址</div><div class="line">route -n add -inet6 default 2001:470:1f06:1458::1</div><div class="line">ifconfig gif0 up</div></pre></td></tr></table></figure></p>
+<p>进去执行掉<br>执行完后，<code>ifconfig</code>里就会多出来一个gif0设备。</p>
+<p>FreeBSD的/etc/rc.conf增加配置，把禁止ipv6的项删去。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"># IPv6 Tunnel Client</div><div class="line">ipv6_enable=&quot;YES&quot;</div><div class="line">gif_interfaces=&quot;gif0&quot;</div><div class="line">gifconfig_gif0=&quot;[我的IP] 209.51.161.14&quot;</div><div class="line">ipv6_ifconfig_gif0=&quot;2001:470:1f06:1458::2 2001:470:1f06:1458::1 prefixlen 128&quot;</div><div class="line">ipv6_defaultrouter=&quot;2001:470:1f06:1458::1&quot;</div><div class="line"> </div><div class="line"># IPv6 Gateway</div><div class="line">ipv6_config_nfe0=&quot;2001:470:1f07:1458::1 prefixlen 64&quot;   #这个是路由地址：在‘Tunnel Details’ 里，是‘Routed IPv6 Prefixes’下的‘Routed /64’项。</div><div class="line">ipv6_gateway_enable=&quot;YES&quot;</div><div class="line">rtadvd_enable=&quot;YES&quot;</div><div class="line">rtadvd_interfaces=&quot;nfe0&quot;</div></pre></td></tr></table></figure></p>
+<p>这个需要rtadvd服务，<code>service rtadvd start</code>。</p>
+<h2 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h2><p>FreeBSD处理ipv4与v6是两条不同的道。<br>所以在<code>nginx</code>里，要加上ipv6的监听，类似：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">listen 443 ssl;</div><div class="line">listen [::]:443 ssl;</div></pre></td></tr></table></figure></p>
+<p>再<code>sysctl net.inet6.ip6.forwarding</code>一下，看看是否支持转发。<br>如果是0。就得放开！执行：<code>sysctl -w net.inet6.ip6.forwarding=1</code>。</p>
+<h2 id="dns"><a href="#dns" class="headerlink" title="dns"></a>dns</h2><p>进入DNSPOD给域名下加一条<code>AAAA</code>记录。地址用<code>2001:470:1f06:1458::2</code>。</p>
+<h1 id="检测"><a href="#检测" class="headerlink" title="检测"></a>检测</h1><p>没有ipv6-only环境，怎么判断这一切生效了呢？只需打开浏览器访问：<a href="http://www.wangjunfeng.com.cn.ipv4.sixxs.org" target="_blank" rel="external"><code>http://www.wangjunfeng.com.cn.ipv4.sixxs.org</code></a>。<br>这里<code>www.wangjunfeng.com.cn</code>就是要支持的网址了。如果正常打开。就OK了！</p>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2017/06/05/swoole-configure/" data-toggle="tooltip" data-placement="top"
+                           title="swoole 编译配置">&larr; Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2017/02/21/webpack-font-awesome/" data-toggle="tooltip" data-placement="top"
+                           title="使用 webpack 打包 font-awesome">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#起源"><span class="toc-text">起源</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#动手"><span class="toc-text">动手</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#配置"><span class="toc-text">配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx"><span class="toc-text">nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#dns"><span class="toc-text">dns</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#检测"><span class="toc-text">检测</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a href="https://ruff.io/zh-cn/">ruff</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/blusewang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    &copy; 2019 Bluse
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> </span>
+                    备案号：京ICP备13038498号-1 Power by <a href="https://hexo.io" target="_blank">hexo</a> Theme by <a href="https://haojen.github.io/" target="_blank">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/blog.js"></script>
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.wangjunfeng.com.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','null','2.0.0');
+</script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://avatars0.githubusercontent.com/u/1764005?v=3&amp;s=460">
+</body>
+
+</html>
