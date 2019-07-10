@@ -17,7 +17,7 @@ nginx 部分变量说明：
 - $time_iso8601 比较舒服的时间
 - $request_time 从accept到发完相应数据，耗费的时间，单位：秒
 - $upstream_response_time   nginx收到请求交给其它应用处理并得到结果的时间，单位：秒
-- $body_bytes_sent  响应包体的尺寸，单位：时节
+- $body_bytes_sent  响应包体的尺寸，单位：字节
 - $request  请求描述
 - $status   响应的状态码
 
