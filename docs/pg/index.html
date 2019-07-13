@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="...">
+    <meta name="keyword" content="undefined">
+    <meta name="theme-color" content="#000000"><!-- 600090 -->
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="Bluse" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        PG Driver｜Bluse
+        
+    </title>
+
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/pg/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/blog-style.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+</head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://www.sslcentral.com/wp-content/uploads/2014/09/sld1.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "false" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    Bluse
+                </span>
+                Programing Thinker
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">tags</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/pg/">PG Driver</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>PG Driver</h1>
+                    
+                    <span class="meta">
+                         作者 bluse wang
+                        <span>
+                          日期 2019-07-11
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            PG Driver
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <h1 id="pg-driver-for-golang"><a href="#pg-driver-for-golang" class="headerlink" title="pg driver for golang"></a><strong><a href="https://github.com/blusewang/pg" target="_blank" rel="noopener">pg driver for golang</a></strong></h1><ul>
+<li>用于golang database/sql 的PostgreSQL驱动</li>
+</ul>
+<p><a href="https://godoc.org/github.com/blusewang/pg" target="_blank" rel="noopener"><img src="https://godoc.org/github.com/blusewang/pg?status.svg" alt="GoDoc"></a><br><a href="https://github.com/blusewang/pg/blob/master/LICENSE" target="_blank" rel="noopener"><img src="http://img.shields.io/badge/license-MIT-red.svg?style=flat" alt="license"></a></p>
+<h4 id="Go-Version-Support"><a href="#Go-Version-Support" class="headerlink" title="Go Version Support"></a>Go Version Support</h4><p><img src="https://img.shields.io/badge/Go-1.11-brightgreen.svg" alt="Go version"></p>
+<h4 id="PostgreSQL-Version-Support"><a href="#PostgreSQL-Version-Support" class="headerlink" title="PostgreSQL Version Support"></a>PostgreSQL Version Support</h4><p><img src="https://img.shields.io/badge/PostgreSQL-10.5-brightgreen.svg" alt="PostgreSQL version"><br><img src="https://img.shields.io/badge/PostgreSQL-11.1-brightgreen.svg" alt="PostgreSQL version"></p>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><pre><code>go get github.com/blusewang/pg</code></pre><h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">db, err := sql.Open(<span class="string">"pg"</span>, <span class="string">"pg://user:password@dbhost.yourdomain.com/database_name?application_name=app_name&amp;sslmode=verify-full"</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> db.Close()</span><br><span class="line">rows, err := db.Query(<span class="string">"select * from bluse where id&gt;$1"</span>, <span class="number">0</span>)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<h2 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h2><p>更多的细节及使用示例，参见： <a href="https://godoc.org/github.com/blusewang/pg" target="_blank" rel="noopener">https://godoc.org/github.com/blusewang/pg</a>.</p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ul>
+<li>送入<code>Scan()</code>处理<code>null</code>值时支持传指针类型的指针！！</li>
+<li>常见<code>Array</code>类型直接兼容golang的数组类型。如PG的：<code>integer[]</code>，对应golang的：<code>[]int64</code></li>
+<li>数据源格式，既支持键值对，又支持URI。书写格式遵守：<a href="https://www.postgresql.org/docs/11/libpq-connect.html#LIBPQ-CONNSTRING" target="_blank" rel="noopener">PG官方规范</a>。<ul>
+<li>URI格式，支持<code>pg://</code>前缀。</li>
+<li>其中用户名、端口、主机名，在数据源中未指定时，有默认值。用户名默认为操作系统当前用户的用户名</li>
+<li>DSN配置中，<code>strict</code>项是独立于PG后端之外的。它默认为<code>true</code>。<ul>
+<li>若置为<code>false</code>；在遇到<code>null</code>值时，宽容处理。例：向<code>Scan()</code>中传 <code>string</code>型的指针，得到 <code>&quot;&quot;</code>，传 <code>*string</code>型的指针，得到 <code>&quot;&quot;</code>！</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>积极标记并缓存所有预备语句[包括<code>db.Query</code>、<code>db.Exec</code>、<code>db.Prepare()</code>等的语句]，遇到相同的语句请求时，自动复用。<strong>这能提高1倍的执行速度！！！</strong><ul>
+<li>为了发挥好此功能，需要最大可能地允许数据库连接空闲。</li>
+<li>配置上推荐将<code>sql.SetMaxIdleConns(x)</code>、<code>sql.SetMaxOpenConns(x)</code>两处的x设置为相同的值！</li>
+</ul>
+</li>
+</ul>
+<h2 id="协议实现"><a href="#协议实现" class="headerlink" title="协议实现"></a>协议实现</h2><ul>
+<li>此驱动更适合服务于Web</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">状态</th>
+<th align="left">功能</th>
+<th align="left">备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">OK</td>
+<td align="left">启动</td>
+<td align="left">必备，实现：无密码，明文密码和md5密码三种认证</td>
+</tr>
+<tr>
+<td align="left">OK</td>
+<td align="left">简单查询</td>
+<td align="left">必备</td>
+</tr>
+<tr>
+<td align="left">OK</td>
+<td align="left">扩展查询</td>
+<td align="left">必备</td>
+</tr>
+<tr>
+<td align="left">OK</td>
+<td align="left">取消正在处理的请求</td>
+<td align="left">必备</td>
+</tr>
+<tr>
+<td align="left">OK</td>
+<td align="left">终止</td>
+<td align="left">必备</td>
+</tr>
+<tr>
+<td align="left">OK</td>
+<td align="left">SSL会话加密</td>
+<td align="left">远程安全</td>
+</tr>
+</tbody></table>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#pg-driver-for-golang"><span class="toc-text">pg driver for golang</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Go-Version-Support"><span class="toc-text">Go Version Support</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#PostgreSQL-Version-Support"><span class="toc-text">PostgreSQL Version Support</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安装"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#使用"><span class="toc-text">使用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文档"><span class="toc-text">文档</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#特性"><span class="toc-text">特性</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#协议实现"><span class="toc-text">协议实现</span></a></li></ol></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a href="https://ruff.io/zh-cn/">ruff</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/blusewang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    &copy; 2019 Bluse
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> </span>
+                    备案号：京ICP备13038498号-1 Power by <a href="https://hexo.io" target="_blank">hexo</a> Theme by <a href="https://haojen.github.io/" target="_blank">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/blog.js"></script>
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.wangjunfeng.com.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','null','2.0.0');
+</script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://avatars0.githubusercontent.com/u/1764005?v=3&amp;s=460">
+</body>
+
+</html>

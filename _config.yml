@@ -12,7 +12,7 @@ language: zh-CN
 timezone: PRC
 
 header-img: "https://www.sslcentral.com/wp-content/uploads/2014/09/sld1.jpg"
-email: wangjunfeng2000@126.com
+email: dev.jf.wang@gmail.com
 
 github_username: blusewang
 
@@ -103,4 +103,4 @@ theme: Anisina
 deploy:
   type: git
   repo: https://github.com/blusewang/blog.git
-  branch: s1
+  branch: master
