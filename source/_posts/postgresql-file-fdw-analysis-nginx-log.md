@@ -71,6 +71,7 @@ create foreign table app_log (
 体验：
 ```sql
 select client_ip,create_at,request_cost,upstream_cost,pg_size_pretty(body_size::bigint) body_length,request from app_log where body_size>1024*1024;
+
   client_ip  |       create_at        | request_cost | upstream_cost | body_length |                           request
 -------------+------------------------+--------------+---------------+-------------+--------------------------------------------------------------
  58.19.94.70 | 2019-07-09 11:05:37+08 |  0.984       |  0.113        | 1470 kB     |  GET /v4.3.1/sync/member_pockets?at=-999&sid=205118 HTTP/2.0

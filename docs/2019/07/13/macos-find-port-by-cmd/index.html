@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
     <title>
         
-        使用postgresql的file-fdw扩展分析nginx日志｜Bluse
+        MacOS 命令查询网络端口占用情况｜Bluse
         
     </title>
 
-    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2019/07/10/postgresql-file-fdw-analysis-nginx-log/">
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2019/07/13/macos-find-port-by-cmd/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -145,27 +145,24 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
                 <div class="post-heading">
-                    <h1>使用postgresql的file-fdw扩展分析nginx日志</h1>
+                    <h1>MacOS 命令查询网络端口占用情况</h1>
                     
                     <span class="meta">
                          作者 bluse wang
                         <span>
-                          日期 2019-07-10
+                          日期 2019-07-13
                          </span>
                     </span>
                     <div class="tags text-center">
                         
-                        <a class="tag" href="/tags/#nginx"
-                           title="nginx">nginx</a>
+                        <a class="tag" href="/tags/#MacOS"
+                           title="MacOS">MacOS</a>
                         
-                        <a class="tag" href="/tags/#PostgreSQL"
-                           title="PostgreSQL">PostgreSQL</a>
+                        <a class="tag" href="/tags/#lsof"
+                           title="lsof">lsof</a>
                         
-                        <a class="tag" href="/tags/#file-fdw"
-                           title="file-fdw">file-fdw</a>
-                        
-                        <a class="tag" href="/tags/#log"
-                           title="log">log</a>
+                        <a class="tag" href="/tags/#netstat"
+                           title="netstat">netstat</a>
                         
                     </div>
                 </div>
@@ -174,7 +171,7 @@
     </div>
     <div class="post-title-haojen">
         <span>
-            使用postgresql的file-fdw扩展分析nginx日志
+            MacOS 命令查询网络端口占用情况
         </span>
     </div>
 </header>
@@ -185,54 +182,25 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <h1 id="原料"><a href="#原料" class="headerlink" title="原料"></a>原料</h1><h2 id="PostgreSQL-方面"><a href="#PostgreSQL-方面" class="headerlink" title="PostgreSQL 方面"></a>PostgreSQL 方面</h2><p>PostgreSQL的file_fdw使用说明：<br><a href="http://www.postgres.cn/docs/11/file-fdw.html" target="_blank" rel="noopener">file_fdw 中文文档</a></p>
-<h2 id="nginx-方面"><a href="#nginx-方面" class="headerlink" title="nginx 方面"></a>nginx 方面</h2><p>nginx 部分变量说明：</p>
-<ul>
-<li>$remote_addr  客户端IP</li>
-<li>$time_local   读起来不太舒服的时间</li>
-<li>$time_iso8601 比较舒服的时间</li>
-<li>$request_time 从accept到发完相应数据，耗费的时间，单位：秒</li>
-<li>$upstream_response_time   nginx收到请求交给其它应用处理并得到结果的时间，单位：秒</li>
-<li>$body_bytes_sent  响应包体的尺寸，单位：字节</li>
-<li>$request  请求描述</li>
-<li>$status   响应的状态码</li>
-</ul>
-<p><strong><code>$request_time</code>、<code>$upstream_response_time</code>的记录值不一定是数字，有时会是<code>-</code></strong></p>
-<h1 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h1><h2 id="Nginx"><a href="#Nginx" class="headerlink" title="Nginx"></a>Nginx</h2><p>PostgreSQL对处理CSV比较擅长。所以我们要把nginx的日志定制成CSV的样子。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">log_format  csv_log &apos;$remote_addr, $time_iso8601, $request_time, $upstream_response_time, $body_bytes_sent, $request, $status&apos;;</span><br></pre></td></tr></table></figure>
-
-<p>在需要的server下应用这个格式，<strong>要确保应用后的日志文件中只有一种格式的日志</strong>。</p>
-<h2 id="PostgreSQL"><a href="#PostgreSQL" class="headerlink" title="PostgreSQL"></a>PostgreSQL</h2><p><code>psql</code> 进入</p>
-<p>判断是否安装扩展：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">\dx</span><br><span class="line">                                     List of installed extensions</span><br><span class="line">        Name        | Version |   Schema   |                        Description</span><br><span class="line"><span class="comment">--------------------+---------+------------+-----------------------------------------------------------</span></span><br><span class="line"> file_fdw           | 1.0     | public     | foreign-data wrapper for flat file access</span><br></pre></td></tr></table></figure>
-
-<p>安装扩展：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> extension file_fdw</span><br></pre></td></tr></table></figure>
-
-<p>创建服务：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">SERVER</span> nginx_log <span class="keyword">FOREIGN</span> <span class="keyword">DATA</span> WRAPPER file_fdw;</span><br></pre></td></tr></table></figure>
-
-<p>创建外部表：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">foreign</span> <span class="keyword">table</span> app_log (</span><br><span class="line"> ip inet,</span><br><span class="line"> create_at <span class="built_in">timestamp</span> <span class="keyword">with</span> <span class="built_in">time</span> zone,</span><br><span class="line"> request_cost <span class="built_in">text</span>,</span><br><span class="line"> stream_cost <span class="built_in">text</span>,</span><br><span class="line"> body_size <span class="built_in">integer</span>,</span><br><span class="line"> request <span class="built_in">text</span>,</span><br><span class="line"> <span class="keyword">status</span> <span class="built_in">integer</span></span><br><span class="line"> ) <span class="keyword">server</span> nginx_log options ( filename <span class="string">'/your/nginx/log/path/file.log'</span>, <span class="keyword">format</span> <span class="string">'csv'</span>);</span><br></pre></td></tr></table></figure>
-
-<p>体验：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> client_ip,create_at,request_cost,upstream_cost,pg_size_pretty(body_size::<span class="built_in">bigint</span>) body_length,request <span class="keyword">from</span> app_log <span class="keyword">where</span> body_size&gt;<span class="number">1024</span>*<span class="number">1024</span>;</span><br><span class="line"></span><br><span class="line">  client_ip  |       create_at        | request_cost | upstream_cost | body_length |                           request</span><br><span class="line"><span class="comment">-------------+------------------------+--------------+---------------+-------------+--------------------------------------------------------------</span></span><br><span class="line"> 58.19.94.70 | 2019-07-09 11:05:37+08 |  0.984       |  0.113        | 1470 kB     |  GET /v4.3.1/sync/member_pockets?at=-999&amp;sid=205118 HTTP/2.0</span><br><span class="line"> 58.19.94.70 | 2019-07-09 11:05:38+08 |  0.810       |  0.149        | 1470 kB     |  GET /v4.3.1/sync/member_pockets?at=-999&amp;sid=205118 HTTP/2.0</span><br><span class="line">(2 rows)</span><br></pre></td></tr></table></figure>
-
+                <h2 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h2><blockquote>
+<p>netstat -an | grep 80</p>
+</blockquote>
+<h2 id="lsof"><a href="#lsof" class="headerlink" title="lsof"></a>lsof</h2><blockquote>
+<p>lsof -i:80</p>
+</blockquote>
+<blockquote>
+<p>lsof -c nsqd</p>
+</blockquote>
 
                 <hr>
                 
 
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2019/07/13/macos-find-port-by-cmd/" data-toggle="tooltip" data-placement="top"
-                           title="MacOS 命令查询网络端口占用情况">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2018/09/07/postgres_fdw/" data-toggle="tooltip" data-placement="top"
-                           title="PostgreSQL 外部表">Next Post &rarr;</a>
+                        <a href="/2019/07/10/postgresql-file-fdw-analysis-nginx-log/" data-toggle="tooltip" data-placement="top"
+                           title="使用postgresql的file-fdw扩展分析nginx日志">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -245,7 +213,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#原料"><span class="toc-text">原料</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#PostgreSQL-方面"><span class="toc-text">PostgreSQL 方面</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#nginx-方面"><span class="toc-text">nginx 方面</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#操作"><span class="toc-text">操作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Nginx"><span class="toc-text">Nginx</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PostgreSQL"><span class="toc-text">PostgreSQL</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#netstat"><span class="toc-text">netstat</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#lsof"><span class="toc-text">lsof</span></a></li></ol>
                 </div>
             </div>
         </div>
