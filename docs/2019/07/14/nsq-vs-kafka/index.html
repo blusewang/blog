@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
     <title>
         
-        Laravel Notification 测评｜Bluse
+        为何要抛弃Kafka，选择NSQ！｜Bluse
         
     </title>
 
-    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2016/12/15/laravel-notification/">
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2019/07/14/nsq-vs-kafka/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -153,21 +153,21 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
                 <div class="post-heading">
-                    <h1>Laravel Notification 测评</h1>
+                    <h1>为何要抛弃Kafka，选择NSQ！</h1>
                     
                     <span class="meta">
                          作者 bluse wang
                         <span>
-                          日期 2016-12-15
+                          日期 2019-07-14
                          </span>
                     </span>
                     <div class="tags text-center">
                         
-                        <a class="tag" href="/tags/#laravel"
-                           title="laravel">laravel</a>
+                        <a class="tag" href="/tags/#Kafka"
+                           title="Kafka">Kafka</a>
                         
-                        <a class="tag" href="/tags/#notification"
-                           title="notification">notification</a>
+                        <a class="tag" href="/tags/#NSQ"
+                           title="NSQ">NSQ</a>
                         
                     </div>
                 </div>
@@ -176,7 +176,7 @@
     </div>
     <div class="post-title-haojen">
         <span>
-            Laravel Notification 测评
+            为何要抛弃Kafka，选择NSQ！
         </span>
     </div>
 </header>
@@ -187,37 +187,148 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <p>Laravel 5.3 新出了个叫 <code>Notification</code> 的消息通知功能！先总，后分吧。</p>
-<h2 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h2><p>它相对<code>event</code>的优点是：更简单也更好地隔离了不同的业务代码。且一次触发，多种’姿势’运行，不同’姿势’代码独立。</p>
-<p>适合于发比较复杂的跨站消息，如：邮件、同步weibo、OA系统、第三方个人笔记Ever-note等。不只适合单发，还适合不同渠道并发。比如：同一个消息同时发送前边列出的所有渠道。</p>
-<p>它还有个优点是，也能做一个Log，记录所有的发送结果。还能支持检测并记录：<strong>接收者对消息的查看状态</strong>。</p>
-<p>不足的地方是：默认支持的实用工具像<code>mail</code>、<code>nexmo</code>、<code>slack</code>。除了<code>mail</code>，其它两个，我天朝子民都用不上。只能用点本地的渠道，如：<code>database</code>、<code>broadcast</code>。<br>虽然默认的有点少，但官方还搞了个<a href="http://laravel-notification-channels.com/" target="_blank" rel="noopener">第三方消息集合的网站</a>。在这里能找到一堆奇葩的，常见的，拿来就能用的第三方消息扩展。<strong>但是</strong>，依旧很少有我天朝可以直接用的。乐观地看：给了你我一个完善的机会！悲观的看：自己写才是王道！总之：还是自己写！</p>
-<h2 id="对象介绍"><a href="#对象介绍" class="headerlink" title="对象介绍"></a>对象介绍</h2><p>相关的类有：</p>
-<p><code>Notification</code>：发出一个消息后，业务就交给它了。这里生成适合不同渠道的消息，并交给不同渠道去发送。</p>
-<p><code>Channel</code>：这里定义这个渠道具体的发送流程</p>
-<p><code>Message</code>：这是个格式化不同消息的助手类。如果消息体简单，可以不用它，直接在<code>Notification</code>中拼合消息体。如果消息体复杂，就有必要专门为格式化这个消息写一个<code>Message</code>Builder Helper。</p>
-<h3 id="类结构"><a href="#类结构" class="headerlink" title="类结构"></a>类结构</h3><p><code>Notification</code> 这个类laravel 的 artisan 有提供make</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">class DemoNotification extends Notification</span><br><span class="line">&#123;</span><br><span class="line">    use Queueable;</span><br><span class="line">    </span><br><span class="line">    /**</span><br><span class="line">     * Create a new notification instance.</span><br><span class="line">     *</span><br><span class="line">     */</span><br><span class="line">    public function __construct()</span><br><span class="line">    &#123;</span><br><span class="line">        //</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 这里返回要发多少个渠道</span><br><span class="line">     *</span><br><span class="line">     * @param  mixed  $notifiable</span><br><span class="line">     * @return array</span><br><span class="line">     */</span><br><span class="line">    public function via($notifiable)</span><br><span class="line">    &#123;</span><br><span class="line">        return [DemoChannel::class];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 后边挨个渠道给生成消息，如有必要，使用Message助手</span><br><span class="line">     * 这里的命名默契地使用 &apos;to&apos; + 渠道名</span><br><span class="line">     */</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    public function toDemo($notifiable)</span><br><span class="line">    &#123;</span><br><span class="line">        return (new DemoMessage)</span><br><span class="line">                -&gt;title(&apos;这里是标题&apos;)</span><br><span class="line">                -&gt;body(&apos;这里是消息主体&apos;)</span><br><span class="line">                -&gt;from(&apos;发送者&apos;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+                <blockquote>
+<p>自从抛PHP从Go。一直相安无事。近来遇到复杂业务时才想起旧爱<code>Laravel Queue</code>。<br>替代品有两个：<br>一个是名声响彻东西半球的时代宠儿：<code>Kafka</code>。<br>另一个是穷光蛋查理的首选：<code>NSQ</code>。</p>
+</blockquote>
+<h1 id="Let’s-Rock"><a href="#Let’s-Rock" class="headerlink" title="Let’s Rock"></a>Let’s Rock</h1><h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><h3 id="NSQ-进程架构"><a href="#NSQ-进程架构" class="headerlink" title="NSQ 进程架构"></a>NSQ 进程架构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"> +-----------------+        +---------------+</span><br><span class="line"> |                 |        |               |</span><br><span class="line"> |    nsqlookup    +&lt;-------+    nsqadmin   |</span><br><span class="line"> |                 |        |               |</span><br><span class="line"> +-------+---------+        +---------------+</span><br><span class="line">         |</span><br><span class="line">         |</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------+</span><br><span class="line">| +-------------+</span><br><span class="line">| | +--------------+</span><br><span class="line">| | |              |</span><br><span class="line">+---+     nsqd     |</span><br><span class="line">  +-+              |</span><br><span class="line">    +--------------+</span><br></pre></td></tr></table></figure>
 
-<p><code>Channel</code> 每个渠道必须实现一个send($notifiable,Notification $notification) 动作</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class DemoChannel</span><br><span class="line">&#123;</span><br><span class="line">    public function send($notifiable,Notification $notification)&#123;</span><br><span class="line">        $msg = $notification-&gt;toDemo($notifiable);</span><br><span class="line">        // 后边去实现怎么把这个$msg给扔出去！</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Kafka-进程架构"><a href="#Kafka-进程架构" class="headerlink" title="Kafka 进程架构"></a>Kafka 进程架构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">+----------------+</span><br><span class="line">|                |</span><br><span class="line">|    zookeeper   |</span><br><span class="line">|                |</span><br><span class="line">+--------+-------+</span><br><span class="line">         |</span><br><span class="line">         |</span><br><span class="line">         |</span><br><span class="line">         v</span><br><span class="line">+-------------+</span><br><span class="line">| +-------------+</span><br><span class="line">| | +--------------+</span><br><span class="line">| | |              |</span><br><span class="line">+---+    kafka     |</span><br><span class="line">  +-+              |</span><br><span class="line">    +--------------+</span><br></pre></td></tr></table></figure>
 
-<p><code>Message</code> 命名默契地使用’Message’结尾，这个类没有约束，没有继承。完全按需发挥！</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class DemoMessage</span><br><span class="line">&#123;</span><br><span class="line">    // 按不同消息的需要自己实现啦，这个类没有约束</span><br><span class="line">    public function title($title)</span><br><span class="line">    &#123;&#125;</span><br><span class="line">    public function body($body)</span><br><span class="line">    &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="资源消耗"><a href="#资源消耗" class="headerlink" title="资源消耗"></a>资源消耗</h2><ul>
+<li>环境：FreeBSD12</li>
+<li>测量工具：htop RES</li>
+</ul>
+<h3 id="NSQ"><a href="#NSQ" class="headerlink" title="NSQ"></a>NSQ</h3><table>
+<thead>
+<tr>
+<th>进程</th>
+<th>启动时占用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>nsqd</td>
+<td>9.2MB</td>
+</tr>
+<tr>
+<td>nsqlookup</td>
+<td>8.5MB</td>
+</tr>
+</tbody></table>
+<h3 id="Kafka"><a href="#Kafka" class="headerlink" title="Kafka"></a>Kafka</h3><table>
+<thead>
+<tr>
+<th>进程</th>
+<th>启动时占用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>kafka</td>
+<td>299MB</td>
+</tr>
+<tr>
+<td>zookeeper</td>
+<td>58MB</td>
+</tr>
+</tbody></table>
+<h2 id="运行与维护"><a href="#运行与维护" class="headerlink" title="运行与维护"></a>运行与维护</h2><table>
+<thead>
+<tr>
+<th>\</th>
+<th>NSQ</th>
+<th>Kafka</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>依赖</td>
+<td>无</td>
+<td>Linux基础包、bash、jdk、java</td>
+</tr>
+<tr>
+<td>耦合</td>
+<td>无！能以nsqd单进程提供完整服务，只在多节点分布式模式下需要nsqlookup</td>
+<td>依赖 zookeeper</td>
+</tr>
+<tr>
+<td>日志</td>
+<td>标准输出，自行重定向</td>
+<td>zookeeper 1份日志，kafka 7份日志，其中两份日志按小时自动切割</td>
+</tr>
+<tr>
+<td>配置</td>
+<td>10项左右，默认即是最优</td>
+<td>10多个独立配置文件，数百个配置项</td>
+</tr>
+<tr>
+<td>性能优化</td>
+<td>默认开启 pprof。支持web可视化实时观测内存、协程等动态</td>
+<td>无</td>
+</tr>
+<tr>
+<td>异常排查</td>
+<td>错误日志中的栈，源码量小。不依赖网络问答也能在短时间内找出问题</td>
+<td>错误日志中的栈，深度的栈，巨量源码，排查需要深入了解其原理，大量阅读源码。否则只能通过互联网、查阅前人经验或大师级人脉。</td>
+</tr>
+</tbody></table>
+<h2 id="业务能力"><a href="#业务能力" class="headerlink" title="业务能力"></a>业务能力</h2><table>
+<thead>
+<tr>
+<th>\</th>
+<th>NSQ</th>
+<th>Kafka</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>数据安全</td>
+<td>单个nsqd实例内的数据，不支异地热备，实例在正常退出时，会做刷入磁盘操作，也有手动备份实例数据的工具。</td>
+<td>数据全在磁盘。多个节点间自动互为备份。</td>
+</tr>
+<tr>
+<td>消息顺序</td>
+<td>不保证有序</td>
+<td>支持有条件的有序</td>
+</tr>
+<tr>
+<td>消息投递</td>
+<td>至少一次，消费者需自行保持消息处理的幂等</td>
+<td>支持准确的一次</td>
+</tr>
+</tbody></table>
+<ul>
+<li>附加能力</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>\</th>
+<th>NSQ</th>
+<th>Kafka</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>界面化管理</td>
+<td>自带nsqadmin</td>
+<td>无，需额外安装第三方包</td>
+</tr>
+<tr>
+<td>基于http协议的pub</td>
+<td>nsqd自带</td>
+<td>无，需额外安装第三方包</td>
+</tr>
+</tbody></table>
+<hr>
+<h2 id="一个Goer视角的体验"><a href="#一个Goer视角的体验" class="headerlink" title="一个Goer视角的体验"></a>一个Goer视角的体验</h2><p>kafka 的golang client 官方首推 sarama。一查就出糙点：<a href="https://blog.wolfogre.com/posts/golang-consume-kafka/" target="_blank" rel="noopener">golang 消费 kafka 的坑</a><br>这些库的版本，1.0都不到。</p>
+<p>而<a href="https://github.com/nsqio/go-nsq" target="_blank" rel="noopener">go-nsq</a>截至当前已经历16次release至v1.0.7。适用度，亲测为上好！</p>
+<h3 id="NATS队列"><a href="#NATS队列" class="headerlink" title="NATS队列"></a>NATS队列</h3><p>by the way 顺便提一下NATS队列，也很有名。它的消息投递既支持至少一次，也支持最多一次，也无法准确的一次。</p>
+<h3 id="身为Goer-自豪地采用NSQ！"><a href="#身为Goer-自豪地采用NSQ！" class="headerlink" title="身为Goer 自豪地采用NSQ！"></a>身为Goer <strong>自豪地采用<code>NSQ</code>！</strong></h3>
                 <hr>
                 
 
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2017/01/02/damned-xcode/" data-toggle="tooltip" data-placement="top"
-                           title="swift3升级后居然不做后向兼容">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2016/12/15/postgresql-config/" data-toggle="tooltip" data-placement="top"
-                           title="PostgreSQL 性能优化">Next Post &rarr;</a>
+                        <a href="/2019/07/13/macos-find-port-by-cmd/" data-toggle="tooltip" data-placement="top"
+                           title="MacOS 命令查询网络端口占用情况">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -230,7 +341,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#适用场景"><span class="toc-text">适用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#对象介绍"><span class="toc-text">对象介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#类结构"><span class="toc-text">类结构</span></a></li></ol></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Let’s-Rock"><span class="toc-text">Let’s Rock</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#架构"><span class="toc-text">架构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSQ-进程架构"><span class="toc-text">NSQ 进程架构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kafka-进程架构"><span class="toc-text">Kafka 进程架构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#资源消耗"><span class="toc-text">资源消耗</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NSQ"><span class="toc-text">NSQ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Kafka"><span class="toc-text">Kafka</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#运行与维护"><span class="toc-text">运行与维护</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#业务能力"><span class="toc-text">业务能力</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#一个Goer视角的体验"><span class="toc-text">一个Goer视角的体验</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#NATS队列"><span class="toc-text">NATS队列</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#身为Goer-自豪地采用NSQ！"><span class="toc-text">身为Goer 自豪地采用NSQ！</span></a></li></ol></li></ol></li></ol>
                 </div>
             </div>
         </div>
