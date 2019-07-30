@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
     <title>
         
-        gin上同时实现websocket｜Bluse
+        腾讯与华为到低谁更赚钱｜Bluse
         
     </title>
 
-    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2019/07/30/gin-with-websocket/">
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2019/07/30/tencent-vs-huwwei-2019/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -153,7 +153,7 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
                 <div class="post-heading">
-                    <h1>gin上同时实现websocket</h1>
+                    <h1>腾讯与华为到低谁更赚钱</h1>
                     
                     <span class="meta">
                          作者 bluse wang
@@ -163,14 +163,8 @@
                     </span>
                     <div class="tags text-center">
                         
-                        <a class="tag" href="/tags/#golang"
-                           title="golang">golang</a>
-                        
-                        <a class="tag" href="/tags/#gin"
-                           title="gin">gin</a>
-                        
-                        <a class="tag" href="/tags/#websocket"
-                           title="websocket">websocket</a>
+                        <a class="tag" href="/tags/#财报解读"
+                           title="财报解读">财报解读</a>
                         
                     </div>
                 </div>
@@ -179,7 +173,7 @@
     </div>
     <div class="post-title-haojen">
         <span>
-            gin上同时实现websocket
+            腾讯与华为到低谁更赚钱
         </span>
     </div>
 </header>
@@ -190,24 +184,29 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <h1 id="一个在Gin框架上实现websocket的样例"><a href="#一个在Gin框架上实现websocket的样例" class="headerlink" title="一个在Gin框架上实现websocket的样例"></a>一个在Gin框架上实现websocket的样例</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">"log"</span></span><br><span class="line">	<span class="string">"net/http"</span></span><br><span class="line">	<span class="string">"time"</span></span><br><span class="line"></span><br><span class="line">	<span class="string">"github.com/gin-gonic/gin"</span></span><br><span class="line">	<span class="string">"github.com/gorilla/websocket"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	upgrader = websocket.Upgrader&#123;</span><br><span class="line">		ReadBufferSize:   <span class="number">1024</span>,</span><br><span class="line">		WriteBufferSize:  <span class="number">1024</span>,</span><br><span class="line">		CheckOrigin:      <span class="function"><span class="keyword">func</span><span class="params">(r *http.Request)</span> <span class="title">bool</span></span> &#123; <span class="keyword">return</span> <span class="literal">true</span> &#125;,</span><br><span class="line">		HandshakeTimeout: time.Duration(time.Second * <span class="number">5</span>),</span><br><span class="line">	&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleWebsocket</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">	conn, err := upgrader.Upgrade(c.Writer, c.Request, <span class="literal">nil</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(<span class="string">"cant upgrade connection:"</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		msgType, msgData, err := conn.ReadMessage()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Println(<span class="string">"cant read message:"</span>, err)</span><br><span class="line"></span><br><span class="line">			<span class="keyword">switch</span> err.(<span class="keyword">type</span>) &#123;</span><br><span class="line">			<span class="keyword">case</span> *websocket.CloseError:</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Skip binary messages</span></span><br><span class="line">		<span class="keyword">if</span> msgType != websocket.TextMessage &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		log.Printf(<span class="string">"incoming message: %s\n"</span>, msgData)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	router := gin.Default()</span><br><span class="line">	router.GET(<span class="string">"/websocket"</span>, handleWebsocket)</span><br><span class="line">	router.Run(<span class="string">":5000"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>备自：<a href="https://github.com/gin-gonic/gin/issues/1305" target="_blank" rel="noopener">https://github.com/gin-gonic/gin/issues/1305</a></p>
-
+                <p>今天华为发布2019年上半年业绩，收入同比增长23.2%！那么华为今年上半年卖了多少钱呢？</p>
+<p><strong>4013亿人民币/6个月</strong></p>
+<p>腾讯2019年5月15日公布的一季度财报显示，腾讯卖了854.65亿。二季度还没出来，且简单做x2推算吧。</p>
+<p><strong>1708亿人民币/6个月</strong></p>
+<p>腾讯一软件服务公司，收钱的能力连卖货的华为一半都不到。不过得深挖一下。</p>
+<h2 id="华为"><a href="#华为" class="headerlink" title="华为"></a>华为</h2><blockquote>
+<p>[中国，深圳，2019年7月30日] 2019年上半年，华为实现销售收入4013亿人民币，<br>同比增长23.2%，<u>净利润率8.7%</u>。<a href="https://www.huawei.com/cn/press-events/news/2019/7/huawei-announces-h1-2019-revenue" target="_blank" rel="noopener">源自：官方新闻</a></p>
+</blockquote>
+<p>华为净利润：4013 x 0.087 / 6 = <strong>58.1亿/月</strong></p>
+<h2 id="腾讯"><a href="#腾讯" class="headerlink" title="腾讯"></a>腾讯</h2><blockquote>
+<p>期内盈利为人民币 278.56 亿元（41.37 亿美元），比去年同期增长 16%；<u>净利润率与去年同期持平，为<br>  33%</u>。<a href="http://www.tencent.com/zh-cn/articles/15000771557911821.pdf" target="_blank" rel="noopener">源自：官方财报</a></p>
+</blockquote>
+<p>腾讯净利润：854.65 x 0.33 / 3 = <strong>94亿/月</strong></p>
+<h3 id="还是搞软件服务更赚钱啊！～～～"><a href="#还是搞软件服务更赚钱啊！～～～" class="headerlink" title="还是搞软件服务更赚钱啊！～～～"></a>还是搞软件服务更赚钱啊！～～～</h3>
                 <hr>
                 
 
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2019/07/30/tencent-vs-huwwei-2019/" data-toggle="tooltip" data-placement="top"
-                           title="腾讯与华为到低谁更赚钱">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2019/07/16/android-custom-dns/" data-toggle="tooltip" data-placement="top"
-                           title="Android 指定 DNS （为什么新用户安装完你的App后，与Api服务连接失败？）">Next Post &rarr;</a>
+                        <a href="/2019/07/30/gin-with-websocket/" data-toggle="tooltip" data-placement="top"
+                           title="gin上同时实现websocket">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -220,7 +219,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#一个在Gin框架上实现websocket的样例"><span class="toc-text">一个在Gin框架上实现websocket的样例</span></a></li></ol>
+                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#华为"><span class="toc-text">华为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#腾讯"><span class="toc-text">腾讯</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#还是搞软件服务更赚钱啊！～～～"><span class="toc-text">还是搞软件服务更赚钱啊！～～～</span></a></li></ol></li></ol>
                 </div>
             </div>
         </div>
