@@ -1,0 +1,71 @@
+---
+layout: layout
+---
+
+<script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
+
+
+<div id="main" style="width: 100%;height:600px;"></div>
+
+<script type="application/javascript">
+    const myChart = echarts.init(document.getElementById('main'));
+    let opt = {
+        title:{
+            text:"股票",
+            left:'center'
+        },
+        tooltip: {
+            formatter: function (info) {
+                return [
+                    '<div class="tooltip-title">' + info.data.name + '</div>',
+                    '市值: ' + info.data.value + ' $',
+                ].join('');
+            }
+        },
+        series: [
+            {
+                name:'互联网',
+                type:'treemap',
+                label: {
+                    show: true,
+                    formatter: '{b}'
+                },
+                data: []
+            }
+        ]
+    };
+    myChart.setOption(opt);
+
+    myChart.showLoading();
+    fetch('http://s1.wangjunfeng.com.cn/finance',{mode:"cors"}).then(function (rs) {
+        return rs.json()
+    }).then(function (ok) {
+        console.log(ok);
+        myChart.hideLoading();
+        myChart.setOption({
+            title:{
+                text:"股票",
+                left:'center'
+            },
+            tooltip: {
+                formatter: function (info) {
+                    return [
+                        '<div class="tooltip-title">' + info.data.name + '</div>',
+                        '市值: ' + info.data.money,
+                    ].join('');
+                }
+            },
+            series:[
+                {
+                    name:'互联网',
+                    type:'treemap',
+                    label: {
+                        show: true,
+                        formatter: '{b}'
+                    },
+                    data: ok
+                }
+            ]
+        });
+    })
+</script>
