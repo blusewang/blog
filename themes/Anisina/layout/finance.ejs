@@ -5,8 +5,27 @@ layout: layout
 <script src="https://cdn.bootcss.com/echarts/4.1.0-release/echarts.min.js"></script>
 
 
-<div id="main" style="width: 100%;height:600px;"></div>
+<div id="main" style="width: 100%;height:750px;"></div>
 
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+            <h3>数据源：</h3>
+            <ul class="list-inline text-center">
+                <li>
+                    <a href="https://xueqiu.com" target="_blank">
+                        <img width="80px" src="data:image/png;base64,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">
+                    </a>
+                </li>
+                <li>
+                    <a href="https://fixer.io/" target="_blank">
+                        <img width="60px" src="https://fixer.io/fixer_images/fixer_money.png">
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 <script type="application/javascript">
     const myChart = echarts.init(document.getElementById('main'));
     let opt = {
@@ -17,8 +36,8 @@ layout: layout
         tooltip: {
             formatter: function (info) {
                 return [
-                    '<div class="tooltip-title">' + info.data.name + '</div>',
-                    '市值: ' + info.data.value + ' $',
+                    `<div class="tooltip-title">${info.data.name}[${info.data.exchange}](${info.data.symbol})</div>`,
+                    '市值: ' + info.data.money,
                 ].join('');
             }
         },
@@ -43,26 +62,8 @@ layout: layout
         console.log(ok);
         myChart.hideLoading();
         myChart.setOption({
-            title:{
-                text:"股票",
-                left:'center'
-            },
-            tooltip: {
-                formatter: function (info) {
-                    return [
-                        '<div class="tooltip-title">' + info.data.name + '</div>',
-                        '市值: ' + info.data.money,
-                    ].join('');
-                }
-            },
             series:[
                 {
-                    name:'互联网',
-                    type:'treemap',
-                    label: {
-                        show: true,
-                        formatter: '{b}'
-                    },
                     data: ok
                 }
             ]
