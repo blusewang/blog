@@ -80,7 +80,7 @@
                         
 							
                         <li>
-                            <a href="/pg/">PG Driver</a>
+                            <a href="/finance/">互联网价值</a>
                         </li>
 							
 						
@@ -96,7 +96,7 @@
                         
 							
                         <li>
-                            <a href="/finance/">互联网价值</a>
+                            <a href="/pg/">PG Driver</a>
                         </li>
 							
 						
@@ -164,6 +164,33 @@
     <div class="row">
         <div class="col-lg-8 col-lg-offset-1 col-md-8 col-md-offset-1 col-sm-12 col-xs-12 post-container">
             <!-- Main Content -->
+
+
+
+<div class="post-preview "
+     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
+    <a href="/2019/10/23/build-postgresql12-on-freebsd12/">
+        <h2 class="post-title">
+            在FreeBSD12上编译PostgreSQL12时报"readline header not found"的解决方案
+        </h2>
+        <p class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-23
+        </p>
+        
+        <div class="post-content-preview">
+            <p>
+                在PostgreSQL12源码里运行 ./configure报：
+12checking for readline.h... noconfigure: error: readline header not found
+
+且readline库已经安装过了。
+1234# pkg info readli..
+            </p>
+        </div>
+    </a>
+
+</div>
+
+<hr>
 
 
 
@@ -407,31 +434,6 @@ $requ..
 1CREATE EXTENSION postgres_fdw;
 
 创建远程服务123CREA..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2018/06/16/freebsd-disk-resize/">
-        <h2 class="post-title">
-            FreeBSD 11 磁盘空间扩容
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-16
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                场景阿里云买了个60G的系统盘ECS。进去一看只有20G！原因是：它刷镜像时，只刷了前边的20G。后边的40G，就成了空白。结果交到我手上，就成了个半成品。只得自己给它扩容
-初始状态：
-1234root@log:~ # df -hFilesystem                     Si..
             </p>
         </div>
     </a>

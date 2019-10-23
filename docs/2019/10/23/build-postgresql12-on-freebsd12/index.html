@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
     <title>
         
-        腾讯与华为到低谁更赚钱｜Bluse
+        在FreeBSD12上编译PostgreSQL12时报&quot;readline header not found&quot;的解决方案｜Bluse
         
     </title>
 
-    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2019/07/30/tencent-vs-huwwei-2019/">
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2019/10/23/build-postgresql12-on-freebsd12/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -161,18 +161,21 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
                 <div class="post-heading">
-                    <h1>腾讯与华为到低谁更赚钱</h1>
+                    <h1>在FreeBSD12上编译PostgreSQL12时报&quot;readline header not found&quot;的解决方案</h1>
                     
                     <span class="meta">
                          作者 bluse wang
                         <span>
-                          日期 2019-07-30
+                          日期 2019-10-23
                          </span>
                     </span>
                     <div class="tags text-center">
                         
-                        <a class="tag" href="/tags/#财报解读"
-                           title="财报解读">财报解读</a>
+                        <a class="tag" href="/tags/#FreeBSD"
+                           title="FreeBSD">FreeBSD</a>
+                        
+                        <a class="tag" href="/tags/#PostgreSQL"
+                           title="PostgreSQL">PostgreSQL</a>
                         
                     </div>
                 </div>
@@ -181,7 +184,7 @@
     </div>
     <div class="post-title-haojen">
         <span>
-            腾讯与华为到低谁更赚钱
+            在FreeBSD12上编译PostgreSQL12时报"readline header not found"的解决方案
         </span>
     </div>
 </header>
@@ -192,34 +195,25 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <p>今天华为发布2019年上半年业绩，收入同比增长23.2%！那么华为今年上半年卖了多少钱呢？</p>
-<p><strong>4013亿人民币/6个月</strong></p>
-<p>腾讯2019年5月15日公布的一季度财报显示，腾讯卖了854.65亿。二季度还没出来，且简单做x2推算吧。</p>
-<p><strong>1708亿人民币/6个月</strong></p>
-<p>腾讯一软件服务公司，收钱的能力连卖货的华为一半都不到。不过得深挖一下。</p>
-<h2 id="华为"><a href="#华为" class="headerlink" title="华为"></a>华为</h2><blockquote>
-<p>[中国，深圳，2019年7月30日] 2019年上半年，华为实现销售收入4013亿人民币，<br>同比增长23.2%，<u>净利润率8.7%</u>。<a href="https://www.huawei.com/cn/press-events/news/2019/7/huawei-announces-h1-2019-revenue" target="_blank" rel="noopener">源自：官方新闻</a></p>
-</blockquote>
-<p>华为净利润：4013 x 0.087 / 6 = <strong>58.1亿/月</strong></p>
-<h2 id="腾讯"><a href="#腾讯" class="headerlink" title="腾讯"></a>腾讯</h2><blockquote>
-<p>期内盈利为人民币 278.56 亿元（41.37 亿美元），比去年同期增长 16%；<u>净利润率与去年同期持平，为<br>  33%</u>。<a href="http://www.tencent.com/zh-cn/articles/15000771557911821.pdf" target="_blank" rel="noopener">源自：官方财报</a></p>
-</blockquote>
-<p>腾讯净利润：854.65 x 0.33 / 3 = <strong>94亿/月</strong></p>
-<h3 id="还是搞软件服务更赚钱啊！～～～"><a href="#还是搞软件服务更赚钱啊！～～～" class="headerlink" title="还是搞软件服务更赚钱啊！～～～"></a>还是搞软件服务更赚钱啊！～～～</h3>
+                <p>在<code>PostgreSQL12</code>源码里运行 <code>./configure</code>报：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">checking <span class="keyword">for</span> readline.h... no</span><br><span class="line">configure: error: readline header not found</span><br></pre></td></tr></table></figure>
+
+<p>且<code>readline</code>库已经安装过了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># pkg info readline</span></span><br><span class="line">readline-8.0.0</span><br><span class="line">Name           : readline</span><br><span class="line">Version        : 8.0.0</span><br></pre></td></tr></table></figure>
+
+<p>原因是：<code>/usr/local/lib</code>和<code>/usr/local/include</code>不在<code>configure</code>脚本的搜索路径中。<br>可以通过<code>--with-includes</code>配置项加入进去就好了。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./configure --with-includes=/usr/<span class="built_in">local</span>/include --with-libraries=/usr/<span class="built_in">local</span>/lib</span><br></pre></td></tr></table></figure>
+
+
                 <hr>
                 
 
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2019/08/05/plan-9-effect/" data-toggle="tooltip" data-placement="top"
-                           title="plan 9 效应 - 为什么功能没坏，你就不该去重构它！">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2019/07/30/gin-with-websocket/" data-toggle="tooltip" data-placement="top"
-                           title="gin上同时实现websocket">Next Post &rarr;</a>
+                        <a href="/2019/08/05/plan-9-effect/" data-toggle="tooltip" data-placement="top"
+                           title="plan 9 效应 - 为什么功能没坏，你就不该去重构它！">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -232,7 +226,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#华为"><span class="toc-text">华为</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#腾讯"><span class="toc-text">腾讯</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#还是搞软件服务更赚钱啊！～～～"><span class="toc-text">还是搞软件服务更赚钱啊！～～～</span></a></li></ol></li></ol>
+                    
                 </div>
             </div>
         </div>

@@ -22,7 +22,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://www.wangjunfeng.com.cn/archives/page/2/">
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/archives/2019/10/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -169,249 +169,21 @@
 
 <div class="post-preview "
      style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2018/06/16/freebsd-disk-resize/">
+    <a href="/2019/10/23/build-postgresql12-on-freebsd12/">
         <h2 class="post-title">
-            FreeBSD 11 磁盘空间扩容
+            在FreeBSD12上编译PostgreSQL12时报"readline header not found"的解决方案
         </h2>
         <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-16
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-23
         </p>
         
         <div class="post-content-preview">
             <p>
-                场景阿里云买了个60G的系统盘ECS。进去一看只有20G！原因是：它刷镜像时，只刷了前边的20G。后边的40G，就成了空白。结果交到我手上，就成了个半成品。只得自己给它扩容
-初始状态：
-1234root@log:~ # df -hFilesystem                     Si..
-            </p>
-        </div>
-    </a>
+                在PostgreSQL12源码里运行 ./configure报：
+12checking for readline.h... noconfigure: error: readline header not found
 
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2018/04/09/postgresql-10-install-ubuntu/">
-        <h2 class="post-title">
-            Ubuntu 上安装 PostgreSQL 10
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-04-09
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                目标
-支持中文
-自定义日志
-初始密码
-
-安装先按PostgreSQL官方指引在Ubuntu上安装好源
-123456sudo apt install language-pack-zh-hans postgresql-10 postgresql-server-dev-10sudo vim /etc/..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/07/22/freebsd/">
-        <h2 class="post-title">
-            FreeBSD 的日常
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-07-22
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                查看当前内核，编译时的参数sysctl kern.conftxt
-配置并编译新内核1234567cd /usr/src/sys/amd64/conf/ee GENERICconfig GENERICcd ../compile/GENERIC/make cleandepend &amp;&amp;..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/07/22/sql-join/">
-        <h2 class="post-title">
-            一张图搞定各种SQL JOINS
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-07-22
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                
-
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/07/12/postgresql-init/">
-        <h2 class="post-title">
-            FreeBSD 上初始化 PostgreSQL 96
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-07-12
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                疼点
-postgres 这个用户名，打起来麻烦，不及pgsql方便。
-initdb 出来的库默认是英文的
-
-设置123456789ee /etc/csh.cshrcalias ll	ls -lAFalias ls	ls -FGsetenv LANG         zh_CN.UTF-8sete..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/06/20/byebye-swoole/">
-        <h2 class="post-title">
-            PHP Swoole 从入门到放弃
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-06-20
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                被Swoole文档上各种“高XX”说得口水流了一地。天真的我，决定花些时间，把自己项目的新业务迁移到swoole平台上来。
-
-今天谨以此文纪念我为了swoole而逝去的时光！
-
-以下是这段时间以来尝试过程中的各种痛：
-
-
-高可用。可以通过给主进程发USR1信号来热更新代码，过程很优雅。我只要一个..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/06/17/daemontools/">
-        <h2 class="post-title">
-            daemontools系列小工具
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-06-17
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                前言为什么要讲一个如此”古老”的守护工具？为什么不用supervisord？
-supervisord 有个问题疼死我了。一远程管理一下它守护下的进程，CPU就会100%。这个问题年久失修。
-它的supervisorctl里的指令，常reload一下会让所有的服务死了，自己也死了！也不重启，得手动..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/06/12/truss-lsof-strace-ltrace/">
-        <h2 class="post-title">
-            truss lsof strace ltrace 让你知道系统运行中的进程正在干什么
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-06-12
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                #truss这个命令一般UNIX平台自带。使用举例：
-123456789101112131415161718192021222324[bluse@ybcz ~/vhosts/bluse]$ sudo truss -p48932clock_gettime(4,&#123;334689.597960..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/06/11/new-start/">
-        <h2 class="post-title">
-            新的开始
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-06-11
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                告别wordPress！不明白这货为什么只支持MySQL！pg4wp插件的支持能力也是弱！
-
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/06/05/swoole-configure/">
-        <h2 class="post-title">
-            swoole 编译配置
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-06-05
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                ./configure –enable-sockets –enable-openssl –enable-thread –enable-swoole –enable-ringbuffer –with-swoole –enable-picohttpparser –with-openssl-dir=/..
+且readline库已经安装过了。
+1234# pkg info readli..
             </p>
         </div>
     </a>
@@ -427,14 +199,6 @@ supervisord 有个问题疼死我了。一远程管理一下它守护下的进�
 
 <ul class="pager">
     
-    <li class="previous">
-        <a href="/archives/">&larr; Newer Posts</a>
-    </li>
-    
-    
-    <li class="next">
-        <a href="/archives/page/3/">Older Posts &rarr;</a>
-    </li>
     
 </ul>
 
