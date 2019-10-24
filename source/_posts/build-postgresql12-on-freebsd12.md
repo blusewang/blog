@@ -1,5 +1,5 @@
 ---
-title: 在FreeBSD12上编译PostgreSQL12时报"readline header not found"的解决方案
+title: 在FreeBSD12上编译PostgreSQL12
 date: 2019-10-23 17:37:40
 tags: [FreeBSD, PostgreSQL]
 ---
