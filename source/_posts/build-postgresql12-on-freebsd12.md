@@ -45,5 +45,5 @@ make install-world
 - `--build` 编译平台，格式：硬件平台-编译方-系统平台。如：“x86_64-myName-freebsd12.0”
 - `build_alias` 编译平台别名
 - `--with-uuid` 在`FreeBSD`上选择`bsd`应该是最合适的
-- `--with-icu` 支持排序
+- `--with-icu` 支持排序，依赖`pkgconf`包
 - `--enable-nls` 软件本地化。可指定多种语言。依赖`GNU`的`gettext`
