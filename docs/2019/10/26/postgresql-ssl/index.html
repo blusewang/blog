@@ -18,11 +18,11 @@
     <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
     <title>
         
-        一张图搞定各种SQL JOINS｜Bluse
+        PostgreSQL SSL 加密传输配置｜Bluse
         
     </title>
 
-    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2017/07/22/sql-join/">
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2019/10/26/postgresql-ssl/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -161,12 +161,12 @@
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
                 <div class="post-heading">
-                    <h1>一张图搞定各种SQL JOINS</h1>
+                    <h1>PostgreSQL SSL 加密传输配置</h1>
                     
                     <span class="meta">
                          作者 bluse wang
                         <span>
-                          日期 2017-07-22
+                          日期 2019-10-26
                          </span>
                     </span>
                     <div class="tags text-center">
@@ -174,11 +174,8 @@
                         <a class="tag" href="/tags/#PostgreSQL"
                            title="PostgreSQL">PostgreSQL</a>
                         
-                        <a class="tag" href="/tags/#SQL"
-                           title="SQL">SQL</a>
-                        
-                        <a class="tag" href="/tags/#JOIN"
-                           title="JOIN">JOIN</a>
+                        <a class="tag" href="/tags/#SSL"
+                           title="SSL">SSL</a>
                         
                     </div>
                 </div>
@@ -187,7 +184,7 @@
     </div>
     <div class="post-title-haojen">
         <span>
-            一张图搞定各种SQL JOINS
+            PostgreSQL SSL 加密传输配置
         </span>
     </div>
 </header>
@@ -198,22 +195,46 @@
         <div class="row">
             <!-- Post Container -->
             <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
-                <p><img src="https://user-images.githubusercontent.com/1764005/28487907-12e08682-6ecf-11e7-9a18-1f229476f0ae.jpg" alt></p>
+                <h1 id="签名证书"><a href="#签名证书" class="headerlink" title="签名证书"></a>签名证书</h1><h2 id="快速测试证书"><a href="#快速测试证书" class="headerlink" title="快速测试证书"></a>快速测试证书</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -x509 -days 365 -nodes -text -out server.crt \</span><br><span class="line">  -keyout server.key -subj &quot;/CN=dbhost.yourdomain.com&quot;</span><br></pre></td></tr></table></figure>
+
+<p>然后</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod og-rwx server.key</span><br></pre></td></tr></table></figure>
+
+<h2 id="生产环境证书"><a href="#生产环境证书" class="headerlink" title="生产环境证书"></a>生产环境证书</h2><ul>
+<li><p>创建根密钥</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -nodes -text -out root.csr \</span><br><span class="line">  -keyout root.key -subj &quot;/CN=root.yourdomain.com&quot;</span><br><span class="line">chmod og-rwx root.key</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建根证书</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -in root.csr -text -days 3650 \</span><br><span class="line">  -extfile /etc/ssl/openssl.cnf -extensions v3_ca \</span><br><span class="line">  -signkey root.key -out root.crt</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<blockquote>
+<p>这里的<code>-extensions v3_ca</code>中的<code>v3_ca</code> 是在 <code>/etc/ssl/openssl.cnf</code>文件中的一个配置。配置要求：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&gt; [ v3_ca ]</span><br><span class="line">&gt; basicConstraints = critical,CA:TRUE</span><br><span class="line">&gt; subjectKeyIdentifier = hash</span><br><span class="line">&gt; authorityKeyIdentifier = keyid:always,issuer:always</span><br><span class="line">&gt;</span><br></pre></td></tr></table></figure>
+</blockquote>
+<ul>
+<li><p>创建服务器密钥并签名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -nodes -text -out server.csr \</span><br><span class="line">  -keyout server.key -subj &quot;/CN=dbhost.yourdomain.com&quot;</span><br><span class="line">chmod og-rwx server.key</span><br><span class="line"></span><br><span class="line">openssl x509 -req -in server.csr -text -days 365 \</span><br><span class="line">  -CA root.crt -CAkey root.key -CAcreateserial \</span><br><span class="line">  -out server.crt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>创建客户端密钥并签名</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">openssl req -new -nodes -text -out client.csr \</span><br><span class="line">  -keyout client.key -subj &quot;/CN=postgres&quot;</span><br><span class="line">chmod og-rwx client.key</span><br><span class="line"></span><br><span class="line">openssl x509 -req -in client.csr -text -days 365 \</span><br><span class="line">  -CA root.crt -CAkey root.key -CAcreateserial \</span><br><span class="line">  -out client.crt</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>JDBC</code> 连接时，key需要转换为der</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl pkcs8 -topk8 -inform PEM -in client.key -outform DER -nocrypt -out client.key.der</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
 
                 <hr>
                 
 
                 <ul class="pager">
                     
-                    <li class="previous">
-                        <a href="/2017/07/22/freebsd/" data-toggle="tooltip" data-placement="top"
-                           title="FreeBSD 的日常">&larr; Previous Post</a>
-                    </li>
-                    
                     
                     <li class="next">
-                        <a href="/2017/07/12/postgresql-init/" data-toggle="tooltip" data-placement="top"
-                           title="FreeBSD 上初始化 PostgreSQL 96">Next Post &rarr;</a>
+                        <a href="/2019/10/23/build-postgresql12-on-freebsd12/" data-toggle="tooltip" data-placement="top"
+                           title="在FreeBSD12上编译PostgreSQL12">Next Post &rarr;</a>
                     </li>
                     
                 </ul>
@@ -226,7 +247,7 @@
 
             <div class="hidden-xs col-sm-3 toc-col">
                 <div class="toc-wrap">
-                    
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#签名证书"><span class="toc-text">签名证书</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#快速测试证书"><span class="toc-text">快速测试证书</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#生产环境证书"><span class="toc-text">生产环境证书</span></a></li></ol></li></ol>
                 </div>
             </div>
         </div>
