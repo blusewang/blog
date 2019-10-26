@@ -205,7 +205,20 @@
 
 <h3 id="llvm-config找不到"><a href="#llvm-config找不到" class="headerlink" title="llvm-config找不到"></a><code>llvm-config</code>找不到</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pkg install llvm90</span><br><span class="line"></span><br><span class="line">ln -s /usr/<span class="built_in">local</span>/bin/llvm-config90 /usr/<span class="built_in">local</span>/bin/llvm-config</span><br></pre></td></tr></table></figure>
 
-<h2 id="完整构建"><a href="#完整构建" class="headerlink" title="完整构建"></a>完整构建</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure --prefix=/usr/<span class="built_in">local</span>/pgsql12 --with-includes=/usr/<span class="built_in">local</span>/include --with-libraries=/usr/<span class="built_in">local</span>/lib --with-ossp-uuid --with-llvm --with-openssl --build=amd64-bluse-freebsd12.0</span><br><span class="line">make world</span><br><span class="line">make install-world</span><br></pre></td></tr></table></figure>
+<h2 id="完整构建"><a href="#完整构建" class="headerlink" title="完整构建"></a>完整构建</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure --with-libraries=/usr/<span class="built_in">local</span>/lib --with-includes=/usr/<span class="built_in">local</span>/include --<span class="built_in">enable</span>-thread-safety --<span class="built_in">disable</span>-debug --with-openssl --with-llvm --prefix=/usr/<span class="built_in">local</span>/pg12 --localstatedir=/var --build=amd64-bluse-freebsd12.0 build_alias=amd64-bluse-freebsd12.0 --with-uuid=bsd --with-icu --<span class="built_in">enable</span>-nls=<span class="string">'zh_CN'</span></span><br><span class="line">make world</span><br><span class="line">make install-world</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>--enable-thread-safety</code> 线程安全</li>
+<li><code>--disable-debug</code> 禁用debug，该是有助于提升生产时运行性能</li>
+<li><code>--with-openssl</code> 支持加密传输</li>
+<li><code>--with-llvm</code> 支持即时编译，使得在处理复杂任务时，性能有望再提升20%～30%</li>
+<li><code>--build</code> 编译平台，格式：硬件平台-编译方-系统平台。如：“x86_64-myName-freebsd12.0”</li>
+<li><code>build_alias</code> 编译平台别名</li>
+<li><code>--with-uuid</code> 在<code>FreeBSD</code>上选择<code>bsd</code>应该是最合适的</li>
+<li><code>--with-icu</code> 支持排序</li>
+<li><code>--enable-nls</code> 软件本地化。可指定多种语言。依赖<code>GNU</code>的<code>gettext</code></li>
+</ul>
+
                 <hr>
                 
 

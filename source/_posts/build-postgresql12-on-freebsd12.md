@@ -33,7 +33,17 @@ ln -s /usr/local/bin/llvm-config90 /usr/local/bin/llvm-config
 
 ## 完整构建
 ```bash
-./configure --prefix=/usr/local/pgsql12 --with-includes=/usr/local/include --with-libraries=/usr/local/lib --with-ossp-uuid --with-llvm --with-openssl --build=amd64-bluse-freebsd12.0
+./configure --with-libraries=/usr/local/lib --with-includes=/usr/local/include --enable-thread-safety --disable-debug --with-openssl --with-llvm --prefix=/usr/local/pg12 --localstatedir=/var --build=amd64-bluse-freebsd12.0 build_alias=amd64-bluse-freebsd12.0 --with-uuid=bsd --with-icu --enable-nls='zh_CN'
 make world
 make install-world
 ```
+
+- `--enable-thread-safety` 线程安全
+- `--disable-debug` 禁用debug，该是有助于提升生产时运行性能
+- `--with-openssl` 支持加密传输
+- `--with-llvm` 支持即时编译，使得在处理复杂任务时，性能有望再提升20%～30%
+- `--build` 编译平台，格式：硬件平台-编译方-系统平台。如：“x86_64-myName-freebsd12.0”
+- `build_alias` 编译平台别名
+- `--with-uuid` 在`FreeBSD`上选择`bsd`应该是最合适的
+- `--with-icu` 支持排序
+- `--enable-nls` 软件本地化。可指定多种语言。依赖`GNU`的`gettext`
