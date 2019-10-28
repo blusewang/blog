@@ -22,7 +22,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://www.wangjunfeng.com.cn/tags/FreeBSD/">
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/tags/freebsd/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -80,7 +80,7 @@
                         
 							
                         <li>
-                            <a href="/finance/">互联网价值</a>
+                            <a href="/tags/">tags</a>
                         </li>
 							
 						
@@ -96,7 +96,7 @@
                         
 							
                         <li>
-                            <a href="/tags/">tags</a>
+                            <a href="/finance/">互联网价值</a>
                         </li>
 							
 						
@@ -169,145 +169,23 @@
 
 <div class="post-preview "
      style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2019/10/23/build-postgresql12-on-freebsd12/">
+    <a href="/2017/03/19/freebsd-nginx-ipv6-with-tunnelbroker/">
         <h2 class="post-title">
-            在FreeBSD12上编译PostgreSQL12
+            FreeBSD上使用tunnelbroker隧道支持ipv6
         </h2>
         <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-23
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-03-19
         </p>
         
         <div class="post-content-preview">
             <p>
-                问题在PostgreSQL12源码里运行 ./configure报：12checking for readline.h... noconfigure: error: readline header not found
-
-且readline库已经安装过了。
-1234# pkg info readl..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2018/06/16/freebsd-disk-resize/">
-        <h2 class="post-title">
-            FreeBSD 11 磁盘空间扩容
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-16
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                场景阿里云买了个60G的系统盘ECS。进去一看只有20G！原因是：它刷镜像时，只刷了前边的20G。后边的40G，就成了空白。结果交到我手上，就成了个半成品。只得自己给它扩容
-初始状态：
-1234root@log:~ # df -hFilesystem                     Si..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/07/22/freebsd/">
-        <h2 class="post-title">
-            FreeBSD 的日常
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-07-22
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                查看当前内核，编译时的参数sysctl kern.conftxt
-配置并编译新内核1234567cd /usr/src/sys/amd64/conf/ee GENERICconfig GENERICcd ../compile/GENERIC/make cleandepend &amp;&amp;..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/07/12/postgresql-init/">
-        <h2 class="post-title">
-            FreeBSD 上初始化 PostgreSQL 96
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-07-12
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                疼点
-postgres 这个用户名，打起来麻烦，不及pgsql方便。
-initdb 出来的库默认是英文的
-
-设置123456789ee /etc/csh.cshrcalias ll	ls -lAFalias ls	ls -FGsetenv LANG         zh_CN.UTF-8sete..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/06/17/daemontools/">
-        <h2 class="post-title">
-            daemontools系列小工具
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-06-17
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                前言为什么要讲一个如此”古老”的守护工具？为什么不用supervisord？
-supervisord 有个问题疼死我了。一远程管理一下它守护下的进程，CPU就会100%。这个问题年久失修。
-它的supervisorctl里的指令，常reload一下会让所有的服务死了，自己也死了！也不重启，得手动..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://3hsyn13u3q9dhgyrg2qh3tin-wpengine.netdna-ssl.com/wp-content/uploads/2015/03/SplitShire-8098-1800x1200.jpg')">
-    <a href="/2017/06/12/truss-lsof-strace-ltrace/">
-        <h2 class="post-title">
-            truss lsof strace ltrace 让你知道系统运行中的进程正在干什么
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-06-12
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                #truss这个命令一般UNIX平台自带。使用举例：
-123456789101112131415161718192021222324[bluse@ybcz ~/vhosts/bluse]$ sudo truss -p48932clock_gettime(4,&#123;334689.597960..
+                起源IOS被拒，原因又是IPV6 only网络下访问异常！
+于是开始自检！
+先检查了代码，没有使用只能用于ipv4的代码。
+接口中也没有使用ipv4静态地址的请求。
+那就是网络问题了！
+先模拟了一下ipv6网络。成功配置了mac pro共享网络。访问了一下！没毛病！
+那就是IPV6 only网络..
             </p>
         </div>
     </a>
@@ -364,6 +242,143 @@ supervisord 有个问题疼死我了。一远程管理一下它守护下的进�
                             <a target="_blank" href="https://github.com/blusewang">
                                         <span class="fa-stack fa-lg">
                                             <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                                        </span>
+                            </a>
+                        </li>
+                        
+
+                        
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Featured Tags  标签 -->
+            
+
+            
+            <hr>
+            <h5 style="text-align: center;">Friends</h5>
+            <ul class="list-inline" style="text-align: center;">
+                
+                <li><a href="https://ruff.io/zh-cn/" target="_blank">ruff</a></li>
+                
+            </ul>
+            
+
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/blusewang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    &copy; 2019 Bluse
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> </span>
+                    备案号：京ICP备13038498号-1 Power by <a href="https://hexo.io" target="_blank">hexo</a> Theme by <a href="https://haojen.github.io/" target="_blank">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/blog.js"></script>
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.wangjunfeng.com.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','null','2.0.0');
+</script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://avatars0.githubusercontent.com/u/1764005?v=3&amp;s=460">
+</body>
+
+</html>
+-circle fa-stack-2x"></i>
                                             <i class="fa fa-github fa-stack-1x fa-inverse"></i>
                                         </span>
                             </a>
