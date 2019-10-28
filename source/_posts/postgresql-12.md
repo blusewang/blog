@@ -1,5 +1,5 @@
 ---
-title: postgresql 12 变更点评
+title: PostgreSQL 12 变更点评
 date: 2019-10-28 17:08:33
 tags: [PostgreSQL]
 ---
