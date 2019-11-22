@@ -80,6 +80,14 @@
                         
 							
                         <li>
+                            <a href="/finance/">互联网价值</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
                             <a href="/pg/">PG Driver</a>
                         </li>
 							
@@ -89,14 +97,6 @@
 							
                         <li>
                             <a href="/tags/">tags</a>
-                        </li>
-							
-						
-                    
-                        
-							
-                        <li>
-                            <a href="/finance/">互联网价值</a>
                         </li>
 							
 						
@@ -194,7 +194,7 @@
     myChart.setOption(opt);
 
     myChart.showLoading();
-    fetch('https://s1.wangjunfeng.com.cn/finance',{mode:"cors"}).then(function (rs) {
+    fetch('https://s1.wangjunfeng.com.cn/s1/finance',{mode:"cors"}).then(function (rs) {
         return rs.json()
     }).then(function (ok) {
         console.log(ok);

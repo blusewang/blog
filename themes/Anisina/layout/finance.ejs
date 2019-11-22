@@ -56,7 +56,7 @@ layout: layout
     myChart.setOption(opt);
 
     myChart.showLoading();
-    fetch('https://s1.wangjunfeng.com.cn/finance',{mode:"cors"}).then(function (rs) {
+    fetch('https://s1.wangjunfeng.com.cn/s1/finance',{mode:"cors"}).then(function (rs) {
         return rs.json()
     }).then(function (ok) {
         console.log(ok);
