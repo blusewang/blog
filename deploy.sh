@@ -1,4 +1,4 @@
-#/bin/sh
+#!/bin/sh
 ./node_modules/hexo-cli/bin/hexo g
 git add source/
 git add docs/
