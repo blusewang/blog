@@ -17,17 +17,17 @@ tags: [kcp, tun]
 "rcvwnd": 1024,
 "datashard": 10,
 "parityshard": 3,
-"dscp": 46, 
+"dscp": 46,
 "nocomp": true,
 "acknodelay": false,
-"sockbuf": 16777217, 
+"sockbuf": 16777217,
 "smuxbuf": 16777217,
 "streambuf":16777217,
-"smuxver": 2, 
+"smuxver": 2,
 "keepalive": 10,
-"pprof":false, 
+"pprof":false,
 "quiet":true,
-"tcp":false 
+"tcp":false
 }
 ```
 
@@ -39,7 +39,7 @@ tags: [kcp, tun]
 | target | "127.0.0.1:33522"  | 本地shadowsocks 服务监听的端口 |
 | key | "igwcwmtd" | |
 | crypt | "salsa20" | salsa20对 arm芯片友好 |
-| mode | "fast" | 如不是竟技游戏，`fast`足矣，mode |
+| mode | "fast" | 如不是竟技游戏，`fast`足矣 |
 | mtu | 1400 | 不重要，copy即可 |
 | sndwnd | 1024 | 不要低于512，也不要过高 |
 | rcvwnd | 1024 | 同上
