@@ -381,7 +381,7 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tcpdump -i eth1 <span class="string">'tcp[13] &amp; 4 = 4'</span></span><br></pre></td></tr></table></figure>
 
 <p>下图详细描述了TCP各种状态的标记，方便分析。</p>
-<p><img src="../images/tcp_state_machine.jpg" alt="tcp_state_machine.jpg"></p>
+<p><img src="https://raw.githubusercontent.com/linuxwiki/SourceWiki/master/images/tcp_state_machine.jpg" alt="tcp_state_machine.jpg"></p>
 <h3 id="2-8、大叔注"><a href="#2-8、大叔注" class="headerlink" title="2.8、大叔注"></a>2.8、大叔注</h3><p>tcpdump考虑了一些数字恐惧症者的需求，提供了部分常用的字段偏移名字：</p>
 <p>icmptype  (ICMP类型字段)<br>icmpcode  (ICMP符号字段)<br>tcpflags  (TCP标记字段)  </p>
 <p>ICMP类型值有：</p>
