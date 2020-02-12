@@ -127,7 +127,20 @@ proto[x:y] = z      : proto[x:y]等于z
 
 本文只针对IPv4。
 
-### 2.2、IP选项设置了吗？
+### 2.2、Flags
+
+| TCP Flag | tcpdump Flag | 含义  |
+| :---- | :---- | :---- |
+| SYN | S | Syn数据包，会话建立请求。|
+| ACK | A | Ack数据包，确认发送端的数据。|
+| FIN | F | 结束标记，终止指示。|
+| RESET | R | 重置，指示立即终止连接。|
+| PUSH | P | 推送，立即将缓存中的数据发完。|
+| URGENT | U | 紧急，优先于其他数据。|
+| NONE | . | 占位符，通常用于ACK。|
+
+
+### 2.3、IP选项设置了吗？
 
 “一般”的IP头是20字节，但IP头有选项设置，不能直接从偏移21字节处读取数据。IP头有个长度字段可以知道头长度是否大于20字节。
 
@@ -189,7 +202,7 @@ tcpdump -i eth1 'ip[0] & 15 > 5'
 tcpdump -i eth1 'ip[0] & 0x0f > 5'
 ```
 
-### 2.3、分片标记
+### 2.4、分片标记
 
 当发送端的MTU大于到目的路径链路上的MTU时就会被分片，这段话有点拗口，权威的请参考《TCP/IP详解》。唉，32借我的书没还，只能凑合写，大家记得看书啊。
 
@@ -215,7 +228,7 @@ Fragment Offset字段只有在分片的时候才使用。
 tcpdump -i eth1 'ip[6] = 64'
 ```
 
-### 2.4、抓分片包
+### 2.5、抓分片包
 
 - 匹配MF，分片包
 
@@ -237,7 +250,7 @@ tcpdump -i eth1 '((ip[6:2] > 0) and (not ip[6] = 64))'
 ping -M want -s 3000 192.168.1.1
 ```
 
-### 2.5、匹配小TTL
+### 2.6、匹配小TTL
 
 TTL字段在第九字节，并且正好是完整的一个字节，TTL最大值是255，二进制为11111111。
 
@@ -260,7 +273,7 @@ ping: ttl 256 out of range
 tcpdump -i eth1 'ip[8] < 5'
 ```
 
-### 2.6、抓大于X字节的包
+### 2.7、抓大于X字节的包
 
 - 大于600字节
 
@@ -268,7 +281,7 @@ tcpdump -i eth1 'ip[8] < 5'
 tcpdump -i eth1 'ip[2:2] > 600'
 ```
 
-### 2.7、更多的IP过滤
+### 2.8、更多的IP过滤
 
 首先还是需要知道TCP基本结构，再次推荐《TCP/IP详解》，卷一就够看的了，避免走火入魔。
 
@@ -372,7 +385,7 @@ tcpdump -i eth1 'tcp[13] & 4 = 4'
 ![tcp_state_machine.jpg](https://raw.githubusercontent.com/linuxwiki/SourceWiki/master/images/tcp_state_machine.jpg)
 
 
-### 2.8、大叔注
+### 2.9、大叔注
 
 tcpdump考虑了一些数字恐惧症者的需求，提供了部分常用的字段偏移名字：
 
@@ -402,7 +415,7 @@ tcpdump -i eth1 'tcp[tcpflags] = tcp-syn'
 tcpdump -i eth1 'tcp[tcpflags] & tcp-syn != 0 and tcp[tcpflags] & tcp-ack != 0'
 ```
 
-### 2.9、抓SMTP数据
+### 2.10、抓SMTP数据
 
 ```bash
 tcpdump -i eth1 '((port 25) and (tcp[(tcp[12]>>2):4] = 0x4d41494c))'
@@ -410,7 +423,7 @@ tcpdump -i eth1 '((port 25) and (tcp[(tcp[12]>>2):4] = 0x4d41494c))'
 
 抓取数据区开始为"MAIL"的包，"MAIL"的十六进制为0x4d41494c。
 
-### 2.10、抓HTTP GET数据
+### 2.11、抓HTTP GET数据
 
 ```bash
 tcpdump -i eth1 'tcp[(tcp[12]>>2):4] = 0x47455420'
@@ -418,7 +431,7 @@ tcpdump -i eth1 'tcp[(tcp[12]>>2):4] = 0x47455420'
 
 "GET "的十六进制是47455420
 
-### 2.11、抓SSH返回
+### 2.12、抓SSH返回
 
 ```bash
 tcpdump -i eth1 'tcp[(tcp[12]>>2):4] = 0x5353482D'
