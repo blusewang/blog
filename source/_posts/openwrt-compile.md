@@ -46,6 +46,8 @@ tags: [openWRT, 编译]
 
 - 环境准备，在装完OS后，其实很简单。只要在[Build system – Installation](https://openwrt.org/docs/guide-developer/build-system/install-buildsystem)文章中复制一下对应的安装指令，再找个地方clone出源码即可。
 - `git tag`查找需要的版本。`git checkout`需要的版本。
+- `./scripts/feeds` feeds 指令是管理Apk（OpenWRT上的安装包）的。就像MacOS上的`brew`。在`menuconfig`之前值得更新一下，`./scripts/feeds update -a`。
+ - 自己的安装包将来也是在这里创建和管理、编译。
 - `make menuconfig` 有UI界面，可在UI界面上选择要编译的镜像的目标设备。如：选择`brcm2708`是`Raspberry Pi`类型的芯片，子类型对应`Raspberry Pi`的不同Model版本，如：`bcm2710`是`Raspberry Pi 3`的芯片型号。
 - `make defconfig` 设置默认项
 - `make kernel_menuconfig` 望文生义，内核配置，一般不需要。

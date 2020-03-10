@@ -232,6 +232,10 @@
 <h1 id="重点提示："><a href="#重点提示：" class="headerlink" title="重点提示："></a>重点提示：</h1><ul>
 <li>环境准备，在装完OS后，其实很简单。只要在<a href="https://openwrt.org/docs/guide-developer/build-system/install-buildsystem" target="_blank" rel="noopener">Build system – Installation</a>文章中复制一下对应的安装指令，再找个地方clone出源码即可。</li>
 <li><code>git tag</code>查找需要的版本。<code>git checkout</code>需要的版本。</li>
+<li><code>./scripts/feeds</code> feeds 指令是管理Apk（OpenWRT上的安装包）的。就像MacOS上的<code>brew</code>。在<code>menuconfig</code>之前值得更新一下，<code>./scripts/feeds update -a</code>。<ul>
+<li>自己的安装包将来也是在这里创建和管理、编译。</li>
+</ul>
+</li>
 <li><code>make menuconfig</code> 有UI界面，可在UI界面上选择要编译的镜像的目标设备。如：选择<code>brcm2708</code>是<code>Raspberry Pi</code>类型的芯片，子类型对应<code>Raspberry Pi</code>的不同Model版本，如：<code>bcm2710</code>是<code>Raspberry Pi 3</code>的芯片型号。</li>
 <li><code>make defconfig</code> 设置默认项</li>
 <li><code>make kernel_menuconfig</code> 望文生义，内核配置，一般不需要。</li>
