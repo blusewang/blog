@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="...">
+    <meta name="keyword" content="undefined">
+    <meta name="theme-color" content="#000000"><!-- 600090 -->
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="Bluse" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        编译OpenWRT｜Bluse
+        
+    </title>
+
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2020/03/10/openwrt-compile/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/blog-style.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+</head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://www.sslcentral.com/wp-content/uploads/2014/09/sld1.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    Bluse
+                </span>
+                Programing Thinker
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">tags</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/pg/">PG Driver</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/finance/">互联网价值</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>编译OpenWRT</h1>
+                    
+                    <span class="meta">
+                         作者 bluse wang
+                        <span>
+                          日期 2020-03-10
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#openWRT"
+                           title="openWRT">openWRT</a>
+                        
+                        <a class="tag" href="/tags/#编译"
+                           title="编译">编译</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            编译OpenWRT
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <p>之前编译OpenWRT时有很多顾虑。比如：</p>
+<ul>
+<li>太多依赖，担心把自己MacOS装太多不明用处的包。将来无法清理</li>
+<li>编译前的配置和编译过程，很多概念看不懂。担心中间出一个问题，google一把后，得到了10个问题。</li>
+<li>不知道编译结果是什么。如何把编译结果变成指定的系统镜像。不相信<code>make</code>能直接出镜像。</li>
+</ul>
+<p>事实上，OpenWRT 团队是群非常实在的人！只需要一次<code>make</code>多版本的IMG镜像和选中的软件包。全编译出来并打好包，还整理得非常整齐！</p>
+<p><a href="https://openwrt.org/zh-cn/doc/howto/build" target="_blank" rel="noopener">官方的中文编译说明</a>这里展示了准备好后的编译过程。由此文可见，确实不难！当然，仅凭此一文，不足以指导完成编译！</p>
+<p>下边记录一下我的编译经历。</p>
+<h1 id="规划"><a href="#规划" class="headerlink" title="规划"></a>规划</h1><p>选择在虚拟机里编译。免得污染OS。</p>
+<ul>
+<li>虚拟机选择VirtualBox；因为免费稳健。</li>
+<li>编译OS，选择Alpine Linux；因为它小且便于安装。<ul>
+<li>OpenWRT编译支持几乎所有常见Linux发行版和MacOS。FreeBSD官方文档立了项，但没有写，就此略过。Windows没有看到相关文档。</li>
+</ul>
+</li>
+</ul>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
+<li>虚拟机尽量多给几个CPU核心，因为OpenWRT项目相当大！更多的核心能压缩编译时间。</li>
+<li>虚拟机硬盘给15GB以上，最好20GB以上。</li>
+<li>给装好的OS建立一个新用户。OpenWRT官方不推荐在<code>root</code>账号下编译。</li>
+<li>源码中依赖的第三方库，多数在海外。一架舒适的小飞机，是理想的选择；甚至是必须！</li>
+</ul>
+<h2 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h2><p>以下要求，不在本文探讨范围。</p>
+<ul>
+<li>要会用VirtualBox。</li>
+<li>要会安装Alpine Linux。</li>
+<li>要会用git。理解分支和标签的概念和用法。</li>
+<li>自备小飞机。</li>
+</ul>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><ul>
+<li>虚拟机环境准备参考：<a href="https://openwrt.org/docs/guide-developer/build-system/install-buildsystem" target="_blank" rel="noopener">Build system – Installation</a></li>
+<li>编译过程及选项参考：<a href="https://openwrt.org/docs/guide-developer/build-system/use-buildsystem" target="_blank" rel="noopener">Build system – Usage</a></li>
+</ul>
+<h1 id="重点提示："><a href="#重点提示：" class="headerlink" title="重点提示："></a>重点提示：</h1><ul>
+<li>环境准备，在装完OS后，其实很简单。只要在<a href="https://openwrt.org/docs/guide-developer/build-system/install-buildsystem" target="_blank" rel="noopener">Build system – Installation</a>文章中复制一下对应的安装指令，再找个地方clone出源码即可。</li>
+<li><code>git tag</code>查找需要的版本。<code>git checkout</code>需要的版本。</li>
+<li><code>make menuconfig</code> 有UI界面，可在UI界面上选择要编译的镜像的目标设备。如：选择<code>brcm2708</code>是<code>Raspberry Pi</code>类型的芯片，子类型对应<code>Raspberry Pi</code>的不同Model版本，如：<code>bcm2710</code>是<code>Raspberry Pi 3</code>的芯片型号。</li>
+<li><code>make defconfig</code> 设置默认项</li>
+<li><code>make kernel_menuconfig</code> 望文生义，内核配置，一般不需要。</li>
+<li><code>make download</code> 下载源码编译过程中依赖的工具。<ul>
+<li>在<code>make download</code>前，配置一下<code>wget</code>的<code>http_proxy``https_proxy``ftp_proxy</code>，并启用<code>proxy</code>。<code>wget</code>配置文件在：<code>/etc/wgetrc</code></li>
+</ul>
+</li>
+<li><code>make</code> 加参数<code>-j3</code>，就是3个线程并发编译，这个数字取决于CPU。</li>
+</ul>
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/03/10/java-async-sync/" data-toggle="tooltip" data-placement="top"
+                           title="Java多个异步任务转同步">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#规划"><span class="toc-text">规划</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#注意事项"><span class="toc-text">注意事项</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#要求"><span class="toc-text">要求</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#参考文档"><span class="toc-text">参考文档</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#重点提示："><span class="toc-text">重点提示：</span></a></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a href="https://ruff.io/zh-cn/">ruff</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/blusewang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    &copy; 2020 Bluse
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> </span>
+                    备案号：京ICP备13038498号-1 Power by <a href="https://hexo.io" target="_blank">hexo</a> Theme by <a href="https://haojen.github.io/" target="_blank">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/blog.js"></script>
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.wangjunfeng.com.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','null','2.0.0');
+</script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://avatars0.githubusercontent.com/u/1764005?v=3&amp;s=460">
+</body>
+
+</html>
