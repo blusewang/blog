@@ -19,7 +19,7 @@ Java[kotlin]对于异步的网络请求，一般采用回调来实现异步！
 
 - 假设一个前提：某业务必须使用回调来完成一次请求，现有`n`个请求，逐个完成。
 
-异步实现的代码：
+异步实现的代码样例：
 
 ```kotlin
 class Worker{
@@ -72,7 +72,7 @@ class Worker{
 
 如果是同步的情况下，代码会很优雅。
 
-同步代码对比：
+同步代码样例：
 
 ```kotlin
 class Worker{
@@ -99,7 +99,7 @@ class Worker{
 Java的`Semaphore`，在使用 `await`时，需要调整JVM的option；不是个好选择！
 不过，Java还提供了另一个东西：`CountDownLatch`可供选择。它的`await`就可以正常使用。
 
-用法举例：
+代码样例：
 ```kotlin
 
 class Worker{
@@ -130,6 +130,8 @@ class Worker{
 这个信号量的`Semaphore`就可以适用了。
 
 用法举例：20个任务，5个并发
+
+代码样例：
 ```kotlin
 
 class Worker{
