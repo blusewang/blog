@@ -44,7 +44,7 @@ tags: [openWRT, 编译]
 
 # 重点提示：
 
-- 环境准备，在装完OS后，其实很简单。只要在[Build system – Installation](https://openwrt.org/docs/guide-developer/build-system/install-buildsystem)文章中复制一下对应的安装指令，再找个地方clone出源码即可。
+- 环境准备，在装完OS后，其实很简单。只要在[Build system – Installation](https://openwrt.org/docs/guide-developer/build-system/install-buildsystem)文章中复制一下对应的安装指令，执行一下；再找个地方clone出源码即可。
 - `git tag`查找需要的版本。`git checkout`需要的版本。
 - `./scripts/feeds` feeds 指令是管理Apk（OpenWRT上的安装包）的。就像MacOS上的`brew`。在`menuconfig`之前值得更新一下，`./scripts/feeds update -a`。
  - 自己的安装包将来也是在这里创建和管理、编译。
