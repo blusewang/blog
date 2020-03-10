@@ -95,9 +95,9 @@ class Worker{
 ```
 
 ## 异步转同步
-一般情况下，操作系统还有个概念可用，那就是：“信号和量”。Java的`Semaphore`，在使用 `await`时，需要调整JVM的option。
-不是个好选择。
-但Java还提供了另一个东西：`CountDownLatch`。它的`await`就可以正常使用。
+一般情况下，操作系统还有个概念可用，那就是：“信号和量”。
+Java的`Semaphore`，在使用 `await`时，需要调整JVM的option；不是个好选择！
+不过，Java还提供了另一个东西：`CountDownLatch`可供选择。它的`await`就可以正常使用。
 
 用法举例：
 ```kotlin
@@ -127,7 +127,7 @@ class Worker{
 ```
 
 # 异步并发控制
-这个信号和量可以适用了。
+这个信号量的`Semaphore`就可以适用了。
 
 用法举例：20个任务，5个并发
 ```kotlin
