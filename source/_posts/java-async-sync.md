@@ -87,7 +87,7 @@ class Worker{
 ```
 
 ## 异步转同步
-一般系统还有个概念可用，那就是：“信号和量”。Java的`Semaphore`，在使用 `await`时，需要调整JVM的option。
+一般情况下，操作系统还有个概念可用，那就是：“信号和量”。Java的`Semaphore`，在使用 `await`时，需要调整JVM的option。
 不是个好选择。
 但Java还提供了另一个东西：`CountDownLatch`。它的`await`就可以正常使用。
 
