@@ -74,7 +74,6 @@ class Worker{
 同步代码对比：
 
 ```kotlin
-
 class Worker{
     private var isSync = false
     fun sync() {
