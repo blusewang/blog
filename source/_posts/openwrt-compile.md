@@ -53,4 +53,7 @@ tags: [openWRT, 编译]
 - `make kernel_menuconfig` 望文生义，内核配置，一般不需要。
 - `make download` 下载源码编译过程中依赖的工具。
  - 在`make download`前，配置一下`wget`的`http_proxy``https_proxy``ftp_proxy`，并启用`proxy`。`wget`配置文件在：`/etc/wgetrc`
-- `make` 加参数`-j3`，就是3个线程并发编译，这个数字取决于CPU。
+- `make` 
+ - 参数`-j3`，就是3个线程并发编译，这个数字取决于CPU。
+ - 参数`V=s`，是显示详细。
+ - 参数`package/cups/compile`，是编译单个应用。

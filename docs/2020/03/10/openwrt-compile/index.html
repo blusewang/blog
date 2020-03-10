@@ -243,7 +243,12 @@
 <li>在<code>make download</code>前，配置一下<code>wget</code>的<code>http_proxy``https_proxy``ftp_proxy</code>，并启用<code>proxy</code>。<code>wget</code>配置文件在：<code>/etc/wgetrc</code></li>
 </ul>
 </li>
-<li><code>make</code> 加参数<code>-j3</code>，就是3个线程并发编译，这个数字取决于CPU。</li>
+<li><code>make</code> <ul>
+<li>参数<code>-j3</code>，就是3个线程并发编译，这个数字取决于CPU。</li>
+<li>参数<code>V=s</code>，是显示详细。</li>
+<li>参数<code>package/cups/compile</code>，是编译单个应用。</li>
+</ul>
+</li>
 </ul>
 
                 <hr>
