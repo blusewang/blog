@@ -63,7 +63,35 @@ class Worker{
     }
 }
 
-``` 
+```
+
+## 异步的缺点
+- 绕脑
+- 递归导致调用栈过深，吃不必要的内存
+
+如果是同步的情况下，代码会很优雅。
+
+同步代码对比：
+
+```kotlin
+class Worker{
+    private var isSync = false
+    fun sync() {
+        isSync = true
+        var ok = false
+        while(!ok){
+            try{
+                val rs = NewReuest().query("msgId",id).send()
+                val msg = NewMsgRow(rs.body)
+                database.table("msgs").insert(msg)
+            }catch(e:Exception){
+                ok = true
+            }
+        }
+    }
+}
+
+```
 
 ## 异步转同步
 一般情况下，操作系统还有个概念可用，那就是：“信号和量”。Java的`Semaphore`，在使用 `await`时，需要调整JVM的option。
