@@ -63,6 +63,7 @@ tags: [openWRT, 编译]
 - 固件型号：	**Raspberry Pi 4 Model B Rev 1.2**
 - 1GB 根空间。
 - 镜像内置了USB转rj45驱动
+- 默认支持`bbr`
 - 支持`v2ray`，在配置好源后，`opkg install v2ray`就能得到。
 - 编译了package中部分我认为常用的包。
 
