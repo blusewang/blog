@@ -57,3 +57,25 @@ tags: [openWRT, 编译]
  - 参数`-j3`，就是3个线程并发编译，这个数字取决于CPU。
  - 参数`V=s`，是显示详细。
  - 参数`package/cups/compile`，是编译单个应用。
+
+# 我的编译成果
+## 固件特点
+- 固件型号：	**Raspberry Pi 4 Model B Rev 1.2**
+- 1GB 根空间。
+- 镜像内置了USB转rj45驱动
+- 支持`v2ray`，在配置好源后，`opkg install v2ray`就能得到。
+- 编译了package中部分我认为常用的包。
+
+## 固件源
+
+固件下载、升级：[http://openwrt.mywsy.cn/targets/bcm27xx/bcm2711/](http://openwrt.mywsy.cn/targets/bcm27xx/bcm2711/)
+
+`/etc/opkg/distfeeds.conf` 源配置：
+```conf
+src/gz jf_core http://openwrt.mywsy.cn/targets/bcm27xx/bcm2711/packages
+src/gz jf_base http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/base
+src/gz jf_luci http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/luci
+src/gz jf_packages http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/packages
+src/gz jf_routing http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/routing
+src/gz jf_telephony http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/telephony
+```
