@@ -63,9 +63,13 @@ tags: [openWRT, 编译]
 - 固件型号：	**Raspberry Pi 4 Model B Rev 1.2**
 - 1GB 根空间。
 - 镜像内置了USB转rj45驱动
-- 默认支持`bbr`
-- 支持`v2ray`，在配置好源后，`opkg install v2ray`就能得到。
-- 编译了package中部分我认为常用的包。
+- 默认支持`bbr`、`tcpdump`
+- 支持`v2ray`，在配置好源后，`opkg update && opkg install v2ray`就能得到。
+ - 广告过滤
+ - 分流
+ - 屏蔽大厂部分产品的日志收集
+ - 出口配置样例
+- 编译了package中部分我认为常用的包，如：`luci-app-statistics`、`6to4`、`htop`、`curl`、`fdisk`、`cfdisk`、`ffmpeg`、`luci-app-samba`等。
 
 ## 固件源
 
@@ -77,6 +81,4 @@ src/gz jf_core http://openwrt.mywsy.cn/targets/bcm27xx/bcm2711/packages
 src/gz jf_base http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/base
 src/gz jf_luci http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/luci
 src/gz jf_packages http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/packages
-src/gz jf_routing http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/routing
-src/gz jf_telephony http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/telephony
 ```
