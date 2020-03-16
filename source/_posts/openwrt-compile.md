@@ -73,7 +73,7 @@ tags: [openWRT, 编译]
 
 ## 固件源
 
-固件下载、升级：[http://openwrt.wangjunfeng.com.cn/targets/bcm27xx/bcm2711/](http://openwrt.mywsy.cn/targets/bcm27xx/bcm2711/)
+固件下载、升级：[http://openwrt.wangjunfeng.com.cn/targets/bcm27xx/bcm2711/](http://openwrt.wangjunfeng.com.cn/targets/bcm27xx/bcm2711/)
 
 `/etc/opkg/distfeeds.conf` 源配置：
 ```conf
