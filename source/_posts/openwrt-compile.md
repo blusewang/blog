@@ -73,12 +73,12 @@ tags: [openWRT, 编译]
 
 ## 固件源
 
-固件下载、升级：[http://openwrt.mywsy.cn/targets/bcm27xx/bcm2711/](http://openwrt.mywsy.cn/targets/bcm27xx/bcm2711/)
+固件下载、升级：[http://openwrt.wangjunfeng.com.cn/targets/bcm27xx/bcm2711/](http://openwrt.mywsy.cn/targets/bcm27xx/bcm2711/)
 
 `/etc/opkg/distfeeds.conf` 源配置：
 ```conf
-src/gz jf_core http://openwrt.mywsy.cn/targets/bcm27xx/bcm2711/packages
-src/gz jf_base http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/base
-src/gz jf_luci http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/luci
-src/gz jf_packages http://openwrt.mywsy.cn/packages/aarch64_cortex-a72/packages
+src/gz jf_core http://openwrt.wangjunfeng.com.cn/targets/bcm27xx/bcm2711/packages
+src/gz jf_base http://openwrt.wangjunfeng.com.cn/packages/aarch64_cortex-a72/base
+src/gz jf_luci http://openwrt.wangjunfeng.com.cn/packages/aarch64_cortex-a72/luci
+src/gz jf_packages http://openwrt.wangjunfeng.com.cn/packages/aarch64_cortex-a72/packages
 ```
