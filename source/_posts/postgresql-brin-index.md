@@ -32,7 +32,7 @@ cashier=> \di+ log.table_name_log_at_idx
                                     关联列表
  架构模式 |         名称          | 类型 |  拥有者  |   数据表   |  大小  | 描述
 ----------+-----------------------+------+----------+------------+--------+------
- log      | table_name_log_at_idx | 索引 | postgres | server_api | 272 kB |
+ log      | table_name_log_at_idx | 索引 | postgres | table_name | 272 kB |
 (1 行记录)
 
 cashier=> explain analyze select count(1) from log.table_name where log_at between '2020-01-01 12:00:00' and '2020-01-01 12:01:00';
