@@ -22,7 +22,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://www.wangjunfeng.com.cn/archives/2020/">
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/tags/索引/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -43,7 +43,7 @@
 <!-- hack iOS CSS :active style -->
 <body ontouchstart="" class="animated fadeIn">
 <!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "false" data-istags="false
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "false" data-istags="true
 " data-ishome = "false" >
     <div class="container-fluid">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -182,113 +182,6 @@
                 一张随着时间增长的表。当表的体积达到数GB或数十GB后。你会发现BTREE索引也也有数GB或数十GB；BTREE索引有时上是表尺寸的70%左右！
 当索引的尺寸接近或超过系统内存一半时。查询使用了索引，速度也会慢到令人无法忍受！
 此时一般的想法是：分表！将表按不同时间段拆开。这样查询时就不需要扫描..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
-    <a href="/2020/06/29/golang-udp-server/">
-        <h2 class="post-title">
-            golang udp 服务的坑
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2020-06-29
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                golang udp 服务端演示级的写法一般是：
-12345678910111213   conn, err := net.ListenUDP("udp", &amp;net.UDPAddr&#123;Port: 8866&#125;)if err != nil &#123;	log.Fatal..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
-    <a href="/2020/03/10/openwrt-compile/">
-        <h2 class="post-title">
-            编译OpenWRT
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-10
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                之前编译OpenWRT时有很多顾虑。比如：
-
-太多依赖，担心把自己MacOS装太多不明用处的包。将来无法清理
-担心搞不懂编译过程中遇到的陌生概念。比如：出一个问题，google一下，得到了10个问题！
-不知道编译结果是什么。如何把编译结果变成指定的系统镜像。不相信make能直接出镜像。
-
-事实上..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
-    <a href="/2020/03/10/java-async-sync/">
-        <h2 class="post-title">
-            Java多个异步任务转同步
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-10
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                Java[kotlin]对于异步的网络请求，一般采用回调来实现异步！虽然，像OkHttp库，已经支持到了同步，但偶尔还是会碰到两种绕不过的情况：
-
-依然有很多必然是异步的场景无法绕过。如：Android的请求权限、调用相机等等。
-多任务并发控制。
-并发。如：N个线程并发执行任务。当N个任务全部执..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
-    <a href="/2020/02/05/tcpdump/">
-        <h2 class="post-title">
-            tcpdump 使用技巧
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2020-02-05
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                一般情况下，非HTTP协议的网络分析，在服务器端用tcpdump比较多，在客户端用wireshark比较多，两个抓包软件的语法是一样的。
-一、基本语法1.1、过滤主机
-抓取所有经过eth1，目的或源地址是192.168.1.1的网络数据
-
-1tcpdump -i eth1 host 192.16..
             </p>
         </div>
     </a>

@@ -169,6 +169,31 @@
 
 <div class="post-preview "
      style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
+    <a href="/2020/06/29/postgresql-brin-index/">
+        <h2 class="post-title">
+            PostgreSQL BRIN索引 日志型数据索引神器
+        </h2>
+        <p class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2020-06-29
+        </p>
+        
+        <div class="post-content-preview">
+            <p>
+                一张随着时间增长的表。当表的体积达到数GB或数十GB后。你会发现BTREE索引也也有数GB或数十GB；BTREE索引有时上是表尺寸的70%左右！
+当索引的尺寸接近或超过系统内存一半时。查询使用了索引，速度也会慢到令人无法忍受！
+此时一般的想法是：分表！将表按不同时间段拆开。这样查询时就不需要扫描..
+            </p>
+        </div>
+    </a>
+
+</div>
+
+<hr>
+
+
+
+<div class="post-preview "
+     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
     <a href="/2020/06/29/golang-udp-server/">
         <h2 class="post-title">
             golang udp 服务的坑

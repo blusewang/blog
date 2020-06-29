@@ -169,6 +169,31 @@
 
 <div class="post-preview "
      style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
+    <a href="/2018/06/16/freebsd-disk-resize/">
+        <h2 class="post-title">
+            FreeBSD 11 磁盘空间扩容
+        </h2>
+        <p class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-06-16
+        </p>
+        
+        <div class="post-content-preview">
+            <p>
+                场景阿里云买了个60G的系统盘ECS。进去一看只有20G！原因是：它刷镜像时，只刷了前边的20G。后边的40G，就成了空白。结果交到我手上，就成了个半成品。只得自己给它扩容
+初始状态：
+1234root@log:~ # df -hFilesystem                     Si..
+            </p>
+        </div>
+    </a>
+
+</div>
+
+<hr>
+
+
+
+<div class="post-preview "
+     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
     <a href="/2018/04/09/postgresql-10-install-ubuntu/">
         <h2 class="post-title">
             Ubuntu 上安装 PostgreSQL 10
@@ -387,35 +412,6 @@ supervisord 有个问题疼死我了。一远程管理一下它守护下的进�
         <div class="post-content-preview">
             <p>
                 ./configure –enable-sockets –enable-openssl –enable-thread –enable-swoole –enable-ringbuffer –with-swoole –enable-picohttpparser –with-openssl-dir=/..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
-    <a href="/2017/03/19/freebsd-nginx-ipv6-with-tunnelbroker/">
-        <h2 class="post-title">
-            FreeBSD上使用tunnelbroker隧道支持ipv6
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-03-19
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                起源IOS被拒，原因又是IPV6 only网络下访问异常！
-于是开始自检！
-先检查了代码，没有使用只能用于ipv4的代码。
-接口中也没有使用ipv4静态地址的请求。
-那就是网络问题了！
-先模拟了一下ipv6网络。成功配置了mac pro共享网络。访问了一下！没毛病！
-那就是IPV6 only网络..
             </p>
         </div>
     </a>
