@@ -22,7 +22,7 @@
         
     </title>
 
-    <link rel="canonical" href="https://www.wangjunfeng.com.cn/tags/openWRT/">
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/tags/音频/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -169,23 +169,20 @@
 
 <div class="post-preview "
      style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
-    <a href="/2020/03/10/openwrt-compile/">
+    <a href="/2020/07/06/openwrt-on-raspberrypi-play-audio/">
         <h2 class="post-title">
-            编译OpenWRT
+            OpenWRT 在 RaspberryPI 播放音频
         </h2>
         <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2020-03-10
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2020-07-06
         </p>
         
         <div class="post-content-preview">
             <p>
-                之前编译OpenWRT时有很多顾虑。比如：
-
-太多依赖，担心把自己MacOS装太多不明用处的包。将来无法清理
-担心搞不懂编译过程中遇到的陌生概念。比如：出一个问题，google一下，得到了10个问题！
-不知道编译结果是什么。如何把编译结果变成指定的系统镜像。不相信make能直接出镜像。
-
-事实上..
+                RaspberryPI 不只能满足路由计算需要，还能用于多媒体，如：插上音箱放音乐！
+OpenWrt编译要求内核驱动类要求：
+Kernel modules &gt; Sound Support &gt; kmod-sound-core
+Kernel modules &gt; Sound Supp..
             </p>
         </div>
     </a>
@@ -350,35 +347,6 @@
 <script>
     async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
         var $nav = document.querySelector("nav");
-        if($nav) FastClick.attach($nav);
-    })
-</script>
-
-<!-- Google Analytics -->
-
-
-
-<!-- Baidu Tongji -->
-
-
-<!-- swiftype -->
-<script type="text/javascript">
-  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
-  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
-  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
-  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
-
-  _st('install','null','2.0.0');
-</script>
-
-<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
-<!--wechat title img-->
-<img class="wechat-title-img" src="https://avatars0.githubusercontent.com/u/1764005?v=3&amp;s=460">
-</body>
-
-</html>
-ar $nav = document.querySelector("nav");
         if($nav) FastClick.attach($nav);
     })
 </script>

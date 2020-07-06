@@ -289,6 +289,32 @@
 
 <div class="post-preview "
      style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
+    <a href="/2019/10/26/postgresql-ssl/">
+        <h2 class="post-title">
+            PostgreSQL SSL 加密传输配置
+        </h2>
+        <p class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2019-10-26
+        </p>
+        
+        <div class="post-content-preview">
+            <p>
+                签名证书快速测试证书12openssl req -new -x509 -days 365 -nodes -text -out server.crt \  -keyout server.key -subj &quot;/CN=dbhost.yourdomain.com&quot;
+
+然后
+1chm..
+            </p>
+        </div>
+    </a>
+
+</div>
+
+<hr>
+
+
+
+<div class="post-preview "
+     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
     <a href="/2019/10/23/build-postgresql12-on-freebsd12/">
         <h2 class="post-title">
             在FreeBSD12上编译PostgreSQL12
@@ -523,36 +549,6 @@ $remote_addr  客户端IP
 $time_local   读起来不太舒服的时间
 $time_iso8601 比较舒服的时间
 $requ..
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
-    <a href="/2018/09/07/postgres_fdw/">
-        <h2 class="post-title">
-            PostgreSQL 外部表
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-09-07
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                是时候用一下PG外部表了。这些年过去，这功能应该是稳定了的。
-开启首先确定contrib是否有安装。如果没有要先安装：
-1pkg install postgresql10-contrib
-
-然后开启扩展
-1CREATE EXTENSION postgres_fdw;
-
-创建远程服务123CREA..
             </p>
         </div>
     </a>

@@ -169,6 +169,36 @@
 
 <div class="post-preview "
      style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
+    <a href="/2018/09/07/postgres_fdw/">
+        <h2 class="post-title">
+            PostgreSQL 外部表
+        </h2>
+        <p class="post-meta">
+            <i class="fa fa-calendar" aria-hidden="true"></i> 2018-09-07
+        </p>
+        
+        <div class="post-content-preview">
+            <p>
+                是时候用一下PG外部表了。这些年过去，这功能应该是稳定了的。
+开启首先确定contrib是否有安装。如果没有要先安装：
+1pkg install postgresql10-contrib
+
+然后开启扩展
+1CREATE EXTENSION postgres_fdw;
+
+创建远程服务123CREA..
+            </p>
+        </div>
+    </a>
+
+</div>
+
+<hr>
+
+
+
+<div class="post-preview "
+     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
     <a href="/2018/06/16/freebsd-disk-resize/">
         <h2 class="post-title">
             FreeBSD 11 磁盘空间扩容
@@ -389,29 +419,6 @@ supervisord 有个问题疼死我了。一远程管理一下它守护下的进�
             <p>
                 告别wordPress！不明白这货为什么只支持MySQL！pg4wp插件的支持能力也是弱！
 
-            </p>
-        </div>
-    </a>
-
-</div>
-
-<hr>
-
-
-
-<div class="post-preview "
-     style="background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')">
-    <a href="/2017/06/05/swoole-configure/">
-        <h2 class="post-title">
-            swoole 编译配置
-        </h2>
-        <p class="post-meta">
-            <i class="fa fa-calendar" aria-hidden="true"></i> 2017-06-05
-        </p>
-        
-        <div class="post-content-preview">
-            <p>
-                ./configure –enable-sockets –enable-openssl –enable-thread –enable-swoole –enable-ringbuffer –with-swoole –enable-picohttpparser –with-openssl-dir=/..
             </p>
         </div>
     </a>
