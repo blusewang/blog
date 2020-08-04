@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="...">
+    <meta name="keyword" content="undefined">
+    <meta name="theme-color" content="#000000"><!-- 600090 -->
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/ionicons/512/icon-person-128.png">
+    <link rel="alternate" type="application/atom+xml" title="Bluse" href="/atom.xml">
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
+    <link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.css">
+    <title>
+        
+        OpenWRT实现内网tcp连接请求整形 搭建逼真开发环境｜Bluse
+        
+    </title>
+
+    <link rel="canonical" href="https://www.wangjunfeng.com.cn/2020/08/04/openwrt-ipv6-firewall-forward/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/blog-style.css">
+
+    <!-- Pygments Github CSS -->
+    <link rel="stylesheet" href="/css/syntax.css">
+</head>
+
+<style>
+
+    header.intro-header {
+        background-image: url('https://www.sslcentral.com/wp-content/uploads/2014/09/sld1.jpg')
+    }
+</style>
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="" class="animated fadeIn">
+<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top " id="nav-top" data-ispost = "true" data-istags="false
+" data-ishome = "false" >
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand animated pulse" href="/">
+                <span class="brand-logo">
+                    Bluse
+                </span>
+                Programing Thinker
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <!-- /.navbar-collapse -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+					
+                    
+                        
+							
+                        <li>
+                            <a href="/finance/">互联网价值</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/pg/">PG Driver</a>
+                        </li>
+							
+						
+                    
+                        
+							
+                        <li>
+                            <a href="/tags/">tags</a>
+                        </li>
+							
+						
+                    
+					
+					
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+//    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+<!-- Main Content -->
+
+<!--only post-->
+
+
+<img class="wechat-title-img"
+     src="https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png">
+
+
+<style>
+    
+    header.intro-header {
+        background-image: url('https://user-images.githubusercontent.com/1764005/68638684-452de100-053d-11ea-8ea3-18f7ea73cf1f.png')
+    }
+
+    
+</style>
+
+<header class="intro-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <div class="post-heading">
+                    <h1>OpenWRT实现内网tcp连接请求整形 搭建逼真开发环境</h1>
+                    
+                    <span class="meta">
+                         作者 bluse wang
+                        <span>
+                          日期 2020-08-04
+                         </span>
+                    </span>
+                    <div class="tags text-center">
+                        
+                        <a class="tag" href="/tags/#ipv6"
+                           title="ipv6">ipv6</a>
+                        
+                        <a class="tag" href="/tags/#ip6tables"
+                           title="ip6tables">ip6tables</a>
+                        
+                        <a class="tag" href="/tags/#OpenWRT"
+                           title="OpenWRT">OpenWRT</a>
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="post-title-haojen">
+        <span>
+            OpenWRT实现内网tcp连接请求整形 搭建逼真开发环境
+        </span>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <!-- Post Container -->
+            <div class="col-lg-8 col-lg-offset-1 col-sm-9 post-container">
+                <h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><h2 id="头疼的配置"><a href="#头疼的配置" class="headerlink" title="头疼的配置"></a>头疼的配置</h2><p>开发者本地开发一款网络应用时，一般是在测试时，使用测试域名/IP。发布时使用正式域名/IP。</p>
+<p>看似简单的小操作。但在多轮迭代时，这个小操作一但出错，会出大问题。</p>
+<p>如果开发环境配置与生产环境完全一样，那就省事许多。</p>
+<p>在有自己可控的内网路由情况下，实现起来，一般有两种方式：DNS劫持、IP劫持。</p>
+<h2 id="DNS劫持"><a href="#DNS劫持" class="headerlink" title="DNS劫持"></a>DNS劫持</h2><p>只需在登入OpenWRT后，把域名新的解析写入 <code>/etc/hosts</code> 。再 <code>/etc/init.d/dnsmasq reload</code> 重载一下<code>dnsmasq</code>就好了。简单好用！</p>
+<h2 id="IP劫持"><a href="#IP劫持" class="headerlink" title="IP劫持"></a>IP劫持</h2><p>这个相对复杂一些。因为在OpenWRT的 <code>网络 - 防火墙 - NAT 规则</code> 只支持重写源地址，不支持重写目标地址。</p>
+<p>这就得手动写<code>网络 - 防火墙 - 自定义规则</code>了！</p>
+<h3 id="IPv4劫持"><a href="#IPv4劫持" class="headerlink" title="IPv4劫持"></a>IPv4劫持</h3><p>IPv4的规则直接写就可以，例如：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iptables -t nat -A PREROUTING -d 1.2.3.4 -p tcp -m tcp --dport 443 -j DNAT --to-destination 192.168.1.2:443</span><br></pre></td></tr></table></figure>
+
+<h3 id="IPv6劫持"><a href="#IPv6劫持" class="headerlink" title="IPv6劫持"></a>IPv6劫持</h3><p>IPv6就麻烦些了。因为IPv6设计目标就是弃用<code>NAT</code>（因为有几乎无穷的地址资源）。<br>虽然按标准应该不用，但依旧有<code>热心人</code>对它进行了实现。</p>
+<p>在<code>系统 - 软件包</code>里搜索并安装：<code>kmod-ipt-nat</code> <code>ip6tables-mod-nat</code>。这就具备了对IPv6进行<code>NAT</code>的能力了！</p>
+<p>但不能直接写规则。需先开启内网v6地址段的伪装。例如：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip6tables -t nat -I POSTROUTING -s 2408:8207:xx:xx::/48 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+
+<p>再写具体规则，例如：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ip6tables -t nat -A PREROUTING -d 2408:4002:xx::xx -p tcp -m tcp --dport 443 -j DNAT --to-destination [2408:8207:xx:xx::2]:443</span><br></pre></td></tr></table></figure>
+
+
+                <hr>
+                
+
+                <ul class="pager">
+                    
+                    
+                    <li class="next">
+                        <a href="/2020/07/06/openwrt-on-raspberrypi-play-audio/" data-toggle="tooltip" data-placement="top"
+                           title="OpenWRT 在 RaspberryPI 播放音频">Next Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+
+                
+
+                
+
+            </div>
+
+            <div class="hidden-xs col-sm-3 toc-col">
+                <div class="toc-wrap">
+                    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#开发环境"><span class="toc-text">开发环境</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#头疼的配置"><span class="toc-text">头疼的配置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#DNS劫持"><span class="toc-text">DNS劫持</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#IP劫持"><span class="toc-text">IP劫持</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv4劫持"><span class="toc-text">IPv4劫持</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#IPv6劫持"><span class="toc-text">IPv6劫持</span></a></li></ol></li></ol></li></ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar Container -->
+
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+
+                <!-- Friends Blog -->
+                
+                <div style="margin-top: 20px;">
+                    <h5 class="text-center">FRIENDS</h5>
+                    <ul class="list-inline text-center">
+                        
+                        <li><a href="https://ruff.io/zh-cn/">ruff</a></li>
+                        
+                    </ul>
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+</article>
+
+
+
+
+
+
+<!-- Footer -->
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 text-center">
+                <br>
+                <ul class="list-inline text-center">
+                
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/blusewang">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    &copy; 2020 Bluse
+                    <span id="busuanzi_container_site_pv" style="font-size: 12px;">PV: <span id="busuanzi_value_site_pv"></span> </span>
+                    备案号：京ICP备13038498号-1 Power by <a href="https://hexo.io" target="_blank">hexo</a> Theme by <a href="https://haojen.github.io/" target="_blank">Haojen Ma</a>
+                </p>
+
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/blog.js"></script>
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.wangjunfeng.com.cn/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("//cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+<!-- Google Analytics -->
+
+
+
+<!-- Baidu Tongji -->
+
+
+<!-- swiftype -->
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+  (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+  e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install','null','2.0.0');
+</script>
+
+<script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+<!--wechat title img-->
+<img class="wechat-title-img" src="https://avatars0.githubusercontent.com/u/1764005?v=3&amp;s=460">
+</body>
+
+</html>
