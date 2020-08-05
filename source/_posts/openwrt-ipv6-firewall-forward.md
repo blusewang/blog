@@ -24,7 +24,7 @@ tags: [ip6tables, ipv6, OpenWRT]
 ### IPv4劫持
 IPv4的规则直接写就可以，例如：
 ```shell script
- iptables -t nat -A PREROUTING -d 1.2.3.4 -p tcp -m tcp --dport 443 -j DNAT --to-destination 192.168.1.2:443
+iptables -t nat -A PREROUTING -i br-lan -d 1.2.3.4 -p tcp -m tcp --dport 443 -m comment --comment "dev" -j DNAT --to-destination 192.168.1.2:443
 ```
 
 ### IPv6劫持
@@ -33,11 +33,11 @@ IPv6就麻烦些了。因为IPv6设计目标就是弃用`NAT`（因为有几乎�
 
 在`系统 - 软件包`里搜索并安装：`kmod-ipt-nat` `ip6tables-mod-nat`。这就具备了对IPv6进行`NAT`的能力了！
 
-但不能直接写规则。需先开启内网v6地址段的伪装。例如：
+但不能直接写规则；需先开启发住内网的v6的伪装。例如：
 ```shell script
-ip6tables -t nat -I POSTROUTING -s 2408:8207:xx:xx::/48 -j MASQUERADE
+ip6tables -t nat -I POSTROUTING -o br-lan -j MASQUERADE
 ```
-再写具体规则，例如：
+再给从内网发出的包写具体规则；例如：
 ```shell script
-ip6tables -t nat -A PREROUTING -d 2408:4002:xx::xx -p tcp -m tcp --dport 443 -j DNAT --to-destination [2408:8207:xx:xx::2]:443
+ip6tables -t nat -A PREROUTING -i br-lan -d 2408:4002:xx::xx -p tcp -m tcp --dport 443 -m comment --comment "dev" -j DNAT --to-destination [2408:8207:xx:xx::2]:443
 ```
