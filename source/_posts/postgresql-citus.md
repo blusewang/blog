@@ -1,5 +1,5 @@
 ---
-title: postgreSQL起步的最佳分布式：Citus
+title: Citus，PostgreSQL的最佳分布式改造！
 date: 2020-08-14 12:23:02
 tags: [PostgreSQL, Citus]
 ---
@@ -22,11 +22,11 @@ Citus 适用于多租户、实时分析场景。（这也正是我迫切需要�
 在每一台机器上，按以下操作同样参数安装。
 ## 版本
 - OS：FreeBSD-12.1-RELEASE-AMD64
--- https://www.freebsd.org/releases/12.1R/announce.html
+    - https://www.freebsd.org/releases/12.1R/announce.html
 - PostgreSQL：12.3
--- https://www.postgresql.org/ftp/source/v12.3/
+    - https://www.postgresql.org/ftp/source/v12.3/
 - Citus：9.4.0
--- https://github.com/citusdata/citus/releases/tag/v9.4.0
+    - https://github.com/citusdata/citus/releases/tag/v9.4.0
 
 ## 编译参数
 ### PostgreSQL 12.3 编译
