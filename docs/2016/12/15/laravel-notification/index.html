@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            Laravel Notification 测评 |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Laravel Notification 测评</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2016-12-15 13:21:15
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/laravel/">laravel</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/notification/">notification</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>Laravel 5.3 新出了个叫 <code>Notification</code> 的消息通知功能！先总，后分吧。</p>
+<h2 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h2><p>它相对<code>event</code>的优点是：更简单也更好地隔离了不同的业务代码。且一次触发，多种’姿势’运行，不同’姿势’代码独立。</p>
+<p>适合于发比较复杂的跨站消息，如：邮件、同步weibo、OA系统、第三方个人笔记Ever-note等。不只适合单发，还适合不同渠道并发。比如：同一个消息同时发送前边列出的所有渠道。</p>
+<p>它还有个优点是，也能做一个Log，记录所有的发送结果。还能支持检测并记录：<strong>接收者对消息的查看状态</strong>。</p>
+<p>不足的地方是：默认支持的实用工具像<code>mail</code>、<code>nexmo</code>、<code>slack</code>。除了<code>mail</code>，其它两个，我天朝子民都用不上。只能用点本地的渠道，如：<code>database</code>、<code>broadcast</code>。<br>虽然默认的有点少，但官方还搞了个<a class="link"   target="_blank" rel="noopener" href="http://laravel-notification-channels.com/" >第三方消息集合的网站<i class="fas fa-external-link-alt"></i></a>。在这里能找到一堆奇葩的，常见的，拿来就能用的第三方消息扩展。<strong>但是</strong>，依旧很少有我天朝可以直接用的。乐观地看：给了你我一个完善的机会！悲观的看：自己写才是王道！总之：还是自己写！</p>
+<h2 id="对象介绍"><a href="#对象介绍" class="headerlink" title="对象介绍"></a>对象介绍</h2><p>相关的类有：</p>
+<p><code>Notification</code>：发出一个消息后，业务就交给它了。这里生成适合不同渠道的消息，并交给不同渠道去发送。</p>
+<p><code>Channel</code>：这里定义这个渠道具体的发送流程</p>
+<p><code>Message</code>：这是个格式化不同消息的助手类。如果消息体简单，可以不用它，直接在<code>Notification</code>中拼合消息体。如果消息体复杂，就有必要专门为格式化这个消息写一个<code>Message</code>Builder Helper。</p>
+<h3 id="类结构"><a href="#类结构" class="headerlink" title="类结构"></a>类结构</h3><p><code>Notification</code> 这个类laravel 的 artisan 有提供make</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">class DemoNotification extends Notification</span><br><span class="line">&#123;</span><br><span class="line">    use Queueable;</span><br><span class="line">    </span><br><span class="line">    /**</span><br><span class="line">     * Create a new notification instance.</span><br><span class="line">     *</span><br><span class="line">     */</span><br><span class="line">    public function __construct()</span><br><span class="line">    &#123;</span><br><span class="line">        //</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 这里返回要发多少个渠道</span><br><span class="line">     *</span><br><span class="line">     * @param  mixed  $notifiable</span><br><span class="line">     * @return array</span><br><span class="line">     */</span><br><span class="line">    public function via($notifiable)</span><br><span class="line">    &#123;</span><br><span class="line">        return [DemoChannel::class];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 后边挨个渠道给生成消息，如有必要，使用Message助手</span><br><span class="line">     * 这里的命名默契地使用 &#x27;to&#x27; + 渠道名</span><br><span class="line">     */</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">    public function toDemo($notifiable)</span><br><span class="line">    &#123;</span><br><span class="line">        return (new DemoMessage)</span><br><span class="line">                -&gt;title(&#x27;这里是标题&#x27;)</span><br><span class="line">                -&gt;body(&#x27;这里是消息主体&#x27;)</span><br><span class="line">                -&gt;from(&#x27;发送者&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Channel</code> 每个渠道必须实现一个send($notifiable,Notification $notification) 动作</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class DemoChannel</span><br><span class="line">&#123;</span><br><span class="line">    public function send($notifiable,Notification $notification)&#123;</span><br><span class="line">        $msg = $notification-&gt;toDemo($notifiable);</span><br><span class="line">        // 后边去实现怎么把这个$msg给扔出去！</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>Message</code> 命名默契地使用’Message’结尾，这个类没有约束，没有继承。完全按需发挥！</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">class DemoMessage</span><br><span class="line">&#123;</span><br><span class="line">    // 按不同消息的需要自己实现啦，这个类没有约束</span><br><span class="line">    public function title($title)</span><br><span class="line">    &#123;&#125;</span><br><span class="line">    public function body($body)</span><br><span class="line">    &#123;&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2017/01/02/damned-xcode/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">swift3升级后居然不做后向兼容</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2016/12/15/postgresql-config/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">PostgreSQL 性能优化</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

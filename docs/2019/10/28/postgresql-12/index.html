@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            PostgreSQL 12 变更点评 |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">PostgreSQL 12 变更点评</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2019-10-28 17:08:33
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/PostgreSQL/">PostgreSQL</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>PostgreSQL 12 于2019年10月3日。之前只阅读了它的<a class="link"   target="_blank" rel="noopener" href="https://www.postgresql.org/about/press/presskit12/zh/#original_release" >中文概要说明<i class="fas fa-external-link-alt"></i></a><br>了解到了很多的性能提升。<br> 但在阅读<a class="link"   target="_blank" rel="noopener" href="https://www.postgresql.org/docs/12/release-12.html" >完整发行说明<i class="fas fa-external-link-alt"></i></a>后，了解到了更多的有用的变更。<br> 以下挑选一些我关心的，做一下介绍。</p>
+<h1 id="流复制和恢复"><a href="#流复制和恢复" class="headerlink" title="流复制和恢复"></a>流复制和恢复</h1><h2 id="废弃了recvoery-conf。"><a href="#废弃了recvoery-conf。" class="headerlink" title="废弃了recvoery.conf。"></a>废弃了<code>recvoery.conf</code>。</h2><ul>
+<li>将其功能并入了<code>postgresql.conf</code>。</li>
+<li>使用<code>recovery.signal</code>或<code>standby.signal</code>文件来标记当前实例的状态。</li>
+<li>使用<code>promove_trigger_file</code>参数 替代了旧的 <code>trigger_file</code>参数。</li>
+<li>添加<code>pg_promote()</code>函数，可以在不操作文件系统的情况下，将从库，直接升级为主库。</li>
+</ul>
+<h2 id="pg-basebackup-操作行为变更"><a href="#pg-basebackup-操作行为变更" class="headerlink" title="pg_basebackup 操作行为变更"></a><code>pg_basebackup</code> 操作行为变更</h2><p>使用<code>pg_basebackup -R ...</code>完成基准备份后，在备份好的数据文件夹中，没有了<code>recovery.conf</code>。<br>会多出一个<code>standby.signal</code>空文件。且在<code>postgresql.conf</code>中找不到 <code>primary_conninfo</code>项的配置。<br>此项配置会自动创建在<code>postgresql.auto.conf</code>文件中。</p>
+<h1 id="默认开启JIT"><a href="#默认开启JIT" class="headerlink" title="默认开启JIT"></a>默认开启<code>JIT</code></h1><p>但在<code>FreeBSD 12.0</code>上，<code>pkg</code>包中，依旧默认选择保守地关闭了<code>JIT</code>支持。</p>
+<h1 id="授权控制"><a href="#授权控制" class="headerlink" title="授权控制"></a>授权控制</h1><h1 id="支持服务端核验证书域名"><a href="#支持服务端核验证书域名" class="headerlink" title="支持服务端核验证书域名"></a>支持服务端核验证书域名</h1><p>在<code>pg_hba.conf</code>中通过配置<code>clientcert=verify-full</code>实现。这让服务器更安全！完整地实现了SSL安全传输。从源头堵住了第三方通过非法证书连接服务！</p>
+<h1 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h1><h2 id="btee增强"><a href="#btee增强" class="headerlink" title="btee增强"></a><code>btee</code>增强</h2><p>允许较小的多列<code>btree</code>索引，多列索引。提高了<code>btree</code>的索引性能和空间利用率。减少锁定开销，进一步提高了<code>btree</code>插入速度。</p>
+<h2 id="表分区增强"><a href="#表分区增强" class="headerlink" title="表分区增强"></a>表分区增强</h2><p>更好的分表性能</p>
+<h2 id="reindex-支持-concurently"><a href="#reindex-支持-concurently" class="headerlink" title="reindex 支持 concurently"></a><code>reindex</code> 支持 <code>concurently</code></h2><p>支持异步重建索引</p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2019/11/11/kcp-tun-config/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">kcptun 服务器配置说明</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2019/10/26/postgresql-ssl/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">PostgreSQL SSL 加密传输配置</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

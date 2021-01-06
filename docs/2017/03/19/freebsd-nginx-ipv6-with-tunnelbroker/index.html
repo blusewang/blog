@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            FreeBSD上使用tunnelbroker隧道支持ipv6 |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">FreeBSD上使用tunnelbroker隧道支持ipv6</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2017-03-19 12:11:21
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/freebsd/">freebsd</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/nginx/">nginx</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/ipv6/">ipv6</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/tunnelbroker/">tunnelbroker</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h1><p>IOS被拒，原因又是<code>IPV6 only</code>网络下访问异常！</p>
+<p>于是开始自检！</p>
+<p>先检查了代码，没有使用只能用于ipv4的代码。</p>
+<p>接口中也没有使用ipv4静态地址的请求。</p>
+<p>那就是网络问题了！</p>
+<p>先模拟了一下<code>ipv6</code>网络。成功配置了mac pro共享网络。访问了一下！没毛病！</p>
+<p>那就是<code>IPV6 only</code>网络至ipv4，且走国际线路，这个有些特别了！<br>找了一下发现不少人吐嘈这个事，文章中甚至扬言要投靠<code>Android</code>^_^。<br>且有公司已经把优化国内IPV4至苹果公司的ipv6-only的网络做成服务，当生意做了。</p>
+<p>这个问题自己解决就是给自己的服务器上加一个ipv6地址，就OK啦！<br>但现实太骨感，阿里云没有ipv6。只好通过其它途径了。比较合适的方案就是使用<a class="link"   target="_blank" rel="noopener" href="https://tunnelbroker.net/" >tunnelbroker<i class="fas fa-external-link-alt"></i></a>提供的ipv6隧道了。</p>
+<h1 id="动手"><a href="#动手" class="headerlink" title="动手"></a>动手</h1><ul>
+<li>注册账号</li>
+<li>验证邮箱<br>完成后，登录进去，在左侧的<code>User Functions</code>下<code>Create Regular Tunnel</code>创建一个常规的就好。</li>
+</ul>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><p>创建完通道后，在<code>Tunnel Details</code>下有个<code>Example Configurations</code>标签，这里能按你的系统生成配置指令。<br>进去选择<code>Freebsd &gt; 4.4</code>，得到：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ifconfig gif0 create</span><br><span class="line">ifconfig gif0 tunnel [我的IP] 209.51.161.14  #我服务器的IP 帮我转发的ipv4IP</span><br><span class="line">ifconfig gif0 inet6 2001:470:1f06:1458::2 2001:470:1f06:1458::1 prefixlen 128       # 出隧道后，我在公网上的ipv6地址 隧道方的服务ipv6地址</span><br><span class="line">route -n add -inet6 default 2001:470:1f06:1458::1</span><br><span class="line">ifconfig gif0 up</span><br></pre></td></tr></table></figure>
+<p>进去执行掉<br>执行完后，<code>ifconfig</code>里就会多出来一个gif0设备。</p>
+<p>FreeBSD的/etc/rc.conf增加配置，把禁止ipv6的项删去。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># IPv6 Tunnel Client</span><br><span class="line">ipv6_enable=&quot;YES&quot;</span><br><span class="line">gif_interfaces=&quot;gif0&quot;</span><br><span class="line">gifconfig_gif0=&quot;[我的IP] 209.51.161.14&quot;</span><br><span class="line">ipv6_ifconfig_gif0=&quot;2001:470:1f06:1458::2 2001:470:1f06:1458::1 prefixlen 128&quot;</span><br><span class="line">ipv6_defaultrouter=&quot;2001:470:1f06:1458::1&quot;</span><br><span class="line"> </span><br><span class="line"># IPv6 Gateway</span><br><span class="line">ipv6_config_nfe0=&quot;2001:470:1f07:1458::1 prefixlen 64&quot;   #这个是路由地址：在‘Tunnel Details’ 里，是‘Routed IPv6 Prefixes’下的‘Routed /64’项。</span><br><span class="line">ipv6_gateway_enable=&quot;YES&quot;</span><br><span class="line">rtadvd_enable=&quot;YES&quot;</span><br><span class="line">rtadvd_interfaces=&quot;nfe0&quot;</span><br></pre></td></tr></table></figure>
+<p>这个需要rtadvd服务，<code>service rtadvd start</code>。</p>
+<h2 id="nginx"><a href="#nginx" class="headerlink" title="nginx"></a>nginx</h2><p>FreeBSD处理ipv4与v6是两条不同的道。<br>所以在<code>nginx</code>里，要加上ipv6的监听，类似：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">listen 443 ssl;</span><br><span class="line">listen [::]:443 ssl;</span><br></pre></td></tr></table></figure>
+<p>再<code>sysctl net.inet6.ip6.forwarding</code>一下，看看是否支持转发。<br>如果是0。就得放开！执行：<code>sysctl -w net.inet6.ip6.forwarding=1</code>。</p>
+<h2 id="dns"><a href="#dns" class="headerlink" title="dns"></a>dns</h2><p>进入DNSPOD给域名下加一条<code>AAAA</code>记录。地址用<code>2001:470:1f06:1458::2</code>。</p>
+<h1 id="检测"><a href="#检测" class="headerlink" title="检测"></a>检测</h1><p>没有ipv6-only环境，怎么判断这一切生效了呢？只需打开浏览器访问：<a target="_blank" rel="noopener" href="http://www.wangjunfeng.com.cn.ipv4.sixxs.org/"><code>http://www.wangjunfeng.com.cn.ipv4.sixxs.org</code></a>。<br>这里<code>www.wangjunfeng.com.cn</code>就是要支持的网址了。如果正常打开。就OK了！</p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2017/06/05/swoole-configure/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">swoole 编译配置</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2017/02/21/webpack-font-awesome/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">使用 webpack 打包 font-awesome</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

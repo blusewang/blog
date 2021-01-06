@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            Citus，PostgreSQL的最佳分布式改造！ |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Citus，PostgreSQL的最佳分布式改造！</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2020-08-14 12:23:02
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/PostgreSQL/">PostgreSQL</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Citus/">Citus</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>对于一直工作在关系型数据库，且功能强大的PostgreSQL的开发者来说。<br>Citus 无疑是给他们插上了一对火箭！让关系型数据库的用户，也能翱翔在大数据的时代。</p>
+<p>Citus 正在被很多大数据机构使用，日均更新5～10亿记录，甚至有在70个节点上，运行数据规模达1.4PB！</p>
+<p>Citus 适用于多租户、实时分析场景。（这也正是我迫切需要的！）</p>
+<p>下边介绍Citus的上手经历。</p>
+<h1 id="准备主机"><a href="#准备主机" class="headerlink" title="准备主机"></a>准备主机</h1><p>分布式，至少两台以上主机。</p>
+<ul>
+<li>协调节点，负责统筹。主机名：citus0</li>
+<li>工作节点，负责存储计算。主机名：citus1、citus2</li>
+</ul>
+<h1 id="编译安装"><a href="#编译安装" class="headerlink" title="编译安装"></a>编译安装</h1><p>在每一台机器上，按以下操作同样参数安装。</p>
+<h2 id="版本"><a href="#版本" class="headerlink" title="版本"></a>版本</h2><ul>
+<li>OS：FreeBSD-12.1-RELEASE-AMD64<ul>
+<li><a class="link"   target="_blank" rel="noopener" href="https://www.freebsd.org/releases/12.1R/announce.html" >https://www.freebsd.org/releases/12.1R/announce.html<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+</li>
+<li>PostgreSQL：12.3<ul>
+<li><a class="link"   target="_blank" rel="noopener" href="https://www.postgresql.org/ftp/source/v12.3/" >https://www.postgresql.org/ftp/source/v12.3/<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+</li>
+<li>Citus：9.4.0<ul>
+<li><a class="link"   target="_blank" rel="noopener" href="https://github.com/citusdata/citus/releases/tag/v9.4.0" >https://github.com/citusdata/citus/releases/tag/v9.4.0<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+</li>
+</ul>
+<h2 id="编译参数"><a href="#编译参数" class="headerlink" title="编译参数"></a>编译参数</h2><h3 id="PostgreSQL-12-3-编译"><a href="#PostgreSQL-12-3-编译" class="headerlink" title="PostgreSQL 12.3 编译"></a>PostgreSQL 12.3 编译</h3><p>编译：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kg install llvm90 gettext curl gmake</span><br><span class="line">./configure &#x27;--with-libraries=/usr/local/lib&#x27; &#x27;--with-includes=/usr/local/include&#x27; &#x27;--enable-thread-safety&#x27; &#x27;--disable-debug&#x27; &#x27;--enable-nls&#x27; &#x27;--without-pam&#x27; &#x27;--with-openssl&#x27; &#x27;--without-llvm&#x27; &#x27;--without-gssapi&#x27; &#x27;--prefix=/usr/local&#x27; &#x27;--localstatedir=/var&#x27; &#x27;--mandir=/usr/local/man&#x27; &#x27;--infodir=/usr/local/share/info/&#x27; &#x27;--build=amd64-portbld-freebsd12.1&#x27; &#x27;build_alias=amd64-portbld-freebsd12.1&#x27; &#x27;CC=cc&#x27; &#x27;CFLAGS=-O2 -pipe  -fstack-protector-strong -fno-strict-aliasing &#x27; &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; &#x27;LIBS=&#x27; &#x27;CPPFLAGS=-I/usr/local/include&#x27; &#x27;CXX=c++&#x27; &#x27;CXXFLAGS=-O2 -pipe -fstack-protector-strong -fno-strict-aliasing  &#x27; &#x27;CPP=cpp&#x27; &#x27;PKG_CONFIG=pkgconf&#x27; &#x27;LDFLAGS_SL=&#x27;</span><br><span class="line">make world</span><br><span class="line">make install-world</span><br><span class="line">adduser postgres</span><br></pre></td></tr></table></figure>
+<h3 id="Citus-9-4-0-编译"><a href="#Citus-9-4-0-编译" class="headerlink" title="Citus 9.4.0 编译"></a>Citus 9.4.0 编译</h3><p>编译</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; CPPFLAGS=-I/usr/local/include</span><br><span class="line">gmake</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
+<h1 id="设置并启用Citus"><a href="#设置并启用Citus" class="headerlink" title="设置并启用Citus"></a>设置并启用Citus</h1><h2 id="所有主机上的共同操作"><a href="#所有主机上的共同操作" class="headerlink" title="所有主机上的共同操作"></a>所有主机上的共同操作</h2><p>注意：**<em>以下所有操作都在要每个节点主机上完整操作完。包括建库和启用<code>citus</code>。且一定是先建库，进入<code>main</code>库后再启动<code>citus</code>扩展**</em></p>
+<ul>
+<li>初始化数据库<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su postgres</span><br><span class="line">initdb data</span><br></pre></td></tr></table></figure></li>
+<li>配置<code>postgresql.conf</code><blockquote>
+<p>listen_addresses = ‘*’</p>
+<p>port = 5432</p>
+<p>shared_buffers = 256MB # 按需调节</p>
+<p>shared_preload_libraries = ‘citus’ # 关键配置</p>
+</blockquote>
+</li>
+<li>配置<code>pg_hba.conf</code><blockquote>
+<p>host    all             all             192.168.1.1/24          trust  # 开放内网访问</p>
+</blockquote>
+</li>
+<li>启动PostgreSQL<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pg_ctl -D data start</span><br></pre></td></tr></table></figure></li>
+<li>建库并启用Citus<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">psql</span><br><span class="line">create database main;</span><br><span class="line">\c main</span><br><span class="line">create extension citus;</span><br></pre></td></tr></table></figure>
+<h2 id="协调节点上的操作"><a href="#协调节点上的操作" class="headerlink" title="协调节点上的操作"></a>协调节点上的操作</h2><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">psql main</span><br><span class="line">select master_add_node(&#x27;citus1&#x27;,5432);</span><br><span class="line">select master_add_node(&#x27;citus2&#x27;,5432);</span><br><span class="line"></span><br><span class="line">main=# select master_get_active_worker_nodes();</span><br><span class="line"> master_get_active_worker_nodes</span><br><span class="line">--------------------------------</span><br><span class="line"> (citus1,5432)</span><br><span class="line"> (citus2,5432)</span><br><span class="line">(2 行记录)</span><br></pre></td></tr></table></figure>
+<h1 id="使用Citus"><a href="#使用Citus" class="headerlink" title="使用Citus"></a>使用Citus</h1>现在只要在协调节点<code>citus0</code>上的<code>main</code>库中建表。所有工作节点都会自动创建分表。</li>
+</ul>
+<p>在协调节点上存储会将数据分发到不同的工作节点上。查询也是在多个工作节点上分布查询了。</p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2020/08/04/openwrt-ipv6-firewall-forward/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">OpenWRT实现内网tcp连接请求整形 搭建逼真开发环境</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

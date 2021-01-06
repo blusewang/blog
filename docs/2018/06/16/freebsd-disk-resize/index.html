@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            FreeBSD 11 磁盘空间扩容 |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">FreeBSD 11 磁盘空间扩容</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2018-06-16 17:43:11
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/FreeBSD/">FreeBSD</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>阿里云买了个60G的系统盘ECS。进去一看只有20G！<br>原因是：它刷镜像时，只刷了前边的20G。后边的40G，就成了空白。结果交到我手上，就成了个半成品。<br>只得自己给它扩容</p>
+<p>初始状态：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">root@log:~ # df -h</span><br><span class="line">Filesystem                     Size    Used   Avail Capacity  Mounted on</span><br><span class="line">/dev/ufsid/59a7effe7885633c     19G    4.1G     14G    23%    /</span><br><span class="line">devfs                          1.0K    1.0K      0B   100%    /dev</span><br></pre></td></tr></table></figure>
+<h3 id="第一步：查看"><a href="#第一步：查看" class="headerlink" title="第一步：查看"></a>第一步：查看</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">root@log:~ # gpart show</span><br><span class="line">=&gt;       63  125829057  vtbd0  MBR  (60G)</span><br><span class="line">         63          1         - free -  (512B)</span><br><span class="line">         64   41942975      1  freebsd  [active]  (20G)</span><br><span class="line">   41943039   83886081         - free -  (40G)</span><br></pre></td></tr></table></figure>
+<p>的确有40G的空白</p>
+<h3 id="第二步：重置大小"><a href="#第二步：重置大小" class="headerlink" title="第二步：重置大小"></a>第二步：重置大小</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@log:~ # gpart resize -i 1 -a 4k -s 59G vtbd0</span><br><span class="line">vtbd0s1 resized</span><br></pre></td></tr></table></figure>
+<p><code>-i 1</code> 这里的<code>1</code>是抄写 <code>gpart show</code>中<code>vtbd0</code>一栏下当前正使用的磁盘的编号<br><code>-s 59G</code> 为什么要丢掉一个G？因为交换分区需要空间。</p>
+<h3 id="第三步：执行配置"><a href="#第三步：执行配置" class="headerlink" title="第三步：执行配置"></a>第三步：执行配置</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">root@log:~ # service growfs onestart</span><br><span class="line">Growing root partition to fill device</span><br><span class="line">vtbd0s1 resized</span><br><span class="line">super-block backups (for fsck_ffs -b #) at:</span><br><span class="line"> 42314112, 43596352, 44878592, 46160832, 47443072, 48725312, 50007552, 51289792, 52572032, 53854272, 55136512, 56418752, 57700992, 58983232, 60265472, 61547712, 62829952,</span><br><span class="line"> 64112192, 65394432, 66676672, 67958912, 69241152, 70523392, 71805632, 73087872, 74370112, 75652352, 76934592, 78216832, 79499072, 80781312, 82063552, 83345792, 84628032,</span><br><span class="line"> 85910272, 87192512, 88474752, 89756992, 91039232, 92321472, 93603712, 94885952, 96168192, 97450432, 98732672, 100014912, 101297152, 102579392, 103861632, 105143872, 106426112,</span><br><span class="line"> 107708352, 108990592, 110272832, 111555072, 112837312, 114119552, 115401792, 116684032, 117966272, 119248512, 120530752, 121812992, 123095232, 124377472, 125659712</span><br></pre></td></tr></table></figure>
+<h3 id="完成！并检查"><a href="#完成！并检查" class="headerlink" title="完成！并检查"></a>完成！并检查</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">root@log:~ # df -h</span><br><span class="line">Filesystem                     Size    Used   Avail Capacity  Mounted on</span><br><span class="line">/dev/ufsid/59a7effe7885633c     58G    4.2G     49G     8%    /</span><br><span class="line">devfs                          1.0K    1.0K      0B   100%    /dev</span><br><span class="line">root@log:~ # gpart show</span><br><span class="line">=&gt;       63  125829057  vtbd0  MBR  (60G)</span><br><span class="line">         63          1         - free -  (512B)</span><br><span class="line">         64  125829056      1  freebsd  [active]  (60G)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2018/09/07/postgres_fdw/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">PostgreSQL 外部表</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2018/04/09/postgresql-10-install-ubuntu/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Ubuntu 上安装 PostgreSQL 10</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            编译OpenWRT |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">编译OpenWRT</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2020-03-10 16:28:31
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/openWRT/">openWRT</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E7%BC%96%E8%AF%91/">编译</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>之前编译OpenWRT时有很多顾虑。比如：</p>
+<ul>
+<li>太多依赖，担心把自己MacOS装太多不明用处的包。将来无法清理</li>
+<li>担心搞不懂编译过程中遇到的陌生概念。比如：出一个问题，google一下，得到了10个问题！</li>
+<li>不知道编译结果是什么。如何把编译结果变成指定的系统镜像。不相信<code>make</code>能直接出镜像。</li>
+</ul>
+<p>事实上，OpenWRT 团队是群非常实在的人！只需要一次<code>make</code>多版本的IMG镜像和选中的软件包。全编译出来并打好包，还整理得非常整齐！</p>
+<p><a class="link"   target="_blank" rel="noopener" href="https://openwrt.org/zh-cn/doc/howto/build" >官方的中文编译说明<i class="fas fa-external-link-alt"></i></a>这里展示了准备好后的编译过程。由此文可见，确实不难！当然，仅凭此一文，不足以指导完成编译！</p>
+<p>下边记录一下我的编译经历。</p>
+<h1 id="规划"><a href="#规划" class="headerlink" title="规划"></a>规划</h1><p>选择在虚拟机里编译。免得污染OS。</p>
+<ul>
+<li>虚拟机选择VirtualBox；因为免费稳健。</li>
+<li>编译OS，选择Alpine Linux；因为它小且便于安装。<ul>
+<li>OpenWRT编译支持几乎所有常见Linux发行版和MacOS。FreeBSD官方文档立了项，但没有写，就此略过。Windows没有看到相关文档。</li>
+</ul>
+</li>
+</ul>
+<h2 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h2><ul>
+<li>虚拟机尽量多给几个CPU核心，因为OpenWRT项目相当大！更多的核心能压缩编译时间。</li>
+<li>虚拟机硬盘给15GB以上，最好20GB以上。</li>
+<li>给装好的OS建立一个新用户。OpenWRT官方不推荐在<code>root</code>账号下编译。</li>
+<li>源码中依赖的第三方库，多数在海外。一架舒适的小飞机，是理想的选择；甚至是必须！</li>
+</ul>
+<h2 id="要求"><a href="#要求" class="headerlink" title="要求"></a>要求</h2><p>以下要求，不在本文探讨范围。</p>
+<ul>
+<li>要会用VirtualBox。</li>
+<li>要会安装Alpine Linux。</li>
+<li>要会用git。理解分支和标签的概念和用法。</li>
+<li>自备小飞机。</li>
+</ul>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><ul>
+<li>虚拟机环境准备参考：<a class="link"   target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-developer/build-system/install-buildsystem" >Build system – Installation<i class="fas fa-external-link-alt"></i></a></li>
+<li>编译过程及选项参考：<a class="link"   target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-developer/build-system/use-buildsystem" >Build system – Usage<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+<h1 id="重点提示："><a href="#重点提示：" class="headerlink" title="重点提示："></a>重点提示：</h1><ul>
+<li>环境准备，在装完OS后，其实很简单。只要在<a class="link"   target="_blank" rel="noopener" href="https://openwrt.org/docs/guide-developer/build-system/install-buildsystem" >Build system – Installation<i class="fas fa-external-link-alt"></i></a>文章中复制一下对应的安装指令，执行一下；再找个地方clone出源码即可。</li>
+<li><code>git tag</code>查找需要的版本。<code>git checkout</code>需要的版本。</li>
+<li><code>./scripts/feeds</code> feeds 指令是管理Apk（OpenWRT上的安装包）的。就像MacOS上的<code>brew</code>。在<code>menuconfig</code>之前值得更新一下，<code>./scripts/feeds update -a</code>。</li>
+<li>自己的安装包将来也是在这里创建和管理、编译。</li>
+<li><code>make menuconfig</code> 有UI界面，可在UI界面上选择要编译的镜像的目标设备。如：选择<code>brcm2708</code>是<code>Raspberry Pi</code>类型的芯片，子类型对应<code>Raspberry Pi</code>的不同Model版本，如：<code>bcm2710</code>是<code>Raspberry Pi 3</code>的芯片型号。</li>
+<li><code>make defconfig</code> 设置默认项</li>
+<li><code>make kernel_menuconfig</code> 望文生义，内核配置，一般不需要。</li>
+<li><code>make download</code> 下载源码编译过程中依赖的工具。</li>
+<li>在<code>make download</code>前，配置一下<code>wget</code>的<code>http_proxy``https_proxy``ftp_proxy</code>，并启用<code>proxy</code>。<code>wget</code>配置文件在：<code>/etc/wgetrc</code></li>
+<li><code>make</code> </li>
+<li>参数<code>-j3</code>，就是3个线程并发编译，这个数字取决于CPU。</li>
+<li>参数<code>V=s</code>，是显示详细。</li>
+<li>参数<code>package/cups/compile</code>，是编译单个应用。</li>
+</ul>
+<h1 id="我的编译成果"><a href="#我的编译成果" class="headerlink" title="我的编译成果"></a>我的编译成果</h1><h2 id="固件特点"><a href="#固件特点" class="headerlink" title="固件特点"></a>固件特点</h2><ul>
+<li>固件型号：    <strong>Raspberry Pi 4 Model B Rev 1.2</strong></li>
+<li>1GB 根空间。</li>
+<li>镜像内置了USB转rj45驱动</li>
+<li>默认支持<code>bbr</code>、<code>tcpdump</code></li>
+<li>支持<code>v2ray</code>，在配置好源后，<code>opkg update &amp;&amp; opkg install v2ray</code>就能得到。</li>
+<li>广告过滤</li>
+<li>分流</li>
+<li>屏蔽大厂部分产品的日志收集</li>
+<li>出口配置样例</li>
+<li>编译了package中部分我认为常用的包，如：<code>luci-app-statistics</code>、<code>6to4</code>、<code>htop</code>、<code>curl</code>、<code>fdisk</code>、<code>cfdisk</code>、<code>ffmpeg</code>、<code>luci-app-samba</code>等。</li>
+</ul>
+<h2 id="固件源"><a href="#固件源" class="headerlink" title="固件源"></a>固件源</h2><p>固件下载、升级：<a class="link"   target="_blank" rel="noopener" href="http://openwrt.wangjunfeng.com.cn/targets/bcm27xx/bcm2711/" >http://openwrt.wangjunfeng.com.cn/targets/bcm27xx/bcm2711/<i class="fas fa-external-link-alt"></i></a></p>
+<p><code>/etc/opkg/distfeeds.conf</code> 源配置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">src&#x2F;gz jf_core http:&#x2F;&#x2F;openwrt.wangjunfeng.com.cn&#x2F;targets&#x2F;bcm27xx&#x2F;bcm2711&#x2F;packages</span><br><span class="line">src&#x2F;gz jf_base http:&#x2F;&#x2F;openwrt.wangjunfeng.com.cn&#x2F;packages&#x2F;aarch64_cortex-a72&#x2F;base</span><br><span class="line">src&#x2F;gz jf_luci http:&#x2F;&#x2F;openwrt.wangjunfeng.com.cn&#x2F;packages&#x2F;aarch64_cortex-a72&#x2F;luci</span><br><span class="line">src&#x2F;gz jf_packages http:&#x2F;&#x2F;openwrt.wangjunfeng.com.cn&#x2F;packages&#x2F;aarch64_cortex-a72&#x2F;packages</span><br></pre></td></tr></table></figure>
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2020/06/29/golang-udp-server/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">golang udp 服务的坑</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2020/03/10/java-async-sync/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Java多个异步任务转同步</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

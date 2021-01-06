@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            RaspberryPI上安装OpenWRT |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">RaspberryPI上安装OpenWRT</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2019-12-04 21:20:25
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/RaspberryPi/">RaspberryPi</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/OpenWRT/">OpenWRT</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><p>家用网络拓扑设计<br><img src="https://user-images.githubusercontent.com/1764005/70146001-3e2d6500-16dc-11ea-952c-dda05eb69029.png" alt="image"></p>
+<p>路由器连接RPI由网线接口。RPI连接电视由HDMI接口。</p>
+<h1 id="配件准备"><a href="#配件准备" class="headerlink" title="配件准备"></a>配件准备</h1><p>唯独RPI连接路由器。额外需要一个 USB转网口。<br>淘宝之：<br><img src="https://gd4.alicdn.com/imgextra/i4/4282361926/O1CN0184Ycaa1Q69NjPfQVD_!!4282361926.png_400x400.jpg" alt="image"><br><a class="link"   target="_blank" rel="noopener" href="https://item.taobao.com/item.htm?spm=a1z09.2.0.0.2b562e8d64yuA7&id=597724398426&_u=416uj6v1a71" >树莓派USB2.0 HUB 网卡加hub 分线器转RJ45外置有线网卡 USB网口<i class="fas fa-external-link-alt"></i></a></p>
+<h1 id="刷OS"><a href="#刷OS" class="headerlink" title="刷OS"></a>刷OS</h1><p>OpenWRT 官方提供了详细的解说。<br><a class="link"   target="_blank" rel="noopener" href="https://openwrt.org/toh/raspberry_pi_foundation/raspberry_pi" >OpenWrt Project: Raspberry Pi<i class="fas fa-external-link-alt"></i></a></p>
+<h1 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h1><p>启动后。通过web连接至OpenWRT。</p>
+<h2 id="设置USTC源"><a href="#设置USTC源" class="headerlink" title="设置USTC源"></a>设置USTC源</h2><p>在【系统】-【软件包】-【配置】将软件源全替换为USTC源。</p>
+<ul>
+<li><p><a class="link"   target="_blank" rel="noopener" href="https://mirrors.ustc.edu.cn/help/lede.html" >USTC配置帮助<i class="fas fa-external-link-alt"></i></a><br>配置效果：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">src/gz openwrt_core http://mirrors.ustc.edu.cn/lede/releases/18.06.5/targets/arm_arm1176jzf-s_vfp/packages</span><br><span class="line">src/gz openwrt_base http://mirrors.ustc.edu.cn/lede/releases/18.06.5/packages/arm_arm1176jzf-s_vfp/base</span><br><span class="line">src/gz openwrt_luci http://mirrors.ustc.edu.cn/lede/releases/18.06.5/packages/arm_arm1176jzf-s_vfp/luci</span><br><span class="line">src/gz openwrt_packages http://mirrors.ustc.edu.cn/lede/releases/18.06.5/packages/arm_arm1176jzf-s_vfp/packages</span><br><span class="line">src/gz openwrt_routing http://mirrors.ustc.edu.cn/lede/releases/18.06.5/packages/arm_arm1176jzf-s_vfp/routing</span><br><span class="line">src/gz openwrt_telephony http://mirrors.ustc.edu.cn/lede/releases/18.06.5/packages/arm_arm1176jzf-s_vfp/telephony</span><br></pre></td></tr></table></figure>
+<h2 id="安装需要的包"><a href="#安装需要的包" class="headerlink" title="安装需要的包"></a>安装需要的包</h2></li>
+<li><p>中文语言包：luci-i18n-base-zh-cn</p>
+</li>
+<li><p>USB转网口：kmod-usb-net-rtl8152</p>
+</li>
+<li><p>开启BBR：kmod-tcp-bbr</p>
+</li>
+</ul>
+<h2 id="编译V2ray"><a href="#编译V2ray" class="headerlink" title="编译V2ray"></a>编译V2ray</h2><p>v2ray的arm版对不同版本芯片支持不完整。辣么，自己动手！<br>查看芯片信息：<code>cat /proc/cpuinfo</code><br>参考<a class="link"   target="_blank" rel="noopener" href="https://www.v2ray.com/developer/intro/compile.html#manualbuild" >手工构建<i class="fas fa-external-link-alt"></i></a><br>参考<a class="link"   target="_blank" rel="noopener" href="https://github.com/golang/go/wiki/GoArm" >golang ARM芯片构建支持情况<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>源码准备：<code>go get github.com/v2ray/v2ray-core</code></li>
+<li>编译<code>v2ray</code>：<code>GOPROXY=https://goproxy.io CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -o $HOME/v2ray -ldflags &quot;-s -w&quot;</code></li>
+<li>编译<code>v2ctl</code>：<code>GOPROXY=https://goproxy.io CGO_ENABLED=0 GOOS=linux GOARCH=arm GOARM=6 go build -o $HOME/v2ctl -ldflags &quot;-s -w&quot; -tags confonly </code></li>
+</ul>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2019/12/14/iptables/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">iptables详细教程：基础、架构、清空规则、追加规则、应用实例</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2019/11/11/kcp-tun-config/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">kcptun 服务器配置说明</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

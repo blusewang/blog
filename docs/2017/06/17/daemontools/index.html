@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            daemontools系列小工具 |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">daemontools系列小工具</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2017-06-17 14:17:12
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/FreeBSD/">FreeBSD</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/daemontool/">daemontool</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/supervisord/">supervisord</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>为什么要讲一个如此”古老”的守护工具？为什么不用supervisord？</p>
+<p><code>supervisord</code> 有个问题疼死我了。一远程管理一下它守护下的进程，<a class="link"   target="_blank" rel="noopener" href="https://github.com/Supervisor/supervisor/issues/807" >CPU就会100%<i class="fas fa-external-link-alt"></i></a>。这个问题年久失修。</p>
+<p>它的supervisorctl里的指令，常reload一下会让所有的服务死了，自己也死了！也不重启，得手动重启。</p>
+<p>更让人揪心的是，当业务负载繁重时，这个工具就成了”仙人掌”，碰不得，前段时间发现一次半夜里无端地持续了2个多小时把CPU提到了100%。</p>
+<p>用了它可让阿里云破费了不少短信费。天天有警告！</p>
+<p>不得已再花些时间学习了一下其它的守护工具了。这个daemontools偏老，看上去更稳妥。</p>
+<p>以下实操基于FreeBSD11（Linux有systend，守护嘎嘎的！）</p>
+<h1 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h1><p><a class="link"   target="_blank" rel="noopener" href="http://cr.yp.to/daemontools.html" >Daemontools<i class="fas fa-external-link-alt"></i></a>是管理Unix服务的工具，它提供一组工具来管理一系列用户进程，当进程由于某些原因down掉之后，daemontools会自动重启进程</p>
+<h1 id="注意"><a href="#注意" class="headerlink" title="注意"></a>注意</h1><ul>
+<li>被管理的进程不能以daemon形式运行，例如nginx.conf 必须关闭daemon， daemon off;</li>
+<li>不要在/var/service/建任何目录， /var/service/只存放一些symbol link</li>
+<li>只需要完成安装 、 配置两步即可</li>
+</ul>
+<h1 id="安装启动"><a href="#安装启动" class="headerlink" title="安装启动"></a>安装启动</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">pkg install daemontools</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;svscan_enable=&quot;YES&quot;&#x27;</span> &gt; /etc/rc.conf</span><br><span class="line">service svscan start</span><br></pre></td></tr></table></figure>
+<p>启动成功多出了2个进程：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root  7616   0.0  0.1   8344  1676  -  S    10:28     0:00.04 /usr/local/bin/svscan /var/service</span><br><span class="line">root  7617   0.0  0.1   6240  1616  -  I    10:28     0:00.00 /usr/local/bin/readproctitle service errors: ......................................................................</span><br></pre></td></tr></table></figure>
+<p><code>svscan</code>启动后监视<code>/var/service</code>目录，当这里有服务的软连接时，svscan会为每个服务主恸一个<code>supervise</code>服务。<br><code>supervise</code> 执行服务目录下的<code>run</code>，如果服务目录下还有<code>down</code>文件存在，就不会自动启动，需人工手动启动此服务。</p>
+<p><code>supervise</code>的状态信息以2进制的形式存放在服务目录的<code>supervise</code>下面，并且提供了下面的工具来操作：</p>
+<ul>
+<li>svstat： 读取状态信息</li>
+<li>svc： 启动/停止/挂起等</li>
+<li>svok： 检查是否运行成功</li>
+<li>svscan：可靠的启动/var/service目录下的服务。如果某个服务加入后，没有启动，可以调用此命令，强制启动。</li>
+</ul>
+<h1 id="添加服务"><a href="#添加服务" class="headerlink" title="添加服务"></a>添加服务</h1><h2 id="普通添加"><a href="#普通添加" class="headerlink" title="普通添加"></a>普通添加</h2><p>先创建一个测试用的需要被守护的项目。放到：<code>/var/server/testprocess/</code></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">root@freebsd:/var/server/testprocess # ll</span><br><span class="line">total 12</span><br><span class="line">-rwxr-xr-x  1 root  wheel  122 Jun 17 10:30 main.py*</span><br><span class="line">-rwxr-xr-x  1 root  wheel  333 Jun 17 10:47 run*</span><br><span class="line">root@freebsd:/var/server/testprocess # cat main.py</span><br><span class="line">#!/usr/local/bin/python2</span><br><span class="line">import time</span><br><span class="line">import logging</span><br><span class="line"></span><br><span class="line">while True:</span><br><span class="line">    time.sleep(1)</span><br><span class="line">    logging.warning(&quot;sleep 1 second&quot;)</span><br><span class="line"></span><br><span class="line">root@freebsd:/var/server/testprocess # cat run</span><br><span class="line">#!/bin/sh</span><br><span class="line">exec /usr/local/bin/python2 /var/server/testprocess/main.py &gt;&gt; /tmp/main.py.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<p>然后在<code>/var/service</code>目录下建立软链接</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">root@freebsd:/var/server/testprocess <span class="comment"># ln -s /var/server/testprocess /var/service/testprocess</span></span><br></pre></td></tr></table></figure>
+<p>这个时候可以检查一下服务是否正在运行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root  7618  0.0  0.1   6252  1632  -  I    10:28     0:00.00 supervise testprocess</span><br><span class="line">root  7747  0.0  0.4  39308  7416  -  S    10:48     0:00.72 &#x2F;usr&#x2F;local&#x2F;bin&#x2F;python2 &#x2F;var&#x2F;server&#x2F;testprocess&#x2F;main.py (python2.7)</span><br></pre></td></tr></table></figure>
+<p>上面这种方式的坏处是必须以root用户运行，如果想以其他用户运行，则需要做如下改进，假设用户为bluse，id为1001：</p>
+<h2 id="以指定用户身份运行"><a href="#以指定用户身份运行" class="headerlink" title="以指定用户身份运行"></a>以指定用户身份运行</h2><p>改进一下run的执行方式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">root@freebsd:/var/server/testprocess # cat run</span><br><span class="line">#!/bin/sh</span><br><span class="line">who=`id -u`</span><br><span class="line">if [ $who -eq 0 ]; then</span><br><span class="line">    exec /usr/local/bin/setuidgid bluse /usr/local/bin/python2 /var/server/testprocess/main.py &gt;&gt; /tmp/main.py.log 2&gt;&amp;1</span><br><span class="line">elif [ $who -eq 1001 ]; then</span><br><span class="line">    exec /usr/local/bin/python2 /var/server/service/testprocess/main.py &gt;&gt; /tmp/main.py.log 2&gt;&amp;1</span><br><span class="line">else</span><br><span class="line">    echo &quot;neither root or bluse&quot;</span><br><span class="line">fi</span><br></pre></td></tr></table></figure>
+<p>就可以了</p>
+<h1 id="管理服务"><a href="#管理服务" class="headerlink" title="管理服务"></a>管理服务</h1><p>使用svstat来查看服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root@freebsd:&#x2F;var&#x2F;server&#x2F;testprocess # svstat &#x2F;var&#x2F;server&#x2F;testprocess&#x2F;</span><br><span class="line">&#x2F;var&#x2F;server&#x2F;testprocess&#x2F;: up (pid 7747) 2680 seconds</span><br></pre></td></tr></table></figure>
+<p>使用svc来管理服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line">NAME</span><br><span class="line">       svc - controls services monitored by supervise(8).</span><br><span class="line"></span><br><span class="line">SYNOPSIS</span><br><span class="line">       svc [ -udopchaitkx ] services</span><br><span class="line"></span><br><span class="line">DESCRIPTION</span><br><span class="line">       services consists of any number of arguments, each argument naming a</span><br><span class="line">       directory used by supervise(8).</span><br><span class="line"></span><br><span class="line">       svc applies all the options to each service in turn.</span><br><span class="line"></span><br><span class="line">OPTIONS</span><br><span class="line">       -u     Up. If the service is not running, start it. If the service</span><br><span class="line">              stops, restart it.</span><br><span class="line"></span><br><span class="line">       -d     Down. If the service is running, send it a TERM signal and then</span><br><span class="line">              a CONT signal. After it stops, do not restart it.</span><br><span class="line"></span><br><span class="line">       -o     Once. If the service is not running, start it. Do not restart it</span><br><span class="line">              if it stops.</span><br><span class="line"></span><br><span class="line">       -p     Pause. Send the service a STOP signal.</span><br><span class="line"></span><br><span class="line">       -c     Continue. Send the service a CONT signal.</span><br><span class="line"></span><br><span class="line">       -h     Hangup. Send the service a HUP signal.</span><br><span class="line"></span><br><span class="line">       -a     Alarm. Send the service an ALRM signal.</span><br><span class="line"></span><br><span class="line">       -i     Interrupt. Send the service an INT signal.</span><br><span class="line"></span><br><span class="line">       -t     Terminate. Send the service a TERM signal.</span><br><span class="line"></span><br><span class="line">       -k     Kill. Send the service a KILL signal.</span><br><span class="line"></span><br><span class="line">       -x     Exit.  supervise(8) will exit as soon as the service is down. If</span><br><span class="line">              you use this option on a stable system, you&#39;re doing something</span><br><span class="line">              wrong; supervise(8) is designed to run forever.</span><br></pre></td></tr></table></figure>
+<h1 id="daemontools-中的其它工具"><a href="#daemontools-中的其它工具" class="headerlink" title="daemontools 中的其它工具"></a>daemontools 中的其它工具</h1><p>log工具：</p>
+<ul>
+<li>The readproctitle program</li>
+<li>The multilog program</li>
+<li>The tai64n program</li>
+<li>The tai64nlocal program</li>
+</ul>
+<p>环境工具：</p>
+<ul>
+<li>The setuidgid program</li>
+<li>The envuidgid program</li>
+<li>The envdir program</li>
+<li>The softlimit program</li>
+<li>The setlock program</li>
+</ul>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2017/06/20/byebye-swoole/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">PHP Swoole 从入门到放弃</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2017/06/12/truss-lsof-strace-ltrace/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">truss lsof strace ltrace 让你知道系统运行中的进程正在干什么</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

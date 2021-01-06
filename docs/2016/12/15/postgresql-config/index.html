@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            PostgreSQL 性能优化 |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">PostgreSQL 性能优化</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2016-12-15 13:21:15
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/PostgreSQL/">PostgreSQL</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <pre><code>PostgreSQL 一个连接一个进程，应用给WEB服务就压力山大了。
+备点货以备山洪来临！</code></pre>
+<p><em>以下整理自：<a class="link"   target="_blank" rel="noopener" href="http://blog.gdsyzx.edu.cn/sense/?p=460#content" >Sense’s Blog<i class="fas fa-external-link-alt"></i></a></em></p>
+<h1 id="服务器参数配置"><a href="#服务器参数配置" class="headerlink" title="服务器参数配置"></a>服务器参数配置</h1><p>配置文件postgres.conf中的很多设置都会影响性能，</p>
+<h2 id="shared-buffers"><a href="#shared-buffers" class="headerlink" title="shared_buffers"></a>shared_buffers</h2><p>这是最重要的参数，postgresql通过shared_buffers和内核/磁盘打交道。</p>
+<p>因此应该尽量大，让更多的数据缓存在shared_buffers中，通常设置为实际RAM的10％是合理的，比如50000(400M)</p>
+<h2 id="work-mem"><a href="#work-mem" class="headerlink" title="work_mem"></a>work_mem</h2><p>在pgsql 8.0之前叫做sort_mem。postgresql在执行排序操作时，</p>
+<p>会根据work_mem的大小决定是否将一个大的结果集拆分为几个小的和work_mem查不多大小的临时文件。</p>
+<p>显然拆分的结果是降低了排序的速度。因此增加work_mem有助于提高排序的速度。通常设置为实际RAM的2%-4%，根据需要排序结果集的大小而定，比如81920(80M)</p>
+<h2 id="effective-cache-size"><a href="#effective-cache-size" class="headerlink" title="effective_cache_size"></a>effective_cache_size</h2><p>是postgresql能够使用的最大缓存，<br>这个数字对于独立的pgsql服务器而言应该足够大，比如4G的内存，可以设置为3.5G(437500)</p>
+<h2 id="maintence-work-mem"><a href="#maintence-work-mem" class="headerlink" title="maintence_work_mem"></a>maintence_work_mem</h2><p>这里定义的内存只是在CREATE INDEX, VACUUM等时用到，因此用到的频率不高，但是往往这些指令消耗比较多的资源，</p>
+<p>因此应该尽快让这些指令快速执行完毕：给maintence_work_mem大的内存，比如512M(524288)</p>
+<h2 id="max-connections"><a href="#max-connections" class="headerlink" title="max_connections"></a>max_connections</h2><p>通常，max_connections的目的是防止max_connections * work_mem超出了实际内存大小。</p>
+<p>比如，如果将work_mem设置为实际内存的2%大小，则在极端情况下，如果有50个查询都有排序要求，而且都使用2％的内存，则会导致swap的产生，系统性能就会大大降低。</p>
+<p>当然，如果有4G的内存，同时出现50个如此大的查询的几率应该是很小的。不过，要清楚max_connections和work_mem的关系。</p>
+<p>有关参数的解释可见： <a class="link"   target="_blank" rel="noopener" href="http://www.postgres.cn/docs/9.5/runtime-config.html" >http://www.postgres.cn/docs/9.5/runtime-config.html<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="硬件的选择"><a href="#硬件的选择" class="headerlink" title="硬件的选择"></a>硬件的选择</h2><p>由于计算机硬件大多数是兼容的，人们总是倾向于相信所有计算机硬件质量也是相同的。</p>
+<p>事实上不是， ECC RAM（带奇偶校验的内存），SCSI （硬盘）和优质的主板比一些便宜货要更加可靠且具有更好的性能。</p>
+<p>PostgreSQL几乎可以运行在任何硬件上，但如果可靠性和性能对你的系统很重要，你就需要全面的研究一下你的硬件配置了。</p>
+<p>计算机硬件对性能的影响可浏览 <a class="link"   target="_blank" rel="noopener" href="http://candle.pha.pa.us/main/writings/pgsql/hw_performance/index.html" >http://candle.pha.pa.us/main/writings/pgsql/hw_performance/index.html<i class="fas fa-external-link-alt"></i></a> 和 <a class="link"   target="_blank" rel="noopener" href="http://www.powerpostgresql.com/PerfList/%E3%80%82" >http://www.powerpostgresql.com/PerfList/。<i class="fas fa-external-link-alt"></i></a></p>
+<h2 id="连接时收到“Sorry-too-many-clients”消息？"><a href="#连接时收到“Sorry-too-many-clients”消息？" class="headerlink" title="连接时收到“Sorry, too many clients”消息？"></a>连接时收到“Sorry, too many clients”消息？</h2><p>这表示你已达到缺省100个并发后台进程数的限制，</p>
+<p>你需要通过修改postgresql.conf文件中的max_connections值来 增加postmaster的后台并发处理数，修改后需重新启动postmaster。</p>
+<h1 id="SQL查询"><a href="#SQL查询" class="headerlink" title="SQL查询"></a>SQL查询</h1><p>检查数据检索的索引是否建立，凡是需要查找的字段尽量建立索引，甚至是联合索引；</p>
+<p>创建索引，包括表达式和部分索引；</p>
+<p>使用COPY语句代替多个Insert语句；</p>
+<p>将多个SQL语句组成一个事务以减少提交事务的开销；</p>
+<p>从一个索引中提取多条记录时使用CLUSTER；</p>
+<p>从一个查询结果中取出部分记录时使用LIMIT；</p>
+<p>使用预编译式查询（Prepared Query)；</p>
+<p>使用ANALYZE以保持精确的优化统计；</p>
+<p>定期使用 VACUUM 或 pg_autovacuum</p>
+<p>进行大量数据更改时先删除索引（然后重建索引）</p>
+<h1 id="程序经验"><a href="#程序经验" class="headerlink" title="程序经验"></a>程序经验</h1><p>检查程序，是否使用了连接池，如果没有使用，尽快使用吧；</p>
+<p>继续检查程序，连接使用后，是否交还给了连接池；</p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2016/12/15/laravel-notification/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Laravel Notification 测评</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2016/12/14/about/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">about</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

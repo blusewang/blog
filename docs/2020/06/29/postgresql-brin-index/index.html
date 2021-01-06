@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            PostgreSQL BRIN索引 日志型数据索引神器 |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">PostgreSQL BRIN索引 日志型数据索引神器</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2020-06-29 15:25:58
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/PostgreSQL/">PostgreSQL</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E7%B4%A2%E5%BC%95/">索引</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>一张随着时间增长的表。当表的体积达到数GB或数十GB后。你会发现<code>BTREE</code>索引也也有数GB或数十GB；BTREE索引尺寸有时能达到表本身尺寸的70%左右！</p>
+<p>当索引的尺寸接近或超过系统内存一半时。查询使用了索引，速度也会慢到令人无法忍受！</p>
+<p>此时一般的想法是：分表！将表按不同时间段拆开。这样查询时就不需要扫描整个索引了！速度就上来了。</p>
+<p>其实，此时PostgreSQL还有个更有意思的索引，简直是从根本上重新定义了这个问题！它就是：</p>
+<h2 id="BRIN索引"><a href="#BRIN索引" class="headerlink" title="BRIN索引"></a><code>BRIN</code>索引</h2><p>通过<a target="_blank" rel="noopener" href="http://postgres.cn/docs/12/brin-intro.html"><code>BRIN</code>索引的官方介绍</a>，得知，它的索引实现是完全另一种思路：</p>
+<p><code>BRIN</code>索引，是按写入磁盘的数据块，做索引的。它记录这张表，索引字段在这个数据块上的最大值与最小值；也叫这个字段的区间。</p>
+<p>这就大大减少了索引的复杂度，提高了查询速度。</p>
+<p>来具体体验一下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> \dt<span class="operator">+</span> log.table_name</span><br><span class="line">                           关联列表</span><br><span class="line"> 架构模式 <span class="operator">|</span>    名称    <span class="operator">|</span>  类型  <span class="operator">|</span>  拥有者  <span class="operator">|</span>  大小   <span class="operator">|</span>  描述</span><br><span class="line"><span class="comment">----------+------------+--------+----------+---------+---------</span></span><br><span class="line"> log      <span class="operator">|</span> table_name <span class="operator">|</span> 数据表 <span class="operator">|</span> postgres <span class="operator">|</span> <span class="number">6908</span> MB <span class="operator">|</span> gdb应用</span><br><span class="line">(<span class="number">1</span> 行记录)</span><br><span class="line"></span><br><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> \di<span class="operator">+</span> log.table_name_log_at_idx</span><br><span class="line">                                    关联列表</span><br><span class="line"> 架构模式 <span class="operator">|</span>         名称          <span class="operator">|</span> 类型 <span class="operator">|</span>  拥有者  <span class="operator">|</span>   数据表   <span class="operator">|</span>  大小  <span class="operator">|</span> 描述</span><br><span class="line"><span class="comment">----------+-----------------------+------+----------+------------+--------+------</span></span><br><span class="line"> log      <span class="operator">|</span> table_name_log_at_idx <span class="operator">|</span> 索引 <span class="operator">|</span> postgres <span class="operator">|</span> table_name <span class="operator">|</span> <span class="number">272</span> kB <span class="operator">|</span></span><br><span class="line">(<span class="number">1</span> 行记录)</span><br><span class="line"></span><br><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> explain analyze <span class="keyword">select</span> <span class="built_in">count</span>(<span class="number">1</span>) <span class="keyword">from</span> log.table_name <span class="keyword">where</span> log_at <span class="keyword">between</span> <span class="string">&#x27;2020-01-01 12:00:00&#x27;</span> <span class="keyword">and</span> <span class="string">&#x27;2020-01-01 12:01:00&#x27;</span>;</span><br><span class="line">                                                                          QUERY PLAN</span><br><span class="line"><span class="comment">---------------------------------------------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"> Aggregate  (cost<span class="operator">=</span><span class="number">15547.84</span>.<span class="number">.15547</span><span class="number">.85</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> width<span class="operator">=</span><span class="number">8</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">46.691</span>.<span class="number">.46</span><span class="number">.700</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">   <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Heap Scan <span class="keyword">on</span> table_name  (cost<span class="operator">=</span><span class="number">109.06</span>.<span class="number">.15547</span><span class="number">.55</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">116</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">3.063</span>.<span class="number">.46</span><span class="number">.153</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">113</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">         Recheck Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line">         <span class="keyword">Rows</span> Removed <span class="keyword">by</span> Index Recheck: <span class="number">124960</span></span><br><span class="line">         Heap Blocks: lossy<span class="operator">=</span><span class="number">3848</span></span><br><span class="line">         <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Index Scan <span class="keyword">on</span> table_name_log_at_idx  (cost<span class="operator">=</span><span class="number">0.00</span>.<span class="number">.109</span><span class="number">.03</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">4059</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">1.384</span>.<span class="number">.1</span><span class="number">.389</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">39680</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">               Index Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line"> Planning <span class="type">Time</span>: <span class="number">0.106</span> ms</span><br><span class="line"> Execution <span class="type">Time</span>: <span class="number">46.797</span> ms</span><br><span class="line">(<span class="number">9</span> 行记录)</span><br><span class="line"></span><br><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> explain analyze <span class="keyword">select</span> <span class="built_in">count</span>(<span class="number">1</span>) <span class="keyword">from</span> log.table_name <span class="keyword">where</span> log_at <span class="keyword">between</span> <span class="string">&#x27;2020-01-01 12:00:00&#x27;</span> <span class="keyword">and</span> <span class="string">&#x27;2020-01-01 12:01:00&#x27;</span> <span class="keyword">and</span> body_size<span class="operator">&gt;</span><span class="number">100</span>;</span><br><span class="line">                                                                          QUERY PLAN</span><br><span class="line"><span class="comment">---------------------------------------------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"> Aggregate  (cost<span class="operator">=</span><span class="number">15557.94</span>.<span class="number">.15557</span><span class="number">.95</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> width<span class="operator">=</span><span class="number">8</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">49.396</span>.<span class="number">.49</span><span class="number">.405</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">   <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Heap Scan <span class="keyword">on</span> table_name  (cost<span class="operator">=</span><span class="number">109.06</span>.<span class="number">.15557</span><span class="number">.69</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">97</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">3.574</span>.<span class="number">.48</span><span class="number">.848</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">101</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">         Recheck Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line">         <span class="keyword">Rows</span> Removed <span class="keyword">by</span> Index Recheck: <span class="number">125418</span></span><br><span class="line">         <span class="keyword">Filter</span>: (body_size <span class="operator">&gt;</span> <span class="number">100</span>)</span><br><span class="line">         <span class="keyword">Rows</span> Removed <span class="keyword">by</span> <span class="keyword">Filter</span>: <span class="number">12</span></span><br><span class="line">         Heap Blocks: lossy<span class="operator">=</span><span class="number">3862</span></span><br><span class="line">         <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Index Scan <span class="keyword">on</span> table_name_log_at_idx  (cost<span class="operator">=</span><span class="number">0.00</span>.<span class="number">.109</span><span class="number">.03</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">4059</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">2.176</span>.<span class="number">.2</span><span class="number">.180</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">39680</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">               Index Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line"> Planning <span class="type">Time</span>: <span class="number">0.901</span> ms</span><br><span class="line"> Execution <span class="type">Time</span>: <span class="number">49.624</span> ms</span><br><span class="line">(<span class="number">11</span> 行记录)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可见：</p>
+<ul>
+<li>在一张6.9GB数据的表上，按创建时间建<code>BRIN</code>索引，建成后，索引只有272KB！</li>
+<li>在做中远距离的<code>between</code>查询。只要<code>46ms</code>！</li>
+<li>带时间段的多条件查询，也只要<code>49ms</code>！</li>
+</ul>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2020/07/06/openwrt-on-raspberrypi-play-audio/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">OpenWRT 在 RaspberryPI 播放音频</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2020/06/29/golang-udp-server/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">golang udp 服务的坑</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

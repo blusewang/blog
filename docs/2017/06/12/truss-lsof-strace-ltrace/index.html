@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            truss lsof strace ltrace 让你知道系统运行中的进程正在干什么 |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">truss lsof strace ltrace 让你知道系统运行中的进程正在干什么</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2017-06-12 16:32:11
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/FreeBSD/">FreeBSD</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/%E6%80%A7%E8%83%BD/">性能</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>#truss<br>这个命令一般UNIX平台自带。使用举例：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">[bluse@ybcz ~/vhosts/bluse]$ sudo truss -p48932</span><br><span class="line">clock_gettime(4,&#123;334689.597960013 &#125;)		 = 0 (0x0)</span><br><span class="line">clock_gettime(4,&#123;334689.598165067 &#125;)		 = 0 (0x0)</span><br><span class="line">clock_gettime(4,&#123;334689.598310337 &#125;)		 = 0 (0x0)</span><br><span class="line">gettimeofday(&#123;1480832080.977889 &#125;,0x0)		 = 0 (0x0)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,54) = 54 (0x36)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,52) = 52 (0x34)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,56) = 56 (0x38)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,55) = 55 (0x37)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,50) = 50 (0x32)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,55) = 55 (0x37)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,54) = 54 (0x36)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,47) = 47 (0x2f)</span><br><span class="line">clock_gettime(4,&#123;334689.600967100 &#125;)		 = 0 (0x0)</span><br><span class="line">gettimeofday(&#123;1480832080.980523 &#125;,0x0)		 = 0 (0x0)</span><br><span class="line">gettimeofday(&#123;1480832080.980791 &#125;,0x0)		 = 0 (0x0)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,52) = 52 (0x34)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,50) = 50 (0x32)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,49) = 49 (0x31)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,46) = 46 (0x2e)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,45) = 45 (0x2d)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,49) = 49 (0x31)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,46) = 46 (0x2e)</span><br><span class="line">write(14,&quot;*3\r\n$4\r\nhget\r\n$14\r\nstate&quot;...,46) = 46 (0x2e)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>这是实时查看。也可以：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">truss -p 48932 -o out.truss</span><br></pre></td></tr></table></figure>
+<p>把结果输出至文件中。捕获一断时间后再细分析。</p>
+<p>这个命令能让你很方便地看清异常位置。如：死循环、某些未写入日志的异常等。</p>
+<p>很适合用来解决CPU占用过高、难定位的异常、难重现的异常等 。</p>
+<p>#lsof<br>这个linux/unix都好使。它有两个方面好使。</p>
+<ul>
+<li>按端口查连接<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">bluse@bluse-Inspiron-1427:~/www/vhost$ lsof -i:80</span><br><span class="line">COMMAND    PID  USER   FD   TYPE DEVICE SIZE/OFF NODE NAME</span><br><span class="line">cairo-doc 3059 bluse   24u  IPv4  95707      0t0  TCP 192.168.1.102:40728-&gt;ec2-35-162-44-96.us-west-2.compute.amazonaws.com:http (ESTABLISHED)</span><br><span class="line">xmradio   3425 bluse   13u  IPv4  96506      0t0  TCP 192.168.1.102:48640-&gt;202.108.249.250:http (ESTABLISHED)</span><br><span class="line">xmradio   3425 bluse   14u  IPv4  90643      0t0  TCP 192.168.1.102:57590-&gt;140.205.220.98:http (CLOSE_WAIT)</span><br><span class="line">gvfsd-htt 3450 bluse   10u  IPv4  95783      0t0  TCP 192.168.1.102:55522-&gt;123.125.7.240:http (ESTABLISHED)</span><br><span class="line">chrome    3967 bluse  162u  IPv4  95526      0t0  TCP 192.168.1.102:58632-&gt;128.199.228.91:http (ESTABLISHED)</span><br><span class="line">chrome    3967 bluse  202u  IPv4  95527      0t0  TCP 192.168.1.102:58634-&gt;128.199.228.91:http (ESTABLISHED)</span><br><span class="line">chrome    3967 bluse  228u  IPv4  91831      0t0  TCP 192.168.1.102:58714-&gt;151.101.52.249:http (ESTABLISHED)</span><br></pre></td></tr></table></figure></li>
+<li>按进程PID查文件调用<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">bluse@bluse-Inspiron-1427:~/www/vhost$ lsof -p 3425</span><br><span class="line">COMMAND  PID  USER   FD      TYPE             DEVICE SIZE/OFF     NODE NAME</span><br><span class="line">xmradio 3425 bluse  cwd       DIR                8,1     4096   262146 /home/bluse</span><br><span class="line">xmradio 3425 bluse  rtd       DIR                8,1     4096        2 /</span><br><span class="line">xmradio 3425 bluse  txt       REG                8,1    14664 21375342 /usr/bin/xmradio</span><br><span class="line">xmradio 3425 bluse  mem       REG               0,19 67108904       15 /dev/shm/pulse-shm-1137957205</span><br><span class="line">xmradio 3425 bluse  mem       REG                8,1    10256 21435409 /usr/lib/vlc/plugins/audio_filter/libtrivial_channel_mixer_plugin.so</span><br><span class="line">xmradio 3425 bluse  mem       REG                8,1    34920 21435412 /usr/lib/vlc/plugins/audio_filter/libaudio_format_plugin.so</span><br><span class="line">xmradio 3425 bluse  mem       REG                8,1    10272 21435429 /usr/lib/vlc/plugins/audio_filter/libugly_resampler_plugin.so</span><br><span class="line">xmradio 3425 bluse  mem       REG                8,1    10280 21435410 /usr/lib/vlc/plugins/audio_filter/libdolby_surround_decoder_plugin.so</span><br><span class="line">xmradio 3425 bluse  mem       REG                8,1    10320 21435419 /usr/lib/vlc/plugins/audio_filter/libdtstospdif_plugin.so</span><br><span class="line">xmradio 3425 bluse  mem       REG                8,1    18472 21435431 /usr/lib/vlc/plugins/audio_filter/libsimple_channel_mixer_plugin.so</span><br><span class="line">xmradio 3425 bluse  mem       REG                8,1     6176 21435428 /usr/lib/vlc/plugins/audio_filter/liba52tospdif_plugin.so</span><br><span class="line">xmradio 3425 bluse  mem       REG               0,19 67108904        7 /dev/shm/pulse-shm-3282743321</span><br><span class="line">xmradio 3425 bluse  mem       REG                8,1  4343844 22414964 /usr/share/fonts/truetype/nanum/NanumGothic.ttf</span><br></pre></td></tr></table></figure>
+#strace<br>它的用法也差不多：<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strace -f -o vim.strace vim： 跟踪vim及其子进程的运行，将输出信息写到文件vim.strace。</span><br></pre></td></tr></table></figure>
+进程调试<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">bluse@bluse-Inspiron-1427:~/www/vhost$ sudo strace -o out.strace lsof -p 3425</span><br><span class="line">bluse@bluse-Inspiron-1427:~/www/vhost$ head -10 out.strace </span><br><span class="line">execve(&quot;/usr/bin/lsof&quot;, [&quot;lsof&quot;, &quot;-p&quot;, &quot;3425&quot;], [/* 26 vars */]) = 0</span><br><span class="line">brk(NULL)                               = 0x562c9956b000</span><br><span class="line">access(&quot;/etc/ld.so.nohwcap&quot;, F_OK)      = -1 ENOENT (No such file or directory)</span><br><span class="line">mmap(NULL, 8192, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0) = 0x7f29b0751000</span><br><span class="line">access(&quot;/etc/ld.so.preload&quot;, R_OK)      = -1 ENOENT (No such file or directory)</span><br><span class="line">open(&quot;/etc/ld.so.cache&quot;, O_RDONLY|O_CLOEXEC) = 3</span><br><span class="line">fstat(3, &#123;st_mode=S_IFREG|0644, st_size=188234, ...&#125;) = 0</span><br><span class="line">mmap(NULL, 188234, PROT_READ, MAP_PRIVATE, 3, 0) = 0x7f29b0723000</span><br><span class="line">close(3)                                = 0</span><br><span class="line">access(&quot;/etc/ld.so.nohwcap&quot;, F_OK)      = -1 ENOENT (No such file or directory)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+##htop 中使用 strace<br>htop中内置了strace</li>
+</ul>
+<p>进入<code>htop</code>后按上下方向键选择进程，在需要调试的进程上按<code>s</code>就能进入 它的strace。<code>F8</code>是自动翻页开关！</p>
+<p>#ltrace</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sudo ltrace -p 3425</span><br><span class="line">--- UNKNOWN_SIGNAL (Unknown signal 32) ---</span><br><span class="line">+++ exited (status 0) +++</span><br><span class="line">+++ exited (status 0) +++</span><br><span class="line">+++ exited (status 0) +++</span><br><span class="line">--- SIGCHLD (Child exited) ---</span><br></pre></td></tr></table></figure>
+<p>作为系统管理，以上这些用法基本能满足日常所需。更多深度功能得找各自的<code>man</code></p>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2017/06/17/daemontools/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">daemontools系列小工具</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2017/06/11/new-start/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">新的开始</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>

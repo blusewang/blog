@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="Hexo Theme Keep">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="Keep team">
+    
+    <title>
+        
+            PHP Swoole 从入门到放弃 |
+        
+        Keep Theme
+    </title>
+    <link rel="shortcut icon" href="/images/logo.svg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/"};
+    KEEP.theme_config = {"toc":{"enable":false,"number":false,"expand_all":false},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.svg","favicon":"/images/logo.svg","article_img_align":"left","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":false,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":false,"preload":false},"code_copy":{"enable":false,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                Keep Theme
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">PHP Swoole 从入门到放弃</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.svg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>Keep team</span>
+                        <span class="level">Lv5</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2017-06-20 15:26:12
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/PHP/">PHP</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/Swoole/">Swoole</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <p>被Swoole文档上各种“高XX”说得口水流了一地。天真的我，决定花些时间，把自己项目的新业务迁移到swoole平台上来。</p>
+<blockquote>
+<p>今天谨以此文纪念我为了swoole而逝去的时光！</p>
+</blockquote>
+<p>以下是这段时间以来尝试过程中的各种痛：</p>
+<hr>
+<blockquote>
+<p>高可用。可以通过给主进程发USR1信号来热更新代码，过程很优雅。我只要一个信号就全GET到了。</p>
+</blockquote>
+<ul>
+<li>事实上。这有个蛋疼的前提：你必须先把server段的代码与worker段的业务代码分开。因为woker重启后，只能reload 启动后include进来的代码。这就操了大蛋了。</li>
+</ul>
+<hr>
+<blockquote>
+<p>高效编码。提供了协程，可以用同步的代码，得到异步的善果！nodejs还要async/await一下呢！</p>
+</blockquote>
+<ul>
+<li>事实上。使用协程有两个条件！</li>
+</ul>
+<ol>
+<li>只能在指定的地方使用，要是在别的地方使用，得用个回调，把代码包起来。与便与其它业务代码隔离开！</li>
+<li>只能使用提供的几样东西。用开发者的话说：缓存只能使用redis，数据库只能用mysql。</li>
+</ol>
+<ul>
+<li>这里还有更多其它蛋疼的事：</li>
+</ul>
+<ol>
+<li>worker 中不能使用同步代码。因为它会阻塞整个完美的worker进程。顿时PHP的很多的第三方库成了废物。即便要用，也要丢到task进程中去。</li>
+<li>task 进程有队列，但是，它只做了内部私有封装了的队列。还提出了若干条不清不楚的使用时的限制。如果任务失败，自己不收集，就无法重现。如果宕机，所有队列里的事，全了了账。队列里的事务也都成了悬案。这一点与laravel的队列比起来，可用性差得太TM远了！</li>
+<li>逃不过的回调。其实PHP其它扩展也有异步的，譬如：ext-pgsql。可以用swoole的Event监听pgsql的socket可获得兼容的异步，但回调的问题就回来了。swoole重要的服务定义也是全程用回调的。包括worker/task/server/process这些对象生命周期。</li>
+<li>不兼容。使用swoole的协程，其它不足不能用其它的异步PHP库做弥补，因为它们各自的event-loop不同。这一点怪不得swoole开发者。如果共用，不是通晓底层的大师级操刀，会出现各种稀奇古怪的问题。</li>
+<li>功能弱。这一点主要表现在websocket Server这个对象上。swoole的websocket。声称自动的握手使用的是XX协议。但不支持使用websocket的内部的“协议”。如果带上协议名，就会拒绝。并且还有个让人蛋疼！如果自己实现握手协议，在很多版本中，它会自动地在返回的header中加入其它的头，导致被客户端拒绝！这一点开发者对此无能为力，因为swoole的response对象中的header，开发者只能加，不能改，不能删。它还不支持accept。什么样来路的请求都是直接到握手，如果要拒绝accept一些不合法的来源都不能轻易做到。</li>
+<li>奇葩的异步http client。设计得还是满好的。但不知道什么原因，使用它请求腾讯的服务器，就是不稳定。40%会被拒。但如果使用nodejs 的 request。就能做到100%稳定！</li>
+</ol>
+<hr>
+<blockquote>
+<p>二进制分发。一次编译分发到各种平台。</p>
+</blockquote>
+<ul>
+<li>一来，分发的需求不大。不同的环境需要不同的定制，服务器环境与开发环境的配置注定不能完全相同。</li>
+<li>二来，编译起来就坑死人了。简单编译很多“高XX”的东西得不到。如果编译的系统有类库缺失，在configure中不会中止，只会在check的时候放个小小的’no’结尾。三个不同的系统平台上编译一下，包你眼花。PHPer对C的make了解并不深，很难编译出一个真正满意的结果。缺失类库的情况下编译出的so文件，放到PHP里后，一运行，PHP就会出一个<code>segmentfault</code>。并且有些第三方库要到放源码内部编译，有的是在外部单独编译安装。其中<code>jemalloc</code>库编译的时候还得加上专门为支持swoole而用的函数前缀。而文档对这里讲解，我就“呵呵”了。</li>
+</ul>
+<hr>
+<blockquote>
+<p>社区及支持</p>
+</blockquote>
+<ul>
+<li>哎！今天我就是在github的issue里把swoole骂上天，恐怕傲慢的开发者也未必能看到我！虽然swoole项目天天有更新，但swoole开发者是在做他自己的事。我们swoole的用户如同苍蝇！</li>
+</ul>
+
+        </div>
+
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2017/07/12/postgresql-init/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">FreeBSD 上初始化 PostgreSQL 96</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2017/06/17/daemontools/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">daemontools系列小工具</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2020</span> -
+            
+            2021 <i class="fas fa-heart icon-animate"></i> <a href="/">Keep team</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+
+        <!-- go comment -->
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+
+
+
+<div class="post-scripts ">
+    
+</div>
+
+
+
+</body>
+</html>
