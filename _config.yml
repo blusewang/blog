@@ -11,6 +11,11 @@ author: jf.wang <dev.jf.wang@gmail.com>
 language: zh-CN
 timezone: 'PRC'
 
+base_info:
+  title: JF Wang's Blog
+  author: jf wang <dev.jf.wang@gmail.com>
+  url: https://www.wangjunfeng.com.cn
+
 # URL
 ## If your site is put in a subdirectory, set url as 'http://example.com/child' and root as '/child/'
 url: https://www.wangjunfeng.com.cn
