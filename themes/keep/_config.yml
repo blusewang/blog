@@ -1,0 +1,205 @@
+# ---------------------------------------------------------------------------------------
+#  Your basic info
+# ---------------------------------------------------------------------------------------
+base_info:
+  title: JF Wang's Blog
+  author: jf wang <dev.jf.wang@gmail.com>
+  url: https://www.wangjunfeng.com.cn/
+
+
+# ---------------------------------------------------------------------------------------
+# Theme style settings
+# ---------------------------------------------------------------------------------------
+style:
+  # Theme primary color
+  primary_color: '#0066CC'
+
+  # Avatar (You can use local image or image external link)
+  avatar: /images/avatar.svg
+
+  # Favicon (You can use local image or image external link)
+  favicon: /images/logo.svg
+
+  # Article image align position, value: left | center
+  article_img_align: left
+
+  # Left side width
+  left_side_width: 260px
+
+  # Content area max width
+  content_max_width: 920px
+
+  # Mouse hover
+  hover:
+    shadow: false   # shadow effect when the mouse hover
+    scale: false    # scale effect when the mouse hover
+
+  # First screen
+  first_screen:
+    enable: true
+    background_img: /images/bg.svg
+    description: Keep writing and Keep loving.
+
+
+# ---------------------------------------------------------------------------------------
+# Social contact link
+# ---------------------------------------------------------------------------------------
+social_contact:
+  enable: true
+  links:
+    github:          https://github.com/blusewang/
+    weixin:          https://user-images.githubusercontent.com/1764005/103761401-90fced00-5051-11eb-9d18-949d2da63d54.png
+    qq:              https://user-images.githubusercontent.com/1764005/103761455-a7a34400-5051-11eb-8b53-291304eb1593.png
+    weibo:           # your WeiBo URL
+    zhihu:           https://www.zhihu.com/people/bluse-wang
+    twitter:         https://twitter.com/dev_jf_wang
+    facebook:        # your facebook URL
+    email:           dev.jf.wang@gmail.com
+
+
+# ---------------------------------------------------------------------------------------
+# Navigation menu
+# ---------------------------------------------------------------------------------------
+menu:
+  Home: /
+  Archives: /archives
+  # Categories: /categories
+  #Tags: /tags
+  # Links: /links
+  # About: /about
+  # Changelog: /changelog
+  # ......
+
+
+# ---------------------------------------------------------------------------------------
+# Home page article block display settings
+# ---------------------------------------------------------------------------------------
+home_article:
+  category:
+    enable: false     # show category in home page article block
+    limit: 3          # max number of categories shown in home page article block
+  tag:
+    enable: false     # show tags in home page article block
+    limit: 5          # max number of tags shown in home page article block
+
+
+# ---------------------------------------------------------------------------------------
+# Code copy
+# ---------------------------------------------------------------------------------------
+code_copy:
+  enable: true
+  style: default        # values: default | mac
+
+
+# ---------------------------------------------------------------------------------------
+# Table of Contents in the Sidebar
+# ---------------------------------------------------------------------------------------
+toc:
+  enable: false
+
+  # Automatically add list number to toc.
+  number: false
+
+  # If true, all level of TOC in a post will be displayed, rather than the activated part of it.
+  expand_all: false
+
+
+# ---------------------------------------------------------------------------------------
+# Post copyright info
+# ---------------------------------------------------------------------------------------
+copyright_info:
+  enable: true
+
+
+# ---------------------------------------------------------------------------------------
+# Post word count
+# Dependencies: hexo-wordcount
+# See: https://github.com/willin/hexo-wordcount
+# ---------------------------------------------------------------------------------------
+post_wordcount:
+  enable: true
+  wordcount: true  # word count, one article
+  min2read: true   # time to read, one article
+
+
+# ---------------------------------------------------------------------------------------
+# Website count
+# ---------------------------------------------------------------------------------------
+website_count:
+  # busuanzi
+  # See: http://ibruce.info/2015/04/04/busuanzi/
+  busuanzi_count:
+    enable: false
+    site_uv: false
+    site_pv: false
+    page_pv: false
+
+
+# ---------------------------------------------------------------------------------------
+# Local Search
+# Dependencies: hexo-generator-searchdb
+# See: https://github.com/theme-next/hexo-generator-searchdb
+# ---------------------------------------------------------------------------------------
+local_search:
+  enable: true
+  preload: true     # Preload the search data when the page loads
+  trigger: auto
+  unescape: false
+
+
+# ---------------------------------------------------------------------------------------
+# Comment plugin
+# ---------------------------------------------------------------------------------------
+comment:
+  # Valine
+  # See: https://github.com/xCss/Valine
+  valine:
+    enable: false
+    appid:                # your leancloud application appid
+    appkey:               # your leancloud application appkey
+    placeholder:          # your placeholder
+
+  # Gitalk
+  # See: https://github.com/gitalk/gitalk
+  gitalk:
+    enable: false
+    github_id:             # GitHub repo owner
+    repository:            # Repository name to store issues
+    client_id:             # GitHub Application Client ID
+    client_secret:         # GitHub Application Client Secret
+
+
+# ---------------------------------------------------------------------------------------
+# RSS
+# Dependencies: hexo-generator-feed
+# See: https://github.com/hexojs/hexo-generator-feed
+# ---------------------------------------------------------------------------------------
+rss:
+  enable: false
+
+
+# ---------------------------------------------------------------------------------------
+# CDN
+# ---------------------------------------------------------------------------------------
+cdn:
+  enable: false
+
+
+# ---------------------------------------------------------------------------------------
+# PJAX
+# ---------------------------------------------------------------------------------------
+pjax:
+  enable: false
+
+
+# ---------------------------------------------------------------------------------------
+# Footer settings
+# ---------------------------------------------------------------------------------------
+footer:
+  since: 2013
+
+
+# ---------------------------------------------------------------------------------------
+# Keep version (Please don't modify)
+# ---------------------------------------------------------------------------------------
+version: 3.1.0
