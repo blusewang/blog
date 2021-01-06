@@ -3,7 +3,7 @@
 # ---------------------------------------------------------------------------------------
 base_info:
   title: JF Wang's Blog
-  author: jf wang <dev.jf.wang@gmail.com>
+  author: jf wang
   url: https://www.wangjunfeng.com.cn/
 
 
@@ -15,10 +15,10 @@ style:
   primary_color: '#0066CC'
 
   # Avatar (You can use local image or image external link)
-  avatar: /images/avatar.svg
+  avatar: /images/avatar.jpg
 
   # Favicon (You can use local image or image external link)
-  favicon: /images/logo.svg
+  favicon: /images/avatar.jpg
 
   # Article image align position, value: left | center
   article_img_align: left
