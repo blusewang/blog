@@ -162,11 +162,11 @@ comment:
   # Gitalk
   # See: https://github.com/gitalk/gitalk
   gitalk:
-    enable: false
-    github_id:             # GitHub repo owner
-    repository:            # Repository name to store issues
-    client_id:             # GitHub Application Client ID
-    client_secret:         # GitHub Application Client Secret
+    enable: true
+    github_id:             blusewang
+    repository:            blog
+    client_id:             47f05f2cf146ab11f9df
+    client_secret:         0b256fbf6c6367af3637f96ce7d702d1eb6ca54c
 
 
 # ---------------------------------------------------------------------------------------
