@@ -261,21 +261,6 @@
       </tags>
   </entry>
   <entry>
-    <title>FreeBSD 的日常</title>
-    <url>/2017/07/22/freebsd/</url>
-    <content><![CDATA[<h1 id="查看当前内核，编译时的参数"><a href="#查看当前内核，编译时的参数" class="headerlink" title="查看当前内核，编译时的参数"></a>查看当前内核，编译时的参数</h1><p><code>sysctl kern.conftxt</code></p>
-<h1 id="配置并编译新内核"><a href="#配置并编译新内核" class="headerlink" title="配置并编译新内核"></a>配置并编译新内核</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/src/sys/amd64/conf/</span><br><span class="line">ee GENERIC</span><br><span class="line">config GENERIC</span><br><span class="line"><span class="built_in">cd</span> ../compile/GENERIC/</span><br><span class="line">make cleandepend &amp;&amp; make depend</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<h1 id="从低版本内核升级至高版本"><a href="#从低版本内核升级至高版本" class="headerlink" title="从低版本内核升级至高版本"></a>从低版本内核升级至高版本</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setenv UNAME_r <span class="string">&quot;10.3-RELEASE&quot;</span></span><br><span class="line">freebsd-update -r 11.0-RELEASE upgrade</span><br><span class="line">freebsd-update insatll</span><br><span class="line">reboot</span><br><span class="line">freebsd-update insatll</span><br></pre></td></tr></table></figure>
-<ul>
-<li>注册不能跨大版本。如：从10.1 -&gt; 11.0 中间要经过10.3。 10.1 -&gt; 10.3 -&gt; 11.0</li>
-<li>如果有定义自己内核，需先升级，再编译自己的配置。</li>
-</ul>
-<h1 id="给内核打补丁"><a href="#给内核打补丁" class="headerlink" title="给内核打补丁"></a>给内核打补丁</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">freebsd-update fetch</span><br><span class="line">freebsd-update install</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>FreeBSD</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>gin上同时实现websocket</title>
     <url>/2019/07/30/gin-with-websocket/</url>
     <content><![CDATA[<h1 id="一个在Gin框架上实现websocket的样例"><a href="#一个在Gin框架上实现websocket的样例" class="headerlink" title="一个在Gin框架上实现websocket的样例"></a>一个在Gin框架上实现websocket的样例</h1><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/gin-gonic/gin&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/gorilla/websocket&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	upgrader = websocket.Upgrader&#123;</span><br><span class="line">		ReadBufferSize:   <span class="number">1024</span>,</span><br><span class="line">		WriteBufferSize:  <span class="number">1024</span>,</span><br><span class="line">		CheckOrigin:      <span class="function"><span class="keyword">func</span><span class="params">(r *http.Request)</span> <span class="title">bool</span></span> &#123; <span class="keyword">return</span> <span class="literal">true</span> &#125;,</span><br><span class="line">		HandshakeTimeout: time.Duration(time.Second * <span class="number">5</span>),</span><br><span class="line">	&#125;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">handleWebsocket</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">	conn, err := upgrader.Upgrade(c.Writer, c.Request, <span class="literal">nil</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(<span class="string">&quot;cant upgrade connection:&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		msgType, msgData, err := conn.ReadMessage()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Println(<span class="string">&quot;cant read message:&quot;</span>, err)</span><br><span class="line"></span><br><span class="line">			<span class="keyword">switch</span> err.(<span class="keyword">type</span>) &#123;</span><br><span class="line">			<span class="keyword">case</span> *websocket.CloseError:</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Skip binary messages</span></span><br><span class="line">		<span class="keyword">if</span> msgType != websocket.TextMessage &#123;</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		log.Printf(<span class="string">&quot;incoming message: %s\n&quot;</span>, msgData)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	router := gin.Default()</span><br><span class="line">	router.GET(<span class="string">&quot;/websocket&quot;</span>, handleWebsocket)</span><br><span class="line">	router.Run(<span class="string">&quot;:5000&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -320,6 +305,21 @@
       <tags>
         <tag>golang</tag>
         <tag>udp</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>FreeBSD 的日常</title>
+    <url>/2017/07/22/freebsd/</url>
+    <content><![CDATA[<h1 id="查看当前内核，编译时的参数"><a href="#查看当前内核，编译时的参数" class="headerlink" title="查看当前内核，编译时的参数"></a>查看当前内核，编译时的参数</h1><p><code>sysctl kern.conftxt</code></p>
+<h1 id="配置并编译新内核"><a href="#配置并编译新内核" class="headerlink" title="配置并编译新内核"></a>配置并编译新内核</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/src/sys/amd64/conf/</span><br><span class="line">ee GENERIC</span><br><span class="line">config GENERIC</span><br><span class="line"><span class="built_in">cd</span> ../compile/GENERIC/</span><br><span class="line">make cleandepend &amp;&amp; make depend</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<h1 id="从低版本内核升级至高版本"><a href="#从低版本内核升级至高版本" class="headerlink" title="从低版本内核升级至高版本"></a>从低版本内核升级至高版本</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setenv UNAME_r <span class="string">&quot;10.3-RELEASE&quot;</span></span><br><span class="line">freebsd-update -r 11.0-RELEASE upgrade</span><br><span class="line">freebsd-update insatll</span><br><span class="line">reboot</span><br><span class="line">freebsd-update insatll</span><br></pre></td></tr></table></figure>
+<ul>
+<li>注册不能跨大版本。如：从10.1 -&gt; 11.0 中间要经过10.3。 10.1 -&gt; 10.3 -&gt; 11.0</li>
+<li>如果有定义自己内核，需先升级，再编译自己的配置。</li>
+</ul>
+<h1 id="给内核打补丁"><a href="#给内核打补丁" class="headerlink" title="给内核打补丁"></a>给内核打补丁</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">freebsd-update fetch</span><br><span class="line">freebsd-update install</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>FreeBSD</tag>
       </tags>
   </entry>
   <entry>
@@ -1021,6 +1021,52 @@
       </tags>
   </entry>
   <entry>
+    <title>OpenWRT实现内网tcp连接请求整形 搭建逼真开发环境</title>
+    <url>/2020/08/04/openwrt-ipv6-firewall-forward/</url>
+    <content><![CDATA[<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><h2 id="头疼的配置"><a href="#头疼的配置" class="headerlink" title="头疼的配置"></a>头疼的配置</h2><p>开发者本地开发一款网络应用时，一般是在测试时，使用测试域名/IP。发布时使用正式域名/IP。</p>
+<p>看似简单的小操作。但在多轮迭代时，这个小操作一但出错，会出大问题。</p>
+<p>如果开发环境配置与生产环境完全一样，那就省事许多。</p>
+<p>在有自己可控的内网路由情况下，实现起来，一般有两种方式：DNS劫持、IP劫持。</p>
+<h2 id="DNS劫持"><a href="#DNS劫持" class="headerlink" title="DNS劫持"></a>DNS劫持</h2><p>只需在登入OpenWRT后，把域名新的解析写入 <code>/etc/hosts</code> 。再 <code>/etc/init.d/dnsmasq reload</code> 重载一下<code>dnsmasq</code>就好了。简单好用！</p>
+<h2 id="IP劫持"><a href="#IP劫持" class="headerlink" title="IP劫持"></a>IP劫持</h2><p>这个相对复杂一些。因为在OpenWRT的 <code>网络 - 防火墙 - NAT 规则</code> 只支持重写源地址，不支持重写目标地址。</p>
+<p>这就得手动写<code>网络 - 防火墙 - 自定义规则</code>了！</p>
+<h3 id="IPv4劫持"><a href="#IPv4劫持" class="headerlink" title="IPv4劫持"></a>IPv4劫持</h3><p>IPv4的规则直接写就可以，例如：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">iptables -t nat -A PREROUTING -i br-lan -d 1.2.3.4 -p tcp -m tcp --dport 443 -m comment --comment &quot;dev&quot; -j DNAT --to-destination 192.168.1.2:443</span><br></pre></td></tr></table></figure>
+<h3 id="IPv6劫持"><a href="#IPv6劫持" class="headerlink" title="IPv6劫持"></a>IPv6劫持</h3><p>IPv6就麻烦些了。因为IPv6设计目标就是弃用<code>NAT</code>（因为有几乎无穷的地址资源）。<br>虽然按标准应该不用，但依旧有<code>热心人</code>对它进行了实现。</p>
+<p>在<code>系统 - 软件包</code>里搜索并安装：<code>kmod-ipt-nat</code> <code>ip6tables-mod-nat</code>。这就具备了对IPv6进行<code>NAT</code>的能力了！</p>
+<p>但不能直接写规则；需先开启发住内网的v6的伪装。例如：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">ip6tables -t nat -I POSTROUTING -o br-lan -j MASQUERADE</span><br></pre></td></tr></table></figure>
+<p>再给从内网发出的包写具体规则；例如：</p>
+<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">ip6tables -t nat -A PREROUTING -i br-lan -d 2408:4002:xx::xx -p tcp -m tcp --dport 443 -m comment --comment &quot;dev&quot; -j DNAT --to-destination [2408:8207:xx:xx::2]:443</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>ipv6</tag>
+        <tag>ip6tables</tag>
+        <tag>OpenWRT</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>OpenWRT 在 RaspberryPI 播放音频</title>
+    <url>/2020/07/06/openwrt-on-raspberrypi-play-audio/</url>
+    <content><![CDATA[<p>RaspberryPI 不只能满足路由计算需要，还能用于多媒体，如：插上音箱放音乐！</p>
+<h1 id="OpenWrt编译要求"><a href="#OpenWrt编译要求" class="headerlink" title="OpenWrt编译要求"></a>OpenWrt编译要求</h1><h2 id="内核驱动类要求："><a href="#内核驱动类要求：" class="headerlink" title="内核驱动类要求："></a>内核驱动类要求：</h2><ul>
+<li>Kernel modules &gt; Sound Support &gt; kmod-sound-core</li>
+<li>Kernel modules &gt; Sound Support &gt; kmod-sound-arm-bcm2835<h2 id="软件要求"><a href="#软件要求" class="headerlink" title="软件要求"></a>软件要求</h2></li>
+<li>Sound &gt; alsa-utils</li>
+<li>Sound &gt; madplay</li>
+</ul>
+<h1 id="Raspberry-PI-设置"><a href="#Raspberry-PI-设置" class="headerlink" title="Raspberry PI 设置"></a>Raspberry PI 设置</h1><h2 id="开放设备"><a href="#开放设备" class="headerlink" title="开放设备"></a>开放设备</h2><p>在 <code>/boot/config.txt</code> 里添加如下行：</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">dtparam=audio=on</span><br></pre></td></tr></table></figure>
+<p>使Raspberry PI开放音频硬件。不然有驱动程序，但找不到音频设备！</p>
+<h2 id="设置音频输出"><a href="#设置音频输出" class="headerlink" title="设置音频输出"></a>设置音频输出</h2><p>通过<code>amixer</code>命令完成：</p>
+<p><code>$ amixer cset numid=3 1</code> ：指定音频输出接口为 3.5mm 耳机接口<br><code>$ amixer cset numid=3 2</code> ：指定音频输出接口为 HDMI</p>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> madplay music.mp3</span></span><br><span class="line">  MPEG Audio Decoder 0.15.2 (beta) - Copyright (C) 2000-2004 Robert Leslie et al.</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>OpenWRT</tag>
+        <tag>RaspberryPi</tag>
+        <tag>音频</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>RaspberryPI上安装OpenWRT</title>
     <url>/2019/12/04/openwrt-on-raspberry-pi/</url>
     <content><![CDATA[<h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><p>家用网络拓扑设计<br><img src="https://user-images.githubusercontent.com/1764005/70146001-3e2d6500-16dc-11ea-952c-dda05eb69029.png" alt="image"></p>
@@ -1048,73 +1094,8 @@
 </ul>
 ]]></content>
       <tags>
+        <tag>OpenWRT</tag>
         <tag>RaspberryPi</tag>
-        <tag>OpenWRT</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>OpenWRT实现内网tcp连接请求整形 搭建逼真开发环境</title>
-    <url>/2020/08/04/openwrt-ipv6-firewall-forward/</url>
-    <content><![CDATA[<h1 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h1><h2 id="头疼的配置"><a href="#头疼的配置" class="headerlink" title="头疼的配置"></a>头疼的配置</h2><p>开发者本地开发一款网络应用时，一般是在测试时，使用测试域名/IP。发布时使用正式域名/IP。</p>
-<p>看似简单的小操作。但在多轮迭代时，这个小操作一但出错，会出大问题。</p>
-<p>如果开发环境配置与生产环境完全一样，那就省事许多。</p>
-<p>在有自己可控的内网路由情况下，实现起来，一般有两种方式：DNS劫持、IP劫持。</p>
-<h2 id="DNS劫持"><a href="#DNS劫持" class="headerlink" title="DNS劫持"></a>DNS劫持</h2><p>只需在登入OpenWRT后，把域名新的解析写入 <code>/etc/hosts</code> 。再 <code>/etc/init.d/dnsmasq reload</code> 重载一下<code>dnsmasq</code>就好了。简单好用！</p>
-<h2 id="IP劫持"><a href="#IP劫持" class="headerlink" title="IP劫持"></a>IP劫持</h2><p>这个相对复杂一些。因为在OpenWRT的 <code>网络 - 防火墙 - NAT 规则</code> 只支持重写源地址，不支持重写目标地址。</p>
-<p>这就得手动写<code>网络 - 防火墙 - 自定义规则</code>了！</p>
-<h3 id="IPv4劫持"><a href="#IPv4劫持" class="headerlink" title="IPv4劫持"></a>IPv4劫持</h3><p>IPv4的规则直接写就可以，例如：</p>
-<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">iptables -t nat -A PREROUTING -i br-lan -d 1.2.3.4 -p tcp -m tcp --dport 443 -m comment --comment &quot;dev&quot; -j DNAT --to-destination 192.168.1.2:443</span><br></pre></td></tr></table></figure>
-<h3 id="IPv6劫持"><a href="#IPv6劫持" class="headerlink" title="IPv6劫持"></a>IPv6劫持</h3><p>IPv6就麻烦些了。因为IPv6设计目标就是弃用<code>NAT</code>（因为有几乎无穷的地址资源）。<br>虽然按标准应该不用，但依旧有<code>热心人</code>对它进行了实现。</p>
-<p>在<code>系统 - 软件包</code>里搜索并安装：<code>kmod-ipt-nat</code> <code>ip6tables-mod-nat</code>。这就具备了对IPv6进行<code>NAT</code>的能力了！</p>
-<p>但不能直接写规则；需先开启发住内网的v6的伪装。例如：</p>
-<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">ip6tables -t nat -I POSTROUTING -o br-lan -j MASQUERADE</span><br></pre></td></tr></table></figure>
-<p>再给从内网发出的包写具体规则；例如：</p>
-<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">ip6tables -t nat -A PREROUTING -i br-lan -d 2408:4002:xx::xx -p tcp -m tcp --dport 443 -m comment --comment &quot;dev&quot; -j DNAT --to-destination [2408:8207:xx:xx::2]:443</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>ipv6</tag>
-        <tag>OpenWRT</tag>
-        <tag>ip6tables</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>OpenWRT 在 RaspberryPI 播放音频</title>
-    <url>/2020/07/06/openwrt-on-raspberrypi-play-audio/</url>
-    <content><![CDATA[<p>RaspberryPI 不只能满足路由计算需要，还能用于多媒体，如：插上音箱放音乐！</p>
-<h1 id="OpenWrt编译要求"><a href="#OpenWrt编译要求" class="headerlink" title="OpenWrt编译要求"></a>OpenWrt编译要求</h1><h2 id="内核驱动类要求："><a href="#内核驱动类要求：" class="headerlink" title="内核驱动类要求："></a>内核驱动类要求：</h2><ul>
-<li>Kernel modules &gt; Sound Support &gt; kmod-sound-core</li>
-<li>Kernel modules &gt; Sound Support &gt; kmod-sound-arm-bcm2835<h2 id="软件要求"><a href="#软件要求" class="headerlink" title="软件要求"></a>软件要求</h2></li>
-<li>Sound &gt; alsa-utils</li>
-<li>Sound &gt; madplay</li>
-</ul>
-<h1 id="Raspberry-PI-设置"><a href="#Raspberry-PI-设置" class="headerlink" title="Raspberry PI 设置"></a>Raspberry PI 设置</h1><h2 id="开放设备"><a href="#开放设备" class="headerlink" title="开放设备"></a>开放设备</h2><p>在 <code>/boot/config.txt</code> 里添加如下行：</p>
-<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">dtparam=audio=on</span><br></pre></td></tr></table></figure>
-<p>使Raspberry PI开放音频硬件。不然有驱动程序，但找不到音频设备！</p>
-<h2 id="设置音频输出"><a href="#设置音频输出" class="headerlink" title="设置音频输出"></a>设置音频输出</h2><p>通过<code>amixer</code>命令完成：</p>
-<p><code>$ amixer cset numid=3 1</code> ：指定音频输出接口为 3.5mm 耳机接口<br><code>$ amixer cset numid=3 2</code> ：指定音频输出接口为 HDMI</p>
-<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> madplay music.mp3</span></span><br><span class="line">  MPEG Audio Decoder 0.15.2 (beta) - Copyright (C) 2000-2004 Robert Leslie et al.</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>RaspberryPi</tag>
-        <tag>OpenWRT</tag>
-        <tag>音频</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PostgreSQL 外部表</title>
-    <url>/2018/09/07/postgres_fdw/</url>
-    <content><![CDATA[<p>是时候用一下PG外部表了。这些年过去，这功能应该是稳定了的。</p>
-<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><p>首先确定contrib是否有安装。如果没有要先安装：</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pkg install postgresql10-contrib</span><br></pre></td></tr></table></figure>
-<p>然后开启扩展</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> EXTENSION postgres_fdw;</span><br></pre></td></tr></table></figure>
-<h2 id="创建远程服务"><a href="#创建远程服务" class="headerlink" title="创建远程服务"></a>创建远程服务</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> SERVER server156</span><br><span class="line">  <span class="keyword">FOREIGN</span> DATA WRAPPER postgres_fdw</span><br><span class="line">OPTIONS (host <span class="string">&#x27;192.168.1.156&#x27;</span>,dbname <span class="string">&#x27;bossdb&#x27;</span>,port <span class="string">&#x27;5432&#x27;</span>);</span><br></pre></td></tr></table></figure>
-<p>这里有个坑,就是如果192.168.1.156连不上的情况下上面语句也会执行成功.其实真正的连接到远程服务器是要等到后面dml执行时才会连接</p>
-<h2 id="创建用户映射"><a href="#创建用户映射" class="headerlink" title="创建用户映射"></a>创建用户映射</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> MAPPING <span class="keyword">FOR</span> postgres</span><br><span class="line">  SERVER server156</span><br><span class="line">  OPTIONS (<span class="keyword">user</span> <span class="string">&#x27;postgres&#x27;</span>,password <span class="string">&#x27;000000&#x27;</span>);</span><br></pre></td></tr></table></figure>
-<p>这里如果输错了也不会知道。</p>
-<h2 id="创建远程表"><a href="#创建远程表" class="headerlink" title="创建远程表"></a>创建远程表</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FOREIGN</span> <span class="keyword">TABLE</span> if <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> qbit_test (</span><br><span class="line">  id <span class="type">INTEGER</span>  ,</span><br><span class="line">  name <span class="type">CHARACTER</span> <span class="type">VARYING</span>(<span class="number">50</span>),</span><br><span class="line">  class <span class="type">CHARACTER</span> <span class="type">VARYING</span>(<span class="number">50</span>),</span><br><span class="line">  <span class="type">time</span> <span class="type">CHARACTER</span> <span class="type">VARYING</span>(<span class="number">50</span>)</span><br><span class="line">)</span><br><span class="line">  SERVER server156</span><br><span class="line">OPTIONS (schema_name <span class="string">&#x27;public&#x27;</span>,table_name <span class="string">&#x27;qbit_test&#x27;</span>);</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>PostgreSQL</tag>
-        <tag>FDW</tag>
-        <tag>外部表</tag>
       </tags>
   </entry>
   <entry>
@@ -1143,6 +1124,25 @@
       <tags>
         <tag>plan9</tag>
         <tag>架构</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PostgreSQL 外部表</title>
+    <url>/2018/09/07/postgres_fdw/</url>
+    <content><![CDATA[<p>是时候用一下PG外部表了。这些年过去，这功能应该是稳定了的。</p>
+<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><p>首先确定contrib是否有安装。如果没有要先安装：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pkg install postgresql10-contrib</span><br></pre></td></tr></table></figure>
+<p>然后开启扩展</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> EXTENSION postgres_fdw;</span><br></pre></td></tr></table></figure>
+<h2 id="创建远程服务"><a href="#创建远程服务" class="headerlink" title="创建远程服务"></a>创建远程服务</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> SERVER server156</span><br><span class="line">  <span class="keyword">FOREIGN</span> DATA WRAPPER postgres_fdw</span><br><span class="line">OPTIONS (host <span class="string">&#x27;192.168.1.156&#x27;</span>,dbname <span class="string">&#x27;bossdb&#x27;</span>,port <span class="string">&#x27;5432&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>这里有个坑,就是如果192.168.1.156连不上的情况下上面语句也会执行成功.其实真正的连接到远程服务器是要等到后面dml执行时才会连接</p>
+<h2 id="创建用户映射"><a href="#创建用户映射" class="headerlink" title="创建用户映射"></a>创建用户映射</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">USER</span> MAPPING <span class="keyword">FOR</span> postgres</span><br><span class="line">  SERVER server156</span><br><span class="line">  OPTIONS (<span class="keyword">user</span> <span class="string">&#x27;postgres&#x27;</span>,password <span class="string">&#x27;000000&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<p>这里如果输错了也不会知道。</p>
+<h2 id="创建远程表"><a href="#创建远程表" class="headerlink" title="创建远程表"></a>创建远程表</h2><figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">CREATE</span> <span class="keyword">FOREIGN</span> <span class="keyword">TABLE</span> if <span class="keyword">NOT</span> <span class="keyword">EXISTS</span> qbit_test (</span><br><span class="line">  id <span class="type">INTEGER</span>  ,</span><br><span class="line">  name <span class="type">CHARACTER</span> <span class="type">VARYING</span>(<span class="number">50</span>),</span><br><span class="line">  class <span class="type">CHARACTER</span> <span class="type">VARYING</span>(<span class="number">50</span>),</span><br><span class="line">  <span class="type">time</span> <span class="type">CHARACTER</span> <span class="type">VARYING</span>(<span class="number">50</span>)</span><br><span class="line">)</span><br><span class="line">  SERVER server156</span><br><span class="line">OPTIONS (schema_name <span class="string">&#x27;public&#x27;</span>,table_name <span class="string">&#x27;qbit_test&#x27;</span>);</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>PostgreSQL</tag>
+        <tag>FDW</tag>
+        <tag>外部表</tag>
       </tags>
   </entry>
   <entry>
@@ -1181,30 +1181,6 @@
 ]]></content>
       <tags>
         <tag>PostgreSQL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>PostgreSQL BRIN索引 日志型数据索引神器</title>
-    <url>/2020/06/29/postgresql-brin-index/</url>
-    <content><![CDATA[<p>一张随着时间增长的表。当表的体积达到数GB或数十GB后。你会发现<code>BTREE</code>索引也也有数GB或数十GB；BTREE索引尺寸有时能达到表本身尺寸的70%左右！</p>
-<p>当索引的尺寸接近或超过系统内存一半时。查询使用了索引，速度也会慢到令人无法忍受！</p>
-<p>此时一般的想法是：分表！将表按不同时间段拆开。这样查询时就不需要扫描整个索引了！速度就上来了。</p>
-<p>其实，此时PostgreSQL还有个更有意思的索引，简直是从根本上重新定义了这个问题！它就是：</p>
-<h2 id="BRIN索引"><a href="#BRIN索引" class="headerlink" title="BRIN索引"></a><code>BRIN</code>索引</h2><p>通过<a href="http://postgres.cn/docs/12/brin-intro.html"><code>BRIN</code>索引的官方介绍</a>，得知，它的索引实现是完全另一种思路：</p>
-<p><code>BRIN</code>索引，是按写入磁盘的数据块，做索引的。它记录这张表，索引字段在这个数据块上的最大值与最小值；也叫这个字段的区间。</p>
-<p>这就大大减少了索引的复杂度，提高了查询速度。</p>
-<p>来具体体验一下：</p>
-<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> \dt<span class="operator">+</span> log.table_name</span><br><span class="line">                           关联列表</span><br><span class="line"> 架构模式 <span class="operator">|</span>    名称    <span class="operator">|</span>  类型  <span class="operator">|</span>  拥有者  <span class="operator">|</span>  大小   <span class="operator">|</span>  描述</span><br><span class="line"><span class="comment">----------+------------+--------+----------+---------+---------</span></span><br><span class="line"> log      <span class="operator">|</span> table_name <span class="operator">|</span> 数据表 <span class="operator">|</span> postgres <span class="operator">|</span> <span class="number">6908</span> MB <span class="operator">|</span> gdb应用</span><br><span class="line">(<span class="number">1</span> 行记录)</span><br><span class="line"></span><br><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> \di<span class="operator">+</span> log.table_name_log_at_idx</span><br><span class="line">                                    关联列表</span><br><span class="line"> 架构模式 <span class="operator">|</span>         名称          <span class="operator">|</span> 类型 <span class="operator">|</span>  拥有者  <span class="operator">|</span>   数据表   <span class="operator">|</span>  大小  <span class="operator">|</span> 描述</span><br><span class="line"><span class="comment">----------+-----------------------+------+----------+------------+--------+------</span></span><br><span class="line"> log      <span class="operator">|</span> table_name_log_at_idx <span class="operator">|</span> 索引 <span class="operator">|</span> postgres <span class="operator">|</span> table_name <span class="operator">|</span> <span class="number">272</span> kB <span class="operator">|</span></span><br><span class="line">(<span class="number">1</span> 行记录)</span><br><span class="line"></span><br><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> explain analyze <span class="keyword">select</span> <span class="built_in">count</span>(<span class="number">1</span>) <span class="keyword">from</span> log.table_name <span class="keyword">where</span> log_at <span class="keyword">between</span> <span class="string">&#x27;2020-01-01 12:00:00&#x27;</span> <span class="keyword">and</span> <span class="string">&#x27;2020-01-01 12:01:00&#x27;</span>;</span><br><span class="line">                                                                          QUERY PLAN</span><br><span class="line"><span class="comment">---------------------------------------------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"> Aggregate  (cost<span class="operator">=</span><span class="number">15547.84</span>.<span class="number">.15547</span><span class="number">.85</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> width<span class="operator">=</span><span class="number">8</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">46.691</span>.<span class="number">.46</span><span class="number">.700</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">   <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Heap Scan <span class="keyword">on</span> table_name  (cost<span class="operator">=</span><span class="number">109.06</span>.<span class="number">.15547</span><span class="number">.55</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">116</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">3.063</span>.<span class="number">.46</span><span class="number">.153</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">113</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">         Recheck Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line">         <span class="keyword">Rows</span> Removed <span class="keyword">by</span> Index Recheck: <span class="number">124960</span></span><br><span class="line">         Heap Blocks: lossy<span class="operator">=</span><span class="number">3848</span></span><br><span class="line">         <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Index Scan <span class="keyword">on</span> table_name_log_at_idx  (cost<span class="operator">=</span><span class="number">0.00</span>.<span class="number">.109</span><span class="number">.03</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">4059</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">1.384</span>.<span class="number">.1</span><span class="number">.389</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">39680</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">               Index Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line"> Planning <span class="type">Time</span>: <span class="number">0.106</span> ms</span><br><span class="line"> Execution <span class="type">Time</span>: <span class="number">46.797</span> ms</span><br><span class="line">(<span class="number">9</span> 行记录)</span><br><span class="line"></span><br><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> explain analyze <span class="keyword">select</span> <span class="built_in">count</span>(<span class="number">1</span>) <span class="keyword">from</span> log.table_name <span class="keyword">where</span> log_at <span class="keyword">between</span> <span class="string">&#x27;2020-01-01 12:00:00&#x27;</span> <span class="keyword">and</span> <span class="string">&#x27;2020-01-01 12:01:00&#x27;</span> <span class="keyword">and</span> body_size<span class="operator">&gt;</span><span class="number">100</span>;</span><br><span class="line">                                                                          QUERY PLAN</span><br><span class="line"><span class="comment">---------------------------------------------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"> Aggregate  (cost<span class="operator">=</span><span class="number">15557.94</span>.<span class="number">.15557</span><span class="number">.95</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> width<span class="operator">=</span><span class="number">8</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">49.396</span>.<span class="number">.49</span><span class="number">.405</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">   <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Heap Scan <span class="keyword">on</span> table_name  (cost<span class="operator">=</span><span class="number">109.06</span>.<span class="number">.15557</span><span class="number">.69</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">97</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">3.574</span>.<span class="number">.48</span><span class="number">.848</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">101</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">         Recheck Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line">         <span class="keyword">Rows</span> Removed <span class="keyword">by</span> Index Recheck: <span class="number">125418</span></span><br><span class="line">         <span class="keyword">Filter</span>: (body_size <span class="operator">&gt;</span> <span class="number">100</span>)</span><br><span class="line">         <span class="keyword">Rows</span> Removed <span class="keyword">by</span> <span class="keyword">Filter</span>: <span class="number">12</span></span><br><span class="line">         Heap Blocks: lossy<span class="operator">=</span><span class="number">3862</span></span><br><span class="line">         <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Index Scan <span class="keyword">on</span> table_name_log_at_idx  (cost<span class="operator">=</span><span class="number">0.00</span>.<span class="number">.109</span><span class="number">.03</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">4059</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">2.176</span>.<span class="number">.2</span><span class="number">.180</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">39680</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">               Index Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line"> Planning <span class="type">Time</span>: <span class="number">0.901</span> ms</span><br><span class="line"> Execution <span class="type">Time</span>: <span class="number">49.624</span> ms</span><br><span class="line">(<span class="number">11</span> 行记录)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>可见：</p>
-<ul>
-<li>在一张6.9GB数据的表上，按创建时间建<code>BRIN</code>索引，建成后，索引只有272KB！</li>
-<li>在做中远距离的<code>between</code>查询。只要<code>46ms</code>！</li>
-<li>带时间段的多条件查询，也只要<code>49ms</code>！</li>
-</ul>
-]]></content>
-      <tags>
-        <tag>PostgreSQL</tag>
-        <tag>索引</tag>
       </tags>
   </entry>
   <entry>
@@ -1262,6 +1238,30 @@
       <tags>
         <tag>PostgreSQL</tag>
         <tag>Citus</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PostgreSQL BRIN索引 日志型数据索引神器</title>
+    <url>/2020/06/29/postgresql-brin-index/</url>
+    <content><![CDATA[<p>一张随着时间增长的表。当表的体积达到数GB或数十GB后。你会发现<code>BTREE</code>索引也也有数GB或数十GB；BTREE索引尺寸有时能达到表本身尺寸的70%左右！</p>
+<p>当索引的尺寸接近或超过系统内存一半时。查询使用了索引，速度也会慢到令人无法忍受！</p>
+<p>此时一般的想法是：分表！将表按不同时间段拆开。这样查询时就不需要扫描整个索引了！速度就上来了。</p>
+<p>其实，此时PostgreSQL还有个更有意思的索引，简直是从根本上重新定义了这个问题！它就是：</p>
+<h2 id="BRIN索引"><a href="#BRIN索引" class="headerlink" title="BRIN索引"></a><code>BRIN</code>索引</h2><p>通过<a href="http://postgres.cn/docs/12/brin-intro.html"><code>BRIN</code>索引的官方介绍</a>，得知，它的索引实现是完全另一种思路：</p>
+<p><code>BRIN</code>索引，是按写入磁盘的数据块，做索引的。它记录这张表，索引字段在这个数据块上的最大值与最小值；也叫这个字段的区间。</p>
+<p>这就大大减少了索引的复杂度，提高了查询速度。</p>
+<p>来具体体验一下：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> \dt<span class="operator">+</span> log.table_name</span><br><span class="line">                           关联列表</span><br><span class="line"> 架构模式 <span class="operator">|</span>    名称    <span class="operator">|</span>  类型  <span class="operator">|</span>  拥有者  <span class="operator">|</span>  大小   <span class="operator">|</span>  描述</span><br><span class="line"><span class="comment">----------+------------+--------+----------+---------+---------</span></span><br><span class="line"> log      <span class="operator">|</span> table_name <span class="operator">|</span> 数据表 <span class="operator">|</span> postgres <span class="operator">|</span> <span class="number">6908</span> MB <span class="operator">|</span> gdb应用</span><br><span class="line">(<span class="number">1</span> 行记录)</span><br><span class="line"></span><br><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> \di<span class="operator">+</span> log.table_name_log_at_idx</span><br><span class="line">                                    关联列表</span><br><span class="line"> 架构模式 <span class="operator">|</span>         名称          <span class="operator">|</span> 类型 <span class="operator">|</span>  拥有者  <span class="operator">|</span>   数据表   <span class="operator">|</span>  大小  <span class="operator">|</span> 描述</span><br><span class="line"><span class="comment">----------+-----------------------+------+----------+------------+--------+------</span></span><br><span class="line"> log      <span class="operator">|</span> table_name_log_at_idx <span class="operator">|</span> 索引 <span class="operator">|</span> postgres <span class="operator">|</span> table_name <span class="operator">|</span> <span class="number">272</span> kB <span class="operator">|</span></span><br><span class="line">(<span class="number">1</span> 行记录)</span><br><span class="line"></span><br><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> explain analyze <span class="keyword">select</span> <span class="built_in">count</span>(<span class="number">1</span>) <span class="keyword">from</span> log.table_name <span class="keyword">where</span> log_at <span class="keyword">between</span> <span class="string">&#x27;2020-01-01 12:00:00&#x27;</span> <span class="keyword">and</span> <span class="string">&#x27;2020-01-01 12:01:00&#x27;</span>;</span><br><span class="line">                                                                          QUERY PLAN</span><br><span class="line"><span class="comment">---------------------------------------------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"> Aggregate  (cost<span class="operator">=</span><span class="number">15547.84</span>.<span class="number">.15547</span><span class="number">.85</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> width<span class="operator">=</span><span class="number">8</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">46.691</span>.<span class="number">.46</span><span class="number">.700</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">   <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Heap Scan <span class="keyword">on</span> table_name  (cost<span class="operator">=</span><span class="number">109.06</span>.<span class="number">.15547</span><span class="number">.55</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">116</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">3.063</span>.<span class="number">.46</span><span class="number">.153</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">113</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">         Recheck Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line">         <span class="keyword">Rows</span> Removed <span class="keyword">by</span> Index Recheck: <span class="number">124960</span></span><br><span class="line">         Heap Blocks: lossy<span class="operator">=</span><span class="number">3848</span></span><br><span class="line">         <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Index Scan <span class="keyword">on</span> table_name_log_at_idx  (cost<span class="operator">=</span><span class="number">0.00</span>.<span class="number">.109</span><span class="number">.03</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">4059</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">1.384</span>.<span class="number">.1</span><span class="number">.389</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">39680</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">               Index Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line"> Planning <span class="type">Time</span>: <span class="number">0.106</span> ms</span><br><span class="line"> Execution <span class="type">Time</span>: <span class="number">46.797</span> ms</span><br><span class="line">(<span class="number">9</span> 行记录)</span><br><span class="line"></span><br><span class="line">cashier<span class="operator">=</span><span class="operator">&gt;</span> explain analyze <span class="keyword">select</span> <span class="built_in">count</span>(<span class="number">1</span>) <span class="keyword">from</span> log.table_name <span class="keyword">where</span> log_at <span class="keyword">between</span> <span class="string">&#x27;2020-01-01 12:00:00&#x27;</span> <span class="keyword">and</span> <span class="string">&#x27;2020-01-01 12:01:00&#x27;</span> <span class="keyword">and</span> body_size<span class="operator">&gt;</span><span class="number">100</span>;</span><br><span class="line">                                                                          QUERY PLAN</span><br><span class="line"><span class="comment">---------------------------------------------------------------------------------------------------------------------------------------------------------------</span></span><br><span class="line"> Aggregate  (cost<span class="operator">=</span><span class="number">15557.94</span>.<span class="number">.15557</span><span class="number">.95</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> width<span class="operator">=</span><span class="number">8</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">49.396</span>.<span class="number">.49</span><span class="number">.405</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">1</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">   <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Heap Scan <span class="keyword">on</span> table_name  (cost<span class="operator">=</span><span class="number">109.06</span>.<span class="number">.15557</span><span class="number">.69</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">97</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">3.574</span>.<span class="number">.48</span><span class="number">.848</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">101</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">         Recheck Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line">         <span class="keyword">Rows</span> Removed <span class="keyword">by</span> Index Recheck: <span class="number">125418</span></span><br><span class="line">         <span class="keyword">Filter</span>: (body_size <span class="operator">&gt;</span> <span class="number">100</span>)</span><br><span class="line">         <span class="keyword">Rows</span> Removed <span class="keyword">by</span> <span class="keyword">Filter</span>: <span class="number">12</span></span><br><span class="line">         Heap Blocks: lossy<span class="operator">=</span><span class="number">3862</span></span><br><span class="line">         <span class="operator">-</span><span class="operator">&gt;</span>  Bitmap Index Scan <span class="keyword">on</span> table_name_log_at_idx  (cost<span class="operator">=</span><span class="number">0.00</span>.<span class="number">.109</span><span class="number">.03</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">4059</span> width<span class="operator">=</span><span class="number">0</span>) (actual <span class="type">time</span><span class="operator">=</span><span class="number">2.176</span>.<span class="number">.2</span><span class="number">.180</span> <span class="keyword">rows</span><span class="operator">=</span><span class="number">39680</span> loops<span class="operator">=</span><span class="number">1</span>)</span><br><span class="line">               Index Cond: ((log_at <span class="operator">&gt;=</span> <span class="string">&#x27;2020-01-01 12:00:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone) <span class="keyword">AND</span> (log_at <span class="operator">&lt;=</span> <span class="string">&#x27;2020-01-01 12:01:00+08&#x27;</span>::<span class="type">timestamp</span> <span class="keyword">with</span> <span class="type">time</span> zone))</span><br><span class="line"> Planning <span class="type">Time</span>: <span class="number">0.901</span> ms</span><br><span class="line"> Execution <span class="type">Time</span>: <span class="number">49.624</span> ms</span><br><span class="line">(<span class="number">11</span> 行记录)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>可见：</p>
+<ul>
+<li>在一张6.9GB数据的表上，按创建时间建<code>BRIN</code>索引，建成后，索引只有272KB！</li>
+<li>在做中远距离的<code>between</code>查询。只要<code>46ms</code>！</li>
+<li>带时间段的多条件查询，也只要<code>49ms</code>！</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>PostgreSQL</tag>
+        <tag>索引</tag>
       </tags>
   </entry>
   <entry>
@@ -1366,17 +1366,6 @@
       </tags>
   </entry>
   <entry>
-    <title>一张图搞定各种SQL JOINS</title>
-    <url>/2017/07/22/sql-join/</url>
-    <content><![CDATA[<p><img src="https://user-images.githubusercontent.com/1764005/28487907-12e08682-6ecf-11e7-9a18-1f229476f0ae.jpg"></p>
-]]></content>
-      <tags>
-        <tag>PostgreSQL</tag>
-        <tag>SQL</tag>
-        <tag>JOIN</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PostgreSQL SSL 加密传输配置</title>
     <url>/2019/10/26/postgresql-ssl/</url>
     <content><![CDATA[<h1 id="签名证书"><a href="#签名证书" class="headerlink" title="签名证书"></a>签名证书</h1><h2 id="快速测试证书"><a href="#快速测试证书" class="headerlink" title="快速测试证书"></a>快速测试证书</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl req -new -x509 -days 365 -nodes -text -out server.crt \</span><br><span class="line">  -keyout server.key -subj &quot;&#x2F;CN&#x3D;dbhost.yourdomain.com&quot;</span><br></pre></td></tr></table></figure>
@@ -1400,6 +1389,17 @@
       </tags>
   </entry>
   <entry>
+    <title>一张图搞定各种SQL JOINS</title>
+    <url>/2017/07/22/sql-join/</url>
+    <content><![CDATA[<p><img src="https://user-images.githubusercontent.com/1764005/28487907-12e08682-6ecf-11e7-9a18-1f229476f0ae.jpg"></p>
+]]></content>
+      <tags>
+        <tag>PostgreSQL</tag>
+        <tag>SQL</tag>
+        <tag>JOIN</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>swoole 编译配置</title>
     <url>/2017/06/05/swoole-configure/</url>
     <content><![CDATA[<p>./configure –enable-sockets –enable-openssl –enable-thread –enable-swoole –enable-ringbuffer –with-swoole –enable-picohttpparser –with-openssl-dir=/usr/local –with-jemalloc-dir=/usr/local</p>
@@ -1412,6 +1412,27 @@
       <tags>
         <tag>PHP</tag>
         <tag>Swoole</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>腾讯与华为到低谁更赚钱</title>
+    <url>/2019/07/30/tencent-vs-huwwei-2019/</url>
+    <content><![CDATA[<p>今天华为发布2019年上半年业绩，收入同比增长23.2%！那么华为今年上半年卖了多少钱呢？</p>
+<p><strong>4013亿人民币/6个月</strong></p>
+<p>腾讯2019年5月15日公布的一季度财报显示，腾讯卖了854.65亿。二季度还没出来，且简单做x2推算吧。</p>
+<p><strong>1708亿人民币/6个月</strong></p>
+<p>腾讯一软件服务公司，收钱的能力连卖货的华为一半都不到。不过得深挖一下。</p>
+<h2 id="华为"><a href="#华为" class="headerlink" title="华为"></a>华为</h2><blockquote>
+<p>[中国，深圳，2019年7月30日] 2019年上半年，华为实现销售收入4013亿人民币，<br>同比增长23.2%，<u>净利润率8.7%</u>。<a class="link"   href="https://www.huawei.com/cn/press-events/news/2019/7/huawei-announces-h1-2019-revenue" >源自：官方新闻<i class="fas fa-external-link-alt"></i></a></p>
+</blockquote>
+<p>华为净利润：4013 x 0.087 / 6 = <strong>58.1亿/月</strong></p>
+<h2 id="腾讯"><a href="#腾讯" class="headerlink" title="腾讯"></a>腾讯</h2><blockquote>
+<p>期内盈利为人民币 278.56 亿元（41.37 亿美元），比去年同期增长 16%；<u>净利润率与去年同期持平，为<br>  33%</u>。<a class="link"   href="http://www.tencent.com/zh-cn/articles/15000771557911821.pdf" >源自：官方财报<i class="fas fa-external-link-alt"></i></a></p>
+</blockquote>
+<p>腾讯净利润：854.65 x 0.33 / 3 = <strong>94亿/月</strong></p>
+<h3 id="还是搞软件服务更赚钱啊！～～～"><a href="#还是搞软件服务更赚钱啊！～～～" class="headerlink" title="还是搞软件服务更赚钱啊！～～～"></a>还是搞软件服务更赚钱啊！～～～</h3>]]></content>
+      <tags>
+        <tag>财报解读</tag>
       </tags>
   </entry>
   <entry>
@@ -1656,27 +1677,6 @@
 ]]></content>
       <tags>
         <tag>net</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>腾讯与华为到低谁更赚钱</title>
-    <url>/2019/07/30/tencent-vs-huwwei-2019/</url>
-    <content><![CDATA[<p>今天华为发布2019年上半年业绩，收入同比增长23.2%！那么华为今年上半年卖了多少钱呢？</p>
-<p><strong>4013亿人民币/6个月</strong></p>
-<p>腾讯2019年5月15日公布的一季度财报显示，腾讯卖了854.65亿。二季度还没出来，且简单做x2推算吧。</p>
-<p><strong>1708亿人民币/6个月</strong></p>
-<p>腾讯一软件服务公司，收钱的能力连卖货的华为一半都不到。不过得深挖一下。</p>
-<h2 id="华为"><a href="#华为" class="headerlink" title="华为"></a>华为</h2><blockquote>
-<p>[中国，深圳，2019年7月30日] 2019年上半年，华为实现销售收入4013亿人民币，<br>同比增长23.2%，<u>净利润率8.7%</u>。<a class="link"   href="https://www.huawei.com/cn/press-events/news/2019/7/huawei-announces-h1-2019-revenue" >源自：官方新闻<i class="fas fa-external-link-alt"></i></a></p>
-</blockquote>
-<p>华为净利润：4013 x 0.087 / 6 = <strong>58.1亿/月</strong></p>
-<h2 id="腾讯"><a href="#腾讯" class="headerlink" title="腾讯"></a>腾讯</h2><blockquote>
-<p>期内盈利为人民币 278.56 亿元（41.37 亿美元），比去年同期增长 16%；<u>净利润率与去年同期持平，为<br>  33%</u>。<a class="link"   href="http://www.tencent.com/zh-cn/articles/15000771557911821.pdf" >源自：官方财报<i class="fas fa-external-link-alt"></i></a></p>
-</blockquote>
-<p>腾讯净利润：854.65 x 0.33 / 3 = <strong>94亿/月</strong></p>
-<h3 id="还是搞软件服务更赚钱啊！～～～"><a href="#还是搞软件服务更赚钱啊！～～～" class="headerlink" title="还是搞软件服务更赚钱啊！～～～"></a>还是搞软件服务更赚钱啊！～～～</h3>]]></content>
-      <tags>
-        <tag>财报解读</tag>
       </tags>
   </entry>
   <entry>
