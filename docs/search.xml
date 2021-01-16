@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>about</title>
-    <url>/2016/12/14/about/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>Android 指定 DNS （为什么新用户安装完你的App后，与Api服务连接失败？）</title>
     <url>/2019/07/16/android-custom-dns/</url>
     <content><![CDATA[<blockquote>

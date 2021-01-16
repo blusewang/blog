@@ -64,7 +64,8 @@ menu:
   Home: /
   Archives: /archives
   # Categories: /categories
-  #Tags: /tags
+  Tags: /tags
+  IP查询: /ip-tool
   # Links: /links
   # About: /about
   # Changelog: /changelog
