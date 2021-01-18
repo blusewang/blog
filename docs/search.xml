@@ -1865,4 +1865,15 @@
         <tag>电子商务法</tag>
       </tags>
   </entry>
+  <entry>
+    <title>linux常用Shell命令</title>
+    <url>/2021/01/18/linux-cmd/</url>
+    <content><![CDATA[<ul>
+<li>找出指定文件夹下指定类型的所有文件，并全部删除<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find /home/user/mydir -name *.png | xargs rm -f</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>shell</tag>
+      </tags>
+  </entry>
 </search>
