@@ -1886,4 +1886,40 @@
         <tag>设计</tag>
       </tags>
   </entry>
+  <entry>
+    <title>FreeBSD上编译最新版 mosquitto</title>
+    <url>/2021/02/01/build-mosquitto-on-freebsd/</url>
+    <content><![CDATA[<h1 id="MQTT服务器需求"><a href="#MQTT服务器需求" class="headerlink" title="MQTT服务器需求"></a>MQTT服务器需求</h1><ul>
+<li>支持Websocket</li>
+<li>支持命令行输出json输出</li>
+<li>支持通过PostgreSQL认证用户</li>
+</ul>
+<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><h2 id="mosquitto-资源"><a href="#mosquitto-资源" class="headerlink" title="mosquitto 资源"></a>mosquitto 资源</h2><p>官网源码包下载地址： <a class="link"   href="https://mosquitto.org/download/" >https://mosquitto.org/download/<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>当前最新版本2.0.6： <a class="link"   href="https://mosquitto.org/files/source/mosquitto-2.0.6.tar.gz" >https://mosquitto.org/files/source/mosquitto-2.0.6.tar.gz<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+<h2 id="官方推荐认证扩展"><a href="#官方推荐认证扩展" class="headerlink" title="官方推荐认证扩展"></a>官方推荐认证扩展</h2><p><a class="link"   href="https://github.com/iegomez/mosquitto-go-auth" >https://github.com/iegomez/mosquitto-go-auth<i class="fas fa-external-link-alt"></i></a></p>
+<h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><h2 id="编译-mosquitto"><a href="#编译-mosquitto" class="headerlink" title="编译 mosquitto"></a>编译 mosquitto</h2><h3 id="安装依赖："><a href="#安装依赖：" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
+<li><code>cmake</code> 编译工具</li>
+<li><code>libcjson</code> 命令行支持json格式输出依赖</li>
+<li><code>libwebsockets</code> websocket依赖</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pkg install cmake libcjson libwebsockets</span><br></pre></td></tr></table></figure>
+<h3 id="解压源码包。配置config-mk"><a href="#解压源码包。配置config-mk" class="headerlink" title="解压源码包。配置config.mk"></a>解压源码包。配置<code>config.mk</code></h3><ul>
+<li>WITH_WEBSOCKETS:=no -&gt; yes</li>
+<li>WITH_CJSON:=yes</li>
+</ul>
+<h3 id="编译-1"><a href="#编译-1" class="headerlink" title="编译"></a>编译</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gmake CFLAGS=&quot;-I/usr/local/include&quot; LDFLAGS=&quot;-L/usr/local/lib&quot;</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
+<h2 id="编译-mosquitto-go-auth"><a href="#编译-mosquitto-go-auth" class="headerlink" title="编译 mosquitto-go-auth"></a>编译 mosquitto-go-auth</h2><h3 id="安装依赖：-1"><a href="#安装依赖：-1" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
+<li><code>go</code> 编译工具，此为<code>golang</code>源码</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pkg install go</span><br></pre></td></tr></table></figure>
+<h3 id="配置国内源"><a href="#配置国内源" class="headerlink" title="配置国内源"></a>配置国内源</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go env -w GO111MODULE=on</span><br><span class="line">go env -w GOPROXY=https://goproxy.cn,direct</span><br></pre></td></tr></table></figure>
+<h3 id="编译-2"><a href="#编译-2" class="headerlink" title="编译"></a>编译</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gmake</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>PostgreSQL</tag>
+        <tag>mosquitto</tag>
+        <tag>mqtt</tag>
+      </tags>
+  </entry>
 </search>
