@@ -23,12 +23,12 @@ https://github.com/iegomez/mosquitto-go-auth
 ## 编译 mosquitto
 
 ### 安装依赖：
-- `cmake` 编译工具
+- `gmake` 编译工具
 - `libcjson` 命令行支持json格式输出依赖
 - `libwebsockets` websocket依赖
 
 ```shell
-pkg install cmake libcjson libwebsockets
+pkg install gmake libcjson libwebsockets
 ```
 
 ### 解压源码包。配置`config.mk`

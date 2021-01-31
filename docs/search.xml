@@ -1900,11 +1900,11 @@
 </ul>
 <h2 id="官方推荐认证扩展"><a href="#官方推荐认证扩展" class="headerlink" title="官方推荐认证扩展"></a>官方推荐认证扩展</h2><p><a class="link"   href="https://github.com/iegomez/mosquitto-go-auth" >https://github.com/iegomez/mosquitto-go-auth<i class="fas fa-external-link-alt"></i></a></p>
 <h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><h2 id="编译-mosquitto"><a href="#编译-mosquitto" class="headerlink" title="编译 mosquitto"></a>编译 mosquitto</h2><h3 id="安装依赖："><a href="#安装依赖：" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
-<li><code>cmake</code> 编译工具</li>
+<li><code>gmake</code> 编译工具</li>
 <li><code>libcjson</code> 命令行支持json格式输出依赖</li>
 <li><code>libwebsockets</code> websocket依赖</li>
 </ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pkg install cmake libcjson libwebsockets</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pkg install gmake libcjson libwebsockets</span><br></pre></td></tr></table></figure>
 <h3 id="解压源码包。配置config-mk"><a href="#解压源码包。配置config-mk" class="headerlink" title="解压源码包。配置config.mk"></a>解压源码包。配置<code>config.mk</code></h3><ul>
 <li>WITH_WEBSOCKETS:=no -&gt; yes</li>
 <li>WITH_CJSON:=yes</li>
