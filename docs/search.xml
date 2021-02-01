@@ -1887,7 +1887,7 @@
       </tags>
   </entry>
   <entry>
-    <title>FreeBSD上编译最新版 mosquitto</title>
+    <title>FreeBSD 12 构建 mosquitto v2.0.6 + websockets + TLS + PostgreSQL认证</title>
     <url>/2021/02/01/build-mosquitto-on-freebsd/</url>
     <content><![CDATA[<h1 id="MQTT服务器需求"><a href="#MQTT服务器需求" class="headerlink" title="MQTT服务器需求"></a>MQTT服务器需求</h1><ul>
 <li>支持Websocket</li>
