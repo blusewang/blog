@@ -1,7 +1,7 @@
 ---
 title: FreeBSD上使用tunnelbroker隧道支持ipv6
 date: 2017-03-19 12:11:21
-tags: [freebsd, nginx, ipv6, tunnelbroker]
+tags: [FreeBSD, nginx, ipv6, tunnelbroker]
 ---
 
 # 起源

@@ -264,7 +264,7 @@
 <h1 id="检测"><a href="#检测" class="headerlink" title="检测"></a>检测</h1><p>没有ipv6-only环境，怎么判断这一切生效了呢？只需打开浏览器访问：<a href="http://www.wangjunfeng.com.cn.ipv4.sixxs.org/"><code>http://www.wangjunfeng.com.cn.ipv4.sixxs.org</code></a>。<br>这里<code>www.wangjunfeng.com.cn</code>就是要支持的网址了。如果正常打开。就OK了！</p>
 ]]></content>
       <tags>
-        <tag>freebsd</tag>
+        <tag>FreeBSD</tag>
         <tag>nginx</tag>
         <tag>ipv6</tag>
         <tag>tunnelbroker</tag>
@@ -1920,6 +1920,23 @@
         <tag>PostgreSQL</tag>
         <tag>mosquitto</tag>
         <tag>mqtt</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>FFmpeg视频裁剪</title>
+    <url>/2021/02/01/ffmpeg-resize/</url>
+    <content><![CDATA[<p>视频裁剪就是选中你想要的矩形区域并只输出这个区域，去污不残留。裁剪通常和大小调整，填充和其他操作一起使用。</p>
+<h1 id="基本裁切内容"><a href="#基本裁切内容" class="headerlink" title="基本裁切内容"></a>基本裁切内容</h1><p>老版本的FFmpeg有<code>cropbottom</code>、<code>cropleft</code>、<code>cropright</code>、<code>croptop</code>几个指令，但是现在过时了。裁剪操作现在使用下表描述的<code>crop</code>滤镜。</p>
+<p><img src="https://user-images.githubusercontent.com/1764005/106429770-d9b79280-64a5-11eb-9531-c3673b9399bf.png" alt="image"></p>
+<p><code>ow</code>的值能够通过<code>oh</code>的值推导得出，反之亦然。但是不能通过<code>x</code>和y推导得出，因为它们是在<code>ow</code>和<code>oh</code>之后进行求值的。另外<code>x</code>能够通过<code>y</code>推导得出，反之亦然。</p>
+<p>好懵逼。先看人家举的栗子：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ffmpeg -i input -vf crop=iw/3:ih:0:0 output</span><br><span class="line">ffmpeg -i input -vf crop=iw/3:ih:iw/3:0 output</span><br><span class="line">ffmpeg -i input -vf crop=iw/3:ih:iw/3*2:0 output</span><br></pre></td></tr></table></figure>
+<p>结果还是没明白人家什么意思。再看个图：<br><img src="https://user-images.githubusercontent.com/1764005/106429885-09669a80-64a6-11eb-9c9c-cc4846b40487.png" alt="image"></p>
+<h1 id="中心裁剪"><a href="#中心裁剪" class="headerlink" title="中心裁剪"></a>中心裁剪</h1><p>当我们进行中心裁剪操作时，可以跳过<code>crop</code>滤镜<code>x</code>和<code>y</code>参数的输入。默认<code>x</code>和<code>y</code>的值分别是：<code>x_default = ( input width - output width)/2，y_default = ( input height - output height)/2</code><br>这意味着中心裁剪时默认值是自动设置的。那么裁剪中心区域的语法是：<code>ffmpeg -i input_file -vf crop=w:h output_file</code><br>例如<code>ffmpeg -i input.mpg -vf crop=iw/2:ih/2 output.mp4</code>表示以中心裁剪的方式裁出宽高为原视频一半的视频。</p>
+]]></content>
+      <tags>
+        <tag>FFmpeg</tag>
+        <tag>视频剪裁</tag>
       </tags>
   </entry>
 </search>
