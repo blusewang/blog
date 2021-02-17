@@ -77,33 +77,6 @@
       </tags>
   </entry>
   <entry>
-    <title>在FreeBSD12上编译PostgreSQL12</title>
-    <url>/2019/10/23/build-postgresql12-on-freebsd12/</url>
-    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="在PostgreSQL12源码里运行-configure报："><a href="#在PostgreSQL12源码里运行-configure报：" class="headerlink" title="在PostgreSQL12源码里运行 ./configure报："></a>在<code>PostgreSQL12</code>源码里运行 <code>./configure</code>报：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">checking <span class="keyword">for</span> readline.h... no</span><br><span class="line">configure: error: readline header not found</span><br></pre></td></tr></table></figure>
-<p>且<code>readline</code>库已经安装过了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># pkg info readline</span></span><br><span class="line">readline-8.0.0</span><br><span class="line">Name           : readline</span><br><span class="line">Version        : 8.0.0</span><br></pre></td></tr></table></figure>
-<p>原因是：<code>/usr/local/lib</code>和<code>/usr/local/include</code>不在<code>configure</code>脚本的搜索路径中。<br>可以通过<code>--with-includes</code>配置项加入进去就好了。</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./configure --with-includes=/usr/<span class="built_in">local</span>/include --with-libraries=/usr/<span class="built_in">local</span>/lib</span><br></pre></td></tr></table></figure>
-<h3 id="llvm-config找不到"><a href="#llvm-config找不到" class="headerlink" title="llvm-config找不到"></a><code>llvm-config</code>找不到</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pkg install llvm90</span><br><span class="line"></span><br><span class="line">ln -s /usr/<span class="built_in">local</span>/bin/llvm-config90 /usr/<span class="built_in">local</span>/bin/llvm-config</span><br></pre></td></tr></table></figure>
-<h2 id="完整构建"><a href="#完整构建" class="headerlink" title="完整构建"></a>完整构建</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./configure --with-libraries=/usr/<span class="built_in">local</span>/lib --with-includes=/usr/<span class="built_in">local</span>/include --enable-thread-safety --disable-debug --with-openssl --with-llvm --prefix=/usr/<span class="built_in">local</span>/pg12 --localstatedir=/var --build=amd64-bluse-freebsd12.0 build_alias=amd64-bluse-freebsd12.0 --with-uuid=bsd --with-icu --enable-nls=<span class="string">&#x27;zh_CN&#x27;</span></span><br><span class="line">make world</span><br><span class="line">make install-world</span><br></pre></td></tr></table></figure>
-<ul>
-<li><code>--enable-thread-safety</code> 线程安全</li>
-<li><code>--disable-debug</code> 禁用debug，该是有助于提升生产时运行性能</li>
-<li><code>--with-openssl</code> 支持加密传输</li>
-<li><code>--with-llvm</code> 支持即时编译，使得在处理复杂任务时，性能有望再提升20%～30%</li>
-<li><code>--build</code> 编译平台，格式：硬件平台-编译方-系统平台。如：“x86_64-myName-freebsd12.0”</li>
-<li><code>build_alias</code> 编译平台别名</li>
-<li><code>--with-uuid</code> 在<code>FreeBSD</code>上选择<code>bsd</code>应该是最合适的</li>
-<li><code>--with-icu</code> 支持排序，依赖<code>pkgconf</code>包</li>
-<li><code>--enable-nls</code> 软件本地化。可指定多种语言。依赖<code>GNU</code>的<code>gettext</code></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>PostgreSQL</tag>
-        <tag>FreeBSD</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>PHP Swoole 从入门到放弃</title>
     <url>/2017/06/20/byebye-swoole/</url>
     <content><![CDATA[<p>被Swoole文档上各种“高XX”说得口水流了一地。天真的我，决定花些时间，把自己项目的新业务迁移到swoole平台上来。</p>
@@ -162,20 +135,30 @@
       </tags>
   </entry>
   <entry>
-    <title>swift3升级后居然不做后向兼容</title>
-    <url>/2017/01/02/damned-xcode/</url>
-    <content><![CDATA[<p>坑死爹了！<code>apple</code>这次升级从系统OS到开发工具，没一个不是到处坑人。</p>
-<p>mac os 10，升级后，一插android手机就死机！windows蓝屏，它白屏！</p>
-<p>xcode升级至8后，上来就要给我的项目转码！想着我大小也是付费用户。每年都交着会费呢！应该给我的待遇不会差的。</p>
-<p>没成想，点完OK后。成百上千个错！错误数量999+！它居然不后向兼容！说好的只是语法变动点的嘛！</p>
-<p>我自己的项目代码就算了，当时alamofire，SwiftyJSON 等等，我有数十个第三方cocoapod库，没一个支持到swift3的，当时就慌了神了。</p>
-<p>想着我还有SVN。xcode这货对SVN的支持是业余级的。自带的提交麻烦就算了。版本还是老的。搞得我提交次数又少。</p>
-<p>现在网上翻了翻，好多人为了稳定还在用着xcode7呢！还是我too young!too simple!</p>
-<p>以此纪念我上过apple的当！</p>
+    <title>在FreeBSD12上编译PostgreSQL12</title>
+    <url>/2019/10/23/build-postgresql12-on-freebsd12/</url>
+    <content><![CDATA[<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="在PostgreSQL12源码里运行-configure报："><a href="#在PostgreSQL12源码里运行-configure报：" class="headerlink" title="在PostgreSQL12源码里运行 ./configure报："></a>在<code>PostgreSQL12</code>源码里运行 <code>./configure</code>报：</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">checking <span class="keyword">for</span> readline.h... no</span><br><span class="line">configure: error: readline header not found</span><br></pre></td></tr></table></figure>
+<p>且<code>readline</code>库已经安装过了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># pkg info readline</span></span><br><span class="line">readline-8.0.0</span><br><span class="line">Name           : readline</span><br><span class="line">Version        : 8.0.0</span><br></pre></td></tr></table></figure>
+<p>原因是：<code>/usr/local/lib</code>和<code>/usr/local/include</code>不在<code>configure</code>脚本的搜索路径中。<br>可以通过<code>--with-includes</code>配置项加入进去就好了。</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./configure --with-includes=/usr/<span class="built_in">local</span>/include --with-libraries=/usr/<span class="built_in">local</span>/lib</span><br></pre></td></tr></table></figure>
+<h3 id="llvm-config找不到"><a href="#llvm-config找不到" class="headerlink" title="llvm-config找不到"></a><code>llvm-config</code>找不到</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">pkg install llvm90</span><br><span class="line"></span><br><span class="line">ln -s /usr/<span class="built_in">local</span>/bin/llvm-config90 /usr/<span class="built_in">local</span>/bin/llvm-config</span><br></pre></td></tr></table></figure>
+<h2 id="完整构建"><a href="#完整构建" class="headerlink" title="完整构建"></a>完整构建</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">./configure --with-libraries=/usr/<span class="built_in">local</span>/lib --with-includes=/usr/<span class="built_in">local</span>/include --enable-thread-safety --disable-debug --with-openssl --with-llvm --prefix=/usr/<span class="built_in">local</span>/pg12 --localstatedir=/var --build=amd64-bluse-freebsd12.0 build_alias=amd64-bluse-freebsd12.0 --with-uuid=bsd --with-icu --enable-nls=<span class="string">&#x27;zh_CN&#x27;</span></span><br><span class="line">make world</span><br><span class="line">make install-world</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>--enable-thread-safety</code> 线程安全</li>
+<li><code>--disable-debug</code> 禁用debug，该是有助于提升生产时运行性能</li>
+<li><code>--with-openssl</code> 支持加密传输</li>
+<li><code>--with-llvm</code> 支持即时编译，使得在处理复杂任务时，性能有望再提升20%～30%</li>
+<li><code>--build</code> 编译平台，格式：硬件平台-编译方-系统平台。如：“x86_64-myName-freebsd12.0”</li>
+<li><code>build_alias</code> 编译平台别名</li>
+<li><code>--with-uuid</code> 在<code>FreeBSD</code>上选择<code>bsd</code>应该是最合适的</li>
+<li><code>--with-icu</code> 支持排序，依赖<code>pkgconf</code>包</li>
+<li><code>--enable-nls</code> 软件本地化。可指定多种语言。依赖<code>GNU</code>的<code>gettext</code></li>
+</ul>
 ]]></content>
       <tags>
-        <tag>xcode</tag>
-        <tag>swift3</tag>
+        <tag>PostgreSQL</tag>
+        <tag>FreeBSD</tag>
       </tags>
   </entry>
   <entry>
@@ -242,6 +225,23 @@
       </tags>
   </entry>
   <entry>
+    <title>swift3升级后居然不做后向兼容</title>
+    <url>/2017/01/02/damned-xcode/</url>
+    <content><![CDATA[<p>坑死爹了！<code>apple</code>这次升级从系统OS到开发工具，没一个不是到处坑人。</p>
+<p>mac os 10，升级后，一插android手机就死机！windows蓝屏，它白屏！</p>
+<p>xcode升级至8后，上来就要给我的项目转码！想着我大小也是付费用户。每年都交着会费呢！应该给我的待遇不会差的。</p>
+<p>没成想，点完OK后。成百上千个错！错误数量999+！它居然不后向兼容！说好的只是语法变动点的嘛！</p>
+<p>我自己的项目代码就算了，当时alamofire，SwiftyJSON 等等，我有数十个第三方cocoapod库，没一个支持到swift3的，当时就慌了神了。</p>
+<p>想着我还有SVN。xcode这货对SVN的支持是业余级的。自带的提交麻烦就算了。版本还是老的。搞得我提交次数又少。</p>
+<p>现在网上翻了翻，好多人为了稳定还在用着xcode7呢！还是我too young!too simple!</p>
+<p>以此纪念我上过apple的当！</p>
+]]></content>
+      <tags>
+        <tag>xcode</tag>
+        <tag>swift3</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>FFmpeg视频裁剪</title>
     <url>/2021/02/01/ffmpeg-resize/</url>
     <content><![CDATA[<p>视频裁剪就是选中你想要的矩形区域并只输出这个区域，去污不残留。裁剪通常和大小调整，填充和其他操作一起使用。</p>
@@ -270,21 +270,6 @@
 <p><code>-i 1</code> 这里的<code>1</code>是抄写 <code>gpart show</code>中<code>vtbd0</code>一栏下当前正使用的磁盘的编号<br><code>-s 59G</code> 为什么要丢掉一个G？因为交换分区需要空间。</p>
 <h3 id="第三步：执行配置"><a href="#第三步：执行配置" class="headerlink" title="第三步：执行配置"></a>第三步：执行配置</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@log:~ # service growfs onestart</span><br><span class="line">Growing root partition to fill device</span><br><span class="line">vtbd0s1 resized</span><br><span class="line">super-block backups (for fsck_ffs -b #) at:</span><br><span class="line"> 42314112, 43596352, 44878592, 46160832, 47443072, 48725312, 50007552, 51289792, 52572032, 53854272, 55136512, 56418752, 57700992, 58983232, 60265472, 61547712, 62829952,</span><br><span class="line"> 64112192, 65394432, 66676672, 67958912, 69241152, 70523392, 71805632, 73087872, 74370112, 75652352, 76934592, 78216832, 79499072, 80781312, 82063552, 83345792, 84628032,</span><br><span class="line"> 85910272, 87192512, 88474752, 89756992, 91039232, 92321472, 93603712, 94885952, 96168192, 97450432, 98732672, 100014912, 101297152, 102579392, 103861632, 105143872, 106426112,</span><br><span class="line"> 107708352, 108990592, 110272832, 111555072, 112837312, 114119552, 115401792, 116684032, 117966272, 119248512, 120530752, 121812992, 123095232, 124377472, 125659712</span><br></pre></td></tr></table></figure>
 <h3 id="完成！并检查"><a href="#完成！并检查" class="headerlink" title="完成！并检查"></a>完成！并检查</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">root@log:~ # df -h</span><br><span class="line">Filesystem                     Size    Used   Avail Capacity  Mounted on</span><br><span class="line">/dev/ufsid/59a7effe7885633c     58G    4.2G     49G     8%    /</span><br><span class="line">devfs                          1.0K    1.0K      0B   100%    /dev</span><br><span class="line">root@log:~ # gpart show</span><br><span class="line">=&gt;       63  125829057  vtbd0  MBR  (60G)</span><br><span class="line">         63          1         - free -  (512B)</span><br><span class="line">         64  125829056      1  freebsd  [active]  (60G)</span><br><span class="line"></span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>FreeBSD</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>FreeBSD 的日常</title>
-    <url>/2017/07/22/freebsd/</url>
-    <content><![CDATA[<h1 id="查看当前内核，编译时的参数"><a href="#查看当前内核，编译时的参数" class="headerlink" title="查看当前内核，编译时的参数"></a>查看当前内核，编译时的参数</h1><p><code>sysctl kern.conftxt</code></p>
-<h1 id="配置并编译新内核"><a href="#配置并编译新内核" class="headerlink" title="配置并编译新内核"></a>配置并编译新内核</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/src/sys/amd64/conf/</span><br><span class="line">ee GENERIC</span><br><span class="line">config GENERIC</span><br><span class="line"><span class="built_in">cd</span> ../compile/GENERIC/</span><br><span class="line">make cleandepend &amp;&amp; make depend</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
-<h1 id="从低版本内核升级至高版本"><a href="#从低版本内核升级至高版本" class="headerlink" title="从低版本内核升级至高版本"></a>从低版本内核升级至高版本</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setenv UNAME_r <span class="string">&quot;10.3-RELEASE&quot;</span></span><br><span class="line">freebsd-update -r 11.0-RELEASE upgrade</span><br><span class="line">freebsd-update insatll</span><br><span class="line">reboot</span><br><span class="line">freebsd-update insatll</span><br></pre></td></tr></table></figure>
-<ul>
-<li>注册不能跨大版本。如：从10.1 -&gt; 11.0 中间要经过10.3。 10.1 -&gt; 10.3 -&gt; 11.0</li>
-<li>如果有定义自己内核，需先升级，再编译自己的配置。</li>
-</ul>
-<h1 id="给内核打补丁"><a href="#给内核打补丁" class="headerlink" title="给内核打补丁"></a>给内核打补丁</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">freebsd-update fetch</span><br><span class="line">freebsd-update install</span><br></pre></td></tr></table></figure>]]></content>
       <tags>
         <tag>FreeBSD</tag>
       </tags>
@@ -321,6 +306,21 @@
         <tag>nginx</tag>
         <tag>ipv6</tag>
         <tag>tunnelbroker</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>FreeBSD 的日常</title>
+    <url>/2017/07/22/freebsd/</url>
+    <content><![CDATA[<h1 id="查看当前内核，编译时的参数"><a href="#查看当前内核，编译时的参数" class="headerlink" title="查看当前内核，编译时的参数"></a>查看当前内核，编译时的参数</h1><p><code>sysctl kern.conftxt</code></p>
+<h1 id="配置并编译新内核"><a href="#配置并编译新内核" class="headerlink" title="配置并编译新内核"></a>配置并编译新内核</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="built_in">cd</span> /usr/src/sys/amd64/conf/</span><br><span class="line">ee GENERIC</span><br><span class="line">config GENERIC</span><br><span class="line"><span class="built_in">cd</span> ../compile/GENERIC/</span><br><span class="line">make cleandepend &amp;&amp; make depend</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<h1 id="从低版本内核升级至高版本"><a href="#从低版本内核升级至高版本" class="headerlink" title="从低版本内核升级至高版本"></a>从低版本内核升级至高版本</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">setenv UNAME_r <span class="string">&quot;10.3-RELEASE&quot;</span></span><br><span class="line">freebsd-update -r 11.0-RELEASE upgrade</span><br><span class="line">freebsd-update insatll</span><br><span class="line">reboot</span><br><span class="line">freebsd-update insatll</span><br></pre></td></tr></table></figure>
+<ul>
+<li>注册不能跨大版本。如：从10.1 -&gt; 11.0 中间要经过10.3。 10.1 -&gt; 10.3 -&gt; 11.0</li>
+<li>如果有定义自己内核，需先升级，再编译自己的配置。</li>
+</ul>
+<h1 id="给内核打补丁"><a href="#给内核打补丁" class="headerlink" title="给内核打补丁"></a>给内核打补丁</h1><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">freebsd-update fetch</span><br><span class="line">freebsd-update install</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>FreeBSD</tag>
       </tags>
   </entry>
   <entry>
@@ -524,48 +524,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Java多个异步任务转同步</title>
-    <url>/2020/03/10/java-async-sync/</url>
-    <content><![CDATA[<p>Java[kotlin]对于异步的网络请求，一般采用回调来实现异步！<br>虽然，像<code>OkHttp</code>库，已经支持到了同步，但偶尔还是会碰到两种绕不过的情况：</p>
-<ul>
-<li>依然有很多必然是异步的场景无法绕过。如：Android的请求权限、调用相机等等。</li>
-<li>多任务并发控制。<ul>
-<li>并发。如：N个线程并发执行任务。当N个任务全部执行完后，再执行后续逻辑。</li>
-<li>可控的并发。如：有N个任务，在M个线程中并发执行。</li>
-</ul>
-</li>
-</ul>
-<blockquote>
-<p>这里我要绕开“线程同步锁”方案。这东西写法纷繁冗长，且考验“智商”。</p>
-</blockquote>
-<h1 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h1><p> 单个异步不会让代码书写得多么考验智商。当数量变成：<code>x</code>后。问题就变得不一样了。如：</p>
-<ul>
-<li>假设一个前提：某业务必须使用回调来完成一次请求，现有<code>n</code>个请求，逐个完成。</li>
-</ul>
-<p>异步实现的代码样例：</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> isSync = <span class="literal">false</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">sync</span><span class="params">(completion: () -&gt; <span class="type">Unit</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isSync) &#123;</span><br><span class="line">            isSync = <span class="literal">true</span></span><br><span class="line">            <span class="keyword">val</span> lastId = database.table(<span class="string">&quot;msgs&quot;</span>).getLast()?.msg_id ?: <span class="string">&quot;&quot;</span></span><br><span class="line">            Thread(Runnable &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                       fetchNext(lastId, completion)</span><br><span class="line">                &#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">                       e.printStackTrace()</span><br><span class="line">                       isSync = <span class="literal">false</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="string">&quot;SyncWorker&quot;</span>).start()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">fetchNext</span><span class="params">(lastId: <span class="type">String</span>, completion: () -&gt; <span class="type">Unit</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> req = NewRequest()</span><br><span class="line">        req.query.msgId = lastId</span><br><span class="line">        Client.send(req.build()) &#123; r, ok -&gt;</span><br><span class="line">            <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!r.hasNext) &#123;</span><br><span class="line">                    <span class="comment">// 数据已取完</span></span><br><span class="line">                    completion()</span><br><span class="line">                    isSync = <span class="literal">false</span></span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// 未取完，继续循环</span></span><br><span class="line">                    <span class="keyword">val</span> msg = NewMsgRow(r.body)</span><br><span class="line">                    database.table(<span class="string">&quot;msgs&quot;</span>).insert(msg)</span><br><span class="line">                    fetchNext(m.msgId, completion)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 请求出错，整个放弃!</span></span><br><span class="line">                completion()</span><br><span class="line">                isSync = <span class="literal">false</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="异步的缺点"><a href="#异步的缺点" class="headerlink" title="异步的缺点"></a>异步的缺点</h2><ul>
-<li>烧脑，也是培养Bug的温床！</li>
-<li>容易滋生Bug，自然难于调试。且难以确保没有bug！</li>
-<li>递归导致调用栈过深，吃不必要的内存！</li>
-</ul>
-<p>如果是同步的情况下，代码会很优雅。</p>
-<p>同步代码样例：</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> isSync = <span class="literal">false</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">sync</span><span class="params">()</span></span> &#123;</span><br><span class="line">        isSync = <span class="literal">true</span></span><br><span class="line">        <span class="keyword">var</span> ok = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">while</span>(!ok)&#123;</span><br><span class="line">            <span class="keyword">try</span>&#123;</span><br><span class="line">                <span class="keyword">val</span> rs = NewReuest().query(<span class="string">&quot;msgId&quot;</span>,id).send()</span><br><span class="line">                <span class="keyword">val</span> msg = NewMsgRow(rs.body)</span><br><span class="line">                database.table(<span class="string">&quot;msgs&quot;</span>).insert(msg)</span><br><span class="line">            &#125;<span class="keyword">catch</span>(e:Exception)&#123;</span><br><span class="line">                ok = <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h2 id="异步转同步"><a href="#异步转同步" class="headerlink" title="异步转同步"></a>异步转同步</h2><p>一般情况下，操作系统还有个概念可用，那就是：“信号和量”。<br>Java的<code>Semaphore</code>，在使用 <code>await</code>时，需要调整JVM的option；不是个好选择！<br>不过，Java还提供了另一个东西：<code>CountDownLatch</code>可供选择。它的<code>await</code>就可以正常使用。</p>
-<p>代码样例：</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 异步转同步</span></span><br><span class="line">    <span class="meta">@Throws(Exception::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">req</span><span class="params">(id:<span class="type">String</span>)</span></span>:Body&#123;</span><br><span class="line">        <span class="comment">// 创建一个只要一个信号的锁</span></span><br><span class="line">        <span class="keyword">val</span> c = CountDownLatch(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">var</span> e:Exception? = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">var</span> rs:Body = EmptyBody()</span><br><span class="line"></span><br><span class="line">        Client.send(NewRequest()) &#123; r, err -&gt;</span><br><span class="line">            <span class="keyword">if</span>(err) e = err</span><br><span class="line">            <span class="keyword">else</span> rs = r.body</span><br><span class="line">            <span class="comment">// 释放锁</span></span><br><span class="line">            c.countDown()</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 等待信号</span></span><br><span class="line">        c.await()</span><br><span class="line">        <span class="keyword">if</span> (e != <span class="literal">null</span>) <span class="keyword">throw</span> e!!</span><br><span class="line">        <span class="keyword">return</span> rs!!</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="异步并发控制"><a href="#异步并发控制" class="headerlink" title="异步并发控制"></a>异步并发控制</h1><p>这个信号量的<code>Semaphore</code>就可以适用了。</p>
-<p>用法举例：20个任务，5个并发</p>
-<p>代码样例：</p>
-<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">mutiTask</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">// 创建5个车道</span></span><br><span class="line">        <span class="keyword">val</span> s = Semaphore(<span class="number">5</span>)</span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">0.</span><span class="number">.20</span>)&#123;</span><br><span class="line">            <span class="comment">// 等绿灯</span></span><br><span class="line">            s.acquire()</span><br><span class="line">            Client.req(NewRequest())&#123;rs,err -&gt;</span><br><span class="line">                <span class="comment">// 处理rs,err....</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 通过后释放车道</span></span><br><span class="line">                s.release()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>Java</tag>
-        <tag>kotlin</tag>
-        <tag>async</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>kcptun 服务器配置说明</title>
     <url>/2019/11/11/kcp-tun-config/</url>
     <content><![CDATA[<h1 id="配置样例"><a href="#配置样例" class="headerlink" title="配置样例"></a>配置样例</h1><figure class="highlight json"><table><tr><td class="code"><pre><span class="line">&#123;</span><br><span class="line"><span class="attr">&quot;listen&quot;</span>: <span class="string">&quot;:8888&quot;</span>,</span><br><span class="line"><span class="attr">&quot;target&quot;</span>: <span class="string">&quot;127.0.0.1:1080&quot;</span>,</span><br><span class="line"><span class="attr">&quot;key&quot;</span>: <span class="string">&quot;password&quot;</span>,</span><br><span class="line"><span class="attr">&quot;crypt&quot;</span>: <span class="string">&quot;salsa20&quot;</span>,</span><br><span class="line"><span class="attr">&quot;mode&quot;</span>: <span class="string">&quot;fast&quot;</span>,</span><br><span class="line"><span class="attr">&quot;mtu&quot;</span>: <span class="number">1400</span>,</span><br><span class="line"><span class="attr">&quot;sndwnd&quot;</span>: <span class="number">1024</span>,</span><br><span class="line"><span class="attr">&quot;rcvwnd&quot;</span>: <span class="number">1024</span>,</span><br><span class="line"><span class="attr">&quot;datashard&quot;</span>: <span class="number">10</span>,</span><br><span class="line"><span class="attr">&quot;parityshard&quot;</span>: <span class="number">3</span>,</span><br><span class="line"><span class="attr">&quot;dscp&quot;</span>: <span class="number">46</span>,</span><br><span class="line"><span class="attr">&quot;nocomp&quot;</span>: <span class="literal">true</span>,</span><br><span class="line"><span class="attr">&quot;acknodelay&quot;</span>: <span class="literal">false</span>,</span><br><span class="line"><span class="attr">&quot;sockbuf&quot;</span>: <span class="number">16777217</span>,</span><br><span class="line"><span class="attr">&quot;smuxbuf&quot;</span>: <span class="number">16777217</span>,</span><br><span class="line"><span class="attr">&quot;streambuf&quot;</span>:<span class="number">16777217</span>,</span><br><span class="line"><span class="attr">&quot;smuxver&quot;</span>: <span class="number">2</span>,</span><br><span class="line"><span class="attr">&quot;keepalive&quot;</span>: <span class="number">10</span>,</span><br><span class="line"><span class="attr">&quot;pprof&quot;</span>:<span class="literal">false</span>,</span><br><span class="line"><span class="attr">&quot;quiet&quot;</span>:<span class="literal">true</span>,</span><br><span class="line"><span class="attr">&quot;tcp&quot;</span>:<span class="literal">false</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -731,6 +689,48 @@
       </tags>
   </entry>
   <entry>
+    <title>Java多个异步任务转同步</title>
+    <url>/2020/03/10/java-async-sync/</url>
+    <content><![CDATA[<p>Java[kotlin]对于异步的网络请求，一般采用回调来实现异步！<br>虽然，像<code>OkHttp</code>库，已经支持到了同步，但偶尔还是会碰到两种绕不过的情况：</p>
+<ul>
+<li>依然有很多必然是异步的场景无法绕过。如：Android的请求权限、调用相机等等。</li>
+<li>多任务并发控制。<ul>
+<li>并发。如：N个线程并发执行任务。当N个任务全部执行完后，再执行后续逻辑。</li>
+<li>可控的并发。如：有N个任务，在M个线程中并发执行。</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>这里我要绕开“线程同步锁”方案。这东西写法纷繁冗长，且考验“智商”。</p>
+</blockquote>
+<h1 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h1><p> 单个异步不会让代码书写得多么考验智商。当数量变成：<code>x</code>后。问题就变得不一样了。如：</p>
+<ul>
+<li>假设一个前提：某业务必须使用回调来完成一次请求，现有<code>n</code>个请求，逐个完成。</li>
+</ul>
+<p>异步实现的代码样例：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> isSync = <span class="literal">false</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">sync</span><span class="params">(completion: () -&gt; <span class="type">Unit</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (!isSync) &#123;</span><br><span class="line">            isSync = <span class="literal">true</span></span><br><span class="line">            <span class="keyword">val</span> lastId = database.table(<span class="string">&quot;msgs&quot;</span>).getLast()?.msg_id ?: <span class="string">&quot;&quot;</span></span><br><span class="line">            Thread(Runnable &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                       fetchNext(lastId, completion)</span><br><span class="line">                &#125; <span class="keyword">catch</span> (e: Exception) &#123;</span><br><span class="line">                       e.printStackTrace()</span><br><span class="line">                       isSync = <span class="literal">false</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;, <span class="string">&quot;SyncWorker&quot;</span>).start()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="function"><span class="keyword">fun</span> <span class="title">fetchNext</span><span class="params">(lastId: <span class="type">String</span>, completion: () -&gt; <span class="type">Unit</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> req = NewRequest()</span><br><span class="line">        req.query.msgId = lastId</span><br><span class="line">        Client.send(req.build()) &#123; r, ok -&gt;</span><br><span class="line">            <span class="keyword">if</span> (ok) &#123;</span><br><span class="line">                <span class="keyword">if</span> (!r.hasNext) &#123;</span><br><span class="line">                    <span class="comment">// 数据已取完</span></span><br><span class="line">                    completion()</span><br><span class="line">                    isSync = <span class="literal">false</span></span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// 未取完，继续循环</span></span><br><span class="line">                    <span class="keyword">val</span> msg = NewMsgRow(r.body)</span><br><span class="line">                    database.table(<span class="string">&quot;msgs&quot;</span>).insert(msg)</span><br><span class="line">                    fetchNext(m.msgId, completion)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 请求出错，整个放弃!</span></span><br><span class="line">                completion()</span><br><span class="line">                isSync = <span class="literal">false</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="异步的缺点"><a href="#异步的缺点" class="headerlink" title="异步的缺点"></a>异步的缺点</h2><ul>
+<li>烧脑，也是培养Bug的温床！</li>
+<li>容易滋生Bug，自然难于调试。且难以确保没有bug！</li>
+<li>递归导致调用栈过深，吃不必要的内存！</li>
+</ul>
+<p>如果是同步的情况下，代码会很优雅。</p>
+<p>同步代码样例：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span></span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">var</span> isSync = <span class="literal">false</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">sync</span><span class="params">()</span></span> &#123;</span><br><span class="line">        isSync = <span class="literal">true</span></span><br><span class="line">        <span class="keyword">var</span> ok = <span class="literal">false</span></span><br><span class="line">        <span class="keyword">while</span>(!ok)&#123;</span><br><span class="line">            <span class="keyword">try</span>&#123;</span><br><span class="line">                <span class="keyword">val</span> rs = NewReuest().query(<span class="string">&quot;msgId&quot;</span>,id).send()</span><br><span class="line">                <span class="keyword">val</span> msg = NewMsgRow(rs.body)</span><br><span class="line">                database.table(<span class="string">&quot;msgs&quot;</span>).insert(msg)</span><br><span class="line">            &#125;<span class="keyword">catch</span>(e:Exception)&#123;</span><br><span class="line">                ok = <span class="literal">true</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="异步转同步"><a href="#异步转同步" class="headerlink" title="异步转同步"></a>异步转同步</h2><p>一般情况下，操作系统还有个概念可用，那就是：“信号和量”。<br>Java的<code>Semaphore</code>，在使用 <code>await</code>时，需要调整JVM的option；不是个好选择！<br>不过，Java还提供了另一个东西：<code>CountDownLatch</code>可供选择。它的<code>await</code>就可以正常使用。</p>
+<p>代码样例：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 异步转同步</span></span><br><span class="line">    <span class="meta">@Throws(Exception::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">req</span><span class="params">(id:<span class="type">String</span>)</span></span>:Body&#123;</span><br><span class="line">        <span class="comment">// 创建一个只要一个信号的锁</span></span><br><span class="line">        <span class="keyword">val</span> c = CountDownLatch(<span class="number">1</span>)</span><br><span class="line">        <span class="keyword">var</span> e:Exception? = <span class="literal">null</span></span><br><span class="line">        <span class="keyword">var</span> rs:Body = EmptyBody()</span><br><span class="line"></span><br><span class="line">        Client.send(NewRequest()) &#123; r, err -&gt;</span><br><span class="line">            <span class="keyword">if</span>(err) e = err</span><br><span class="line">            <span class="keyword">else</span> rs = r.body</span><br><span class="line">            <span class="comment">// 释放锁</span></span><br><span class="line">            c.countDown()</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 等待信号</span></span><br><span class="line">        c.await()</span><br><span class="line">        <span class="keyword">if</span> (e != <span class="literal">null</span>) <span class="keyword">throw</span> e!!</span><br><span class="line">        <span class="keyword">return</span> rs!!</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="异步并发控制"><a href="#异步并发控制" class="headerlink" title="异步并发控制"></a>异步并发控制</h1><p>这个信号量的<code>Semaphore</code>就可以适用了。</p>
+<p>用法举例：20个任务，5个并发</p>
+<p>代码样例：</p>
+<figure class="highlight kotlin"><table><tr><td class="code"><pre><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Worker</span></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">mutiTask</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="comment">// 创建5个车道</span></span><br><span class="line">        <span class="keyword">val</span> s = Semaphore(<span class="number">5</span>)</span><br><span class="line">        <span class="keyword">for</span> (i <span class="keyword">in</span> <span class="number">0.</span><span class="number">.20</span>)&#123;</span><br><span class="line">            <span class="comment">// 等绿灯</span></span><br><span class="line">            s.acquire()</span><br><span class="line">            Client.req(NewRequest())&#123;rs,err -&gt;</span><br><span class="line">                <span class="comment">// 处理rs,err....</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 通过后释放车道</span></span><br><span class="line">                s.release()</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>Java</tag>
+        <tag>kotlin</tag>
+        <tag>async</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Laravel Notification 测评</title>
     <url>/2016/12/15/laravel-notification/</url>
     <content><![CDATA[<p>Laravel 5.3 新出了个叫 <code>Notification</code> 的消息通知功能！先总，后分吧。</p>
@@ -774,6 +774,17 @@
       </tags>
   </entry>
   <entry>
+    <title>linux常用Shell命令</title>
+    <url>/2021/01/18/linux-cmd/</url>
+    <content><![CDATA[<ul>
+<li>找出指定文件夹下指定类型的所有文件，并全部删除<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find /home/user/mydir -name *.png | xargs rm -f</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>shell</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>使用 Let&#39;s Encrypt 给Nginx网站加密</title>
     <url>/2017/01/12/lets-encrypt-nginx/</url>
     <content><![CDATA[<p>使用<a class="link"   href="https://certbot.eff.org/#freebsd-nginx" >certbot<i class="fas fa-external-link-alt"></i></a>管理证书。</p>
@@ -793,17 +804,6 @@
         <tag>lets-encrypt</tag>
         <tag>ssl</tag>
         <tag>https</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>linux常用Shell命令</title>
-    <url>/2021/01/18/linux-cmd/</url>
-    <content><![CDATA[<ul>
-<li>找出指定文件夹下指定类型的所有文件，并全部删除<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find /home/user/mydir -name *.png | xargs rm -f</span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>shell</tag>
       </tags>
   </entry>
   <entry>
@@ -840,35 +840,6 @@
     <url>/2017/06/11/new-start/</url>
     <content><![CDATA[<p>告别wordPress！不明白这货为什么只支持MySQL！pg4wp插件的支持能力也是弱！</p>
 ]]></content>
-  </entry>
-  <entry>
-    <title>NSQ的部署</title>
-    <url>/2019/07/15/nsq-deploy/</url>
-    <content><![CDATA[<h2 id="原料"><a href="#原料" class="headerlink" title="原料"></a>原料</h2><ul>
-<li>系统：FreeBSD 12</li>
-</ul>
-<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pkg install nsq</span><br></pre></td></tr></table></figure>
-<h3 id="编写配置文件"><a href="#编写配置文件" class="headerlink" title="编写配置文件"></a>编写配置文件</h3><ul>
-<li>NSQ 配置文件样例：<a class="link"   href="https://github.com/nsqio/nsq/tree/master/contrib" >https://github.com/nsqio/nsq/tree/master/contrib<i class="fas fa-external-link-alt"></i></a></li>
-<li>部署在<code>/usr/local/etc/</code>下<ul>
-<li>nsqd.conf</li>
-<li>nsqlookup.conf</li>
-<li>nsqadmin.conf</li>
-</ul>
-</li>
-</ul>
-<h3 id="应用配置文件"><a href="#应用配置文件" class="headerlink" title="应用配置文件"></a>应用配置文件</h3><p>在<code>/usr/local/etc/rc.d/</code>下找到对应的服务管理脚本。</p>
-<p>会看到下面的头部：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $FreeBSD: branches/2019Q2/net/nsq/files/nsqd.in 454856 2017-11-24 23:17:50Z dbaio $</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># PROVIDE: nsqd</span></span><br><span class="line"><span class="comment"># REQUIRE: LOGIN</span></span><br><span class="line"><span class="comment"># KEYWORD: shutdown</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add the following lines to /etc/rc.conf to enable nsqd:</span></span><br><span class="line"><span class="comment"># nsqd_enable=&quot;YES&quot;</span></span><br><span class="line"><span class="comment"># nsqd_args=&quot;&lt;set as needed&gt;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>在此将</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># nsqd_enable=&quot;YES&quot;</span></span><br><span class="line"><span class="comment"># nsqd_args=&quot;&lt;set as needed&gt;&quot;</span></span><br></pre></td></tr></table></figure>
-<p>改为：</p>
-<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nsqd_enable=<span class="string">&quot;YES&quot;</span></span><br><span class="line">nsqd_args=<span class="string">&quot;--config=/usr/local/etc/nsqd.conf&quot;</span></span><br></pre></td></tr></table></figure>
-<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><p><code>service nsqd start</code></p>
-]]></content>
-      <tags>
-        <tag>NSQ</tag>
-      </tags>
   </entry>
   <entry>
     <title>为何要抛弃Kafka，选择NSQ！</title>
@@ -1013,8 +984,37 @@
 </ul>
 ]]></content>
       <tags>
-        <tag>NSQ</tag>
         <tag>Kafka</tag>
+        <tag>NSQ</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>NSQ的部署</title>
+    <url>/2019/07/15/nsq-deploy/</url>
+    <content><![CDATA[<h2 id="原料"><a href="#原料" class="headerlink" title="原料"></a>原料</h2><ul>
+<li>系统：FreeBSD 12</li>
+</ul>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">pkg install nsq</span><br></pre></td></tr></table></figure>
+<h3 id="编写配置文件"><a href="#编写配置文件" class="headerlink" title="编写配置文件"></a>编写配置文件</h3><ul>
+<li>NSQ 配置文件样例：<a class="link"   href="https://github.com/nsqio/nsq/tree/master/contrib" >https://github.com/nsqio/nsq/tree/master/contrib<i class="fas fa-external-link-alt"></i></a></li>
+<li>部署在<code>/usr/local/etc/</code>下<ul>
+<li>nsqd.conf</li>
+<li>nsqlookup.conf</li>
+<li>nsqadmin.conf</li>
+</ul>
+</li>
+</ul>
+<h3 id="应用配置文件"><a href="#应用配置文件" class="headerlink" title="应用配置文件"></a>应用配置文件</h3><p>在<code>/usr/local/etc/rc.d/</code>下找到对应的服务管理脚本。</p>
+<p>会看到下面的头部：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># $FreeBSD: branches/2019Q2/net/nsq/files/nsqd.in 454856 2017-11-24 23:17:50Z dbaio $</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># PROVIDE: nsqd</span></span><br><span class="line"><span class="comment"># REQUIRE: LOGIN</span></span><br><span class="line"><span class="comment"># KEYWORD: shutdown</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># Add the following lines to /etc/rc.conf to enable nsqd:</span></span><br><span class="line"><span class="comment"># nsqd_enable=&quot;YES&quot;</span></span><br><span class="line"><span class="comment"># nsqd_args=&quot;&lt;set as needed&gt;&quot;</span></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>在此将</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line"><span class="comment"># nsqd_enable=&quot;YES&quot;</span></span><br><span class="line"><span class="comment"># nsqd_args=&quot;&lt;set as needed&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+<p>改为：</p>
+<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">nsqd_enable=<span class="string">&quot;YES&quot;</span></span><br><span class="line">nsqd_args=<span class="string">&quot;--config=/usr/local/etc/nsqd.conf&quot;</span></span><br></pre></td></tr></table></figure>
+<h3 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h3><p><code>service nsqd start</code></p>
+]]></content>
+      <tags>
+        <tag>NSQ</tag>
       </tags>
   </entry>
   <entry>
