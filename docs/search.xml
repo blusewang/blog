@@ -22,6 +22,42 @@
       </tags>
   </entry>
   <entry>
+    <title>FreeBSD 12 构建 mosquitto v2.0.6 + websockets + TLS + PostgreSQL认证</title>
+    <url>/2021/02/01/build-mosquitto-on-freebsd/</url>
+    <content><![CDATA[<h1 id="MQTT服务器需求"><a href="#MQTT服务器需求" class="headerlink" title="MQTT服务器需求"></a>MQTT服务器需求</h1><ul>
+<li>支持Websocket</li>
+<li>支持命令行输出json输出</li>
+<li>支持通过PostgreSQL认证用户</li>
+</ul>
+<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><h2 id="mosquitto-资源"><a href="#mosquitto-资源" class="headerlink" title="mosquitto 资源"></a>mosquitto 资源</h2><p>官网源码包下载地址： <a class="link"   href="https://mosquitto.org/download/" >https://mosquitto.org/download/<i class="fas fa-external-link-alt"></i></a></p>
+<ul>
+<li>当前最新版本2.0.6： <a class="link"   href="https://mosquitto.org/files/source/mosquitto-2.0.6.tar.gz" >https://mosquitto.org/files/source/mosquitto-2.0.6.tar.gz<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+<h2 id="官方推荐认证扩展"><a href="#官方推荐认证扩展" class="headerlink" title="官方推荐认证扩展"></a>官方推荐认证扩展</h2><p><a class="link"   href="https://github.com/iegomez/mosquitto-go-auth" >https://github.com/iegomez/mosquitto-go-auth<i class="fas fa-external-link-alt"></i></a></p>
+<h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><h2 id="编译-mosquitto"><a href="#编译-mosquitto" class="headerlink" title="编译 mosquitto"></a>编译 mosquitto</h2><h3 id="安装依赖："><a href="#安装依赖：" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
+<li><code>gmake</code> 编译工具</li>
+<li><code>libcjson</code> 命令行支持json格式输出依赖</li>
+<li><code>libwebsockets</code> websocket依赖</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pkg install gmake libcjson libwebsockets</span><br></pre></td></tr></table></figure>
+<h3 id="解压源码包。配置config-mk"><a href="#解压源码包。配置config-mk" class="headerlink" title="解压源码包。配置config.mk"></a>解压源码包。配置<code>config.mk</code></h3><ul>
+<li>WITH_WEBSOCKETS:=no -&gt; yes</li>
+<li>WITH_CJSON:=yes</li>
+</ul>
+<h3 id="编译-1"><a href="#编译-1" class="headerlink" title="编译"></a>编译</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gmake CFLAGS=&quot;-I/usr/local/include&quot; LDFLAGS=&quot;-L/usr/local/lib&quot;</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
+<h2 id="编译-mosquitto-go-auth"><a href="#编译-mosquitto-go-auth" class="headerlink" title="编译 mosquitto-go-auth"></a>编译 mosquitto-go-auth</h2><h3 id="安装依赖：-1"><a href="#安装依赖：-1" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
+<li><code>go</code> 编译工具，此为<code>golang</code>源码</li>
+</ul>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pkg install go</span><br></pre></td></tr></table></figure>
+<h3 id="配置国内源"><a href="#配置国内源" class="headerlink" title="配置国内源"></a>配置国内源</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go env -w GO111MODULE=on</span><br><span class="line">go env -w GOPROXY=https://goproxy.cn,direct</span><br></pre></td></tr></table></figure>
+<h3 id="编译-2"><a href="#编译-2" class="headerlink" title="编译"></a>编译</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gmake</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>mosquitto</tag>
+        <tag>mqtt</tag>
+        <tag>PostgreSQL</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>编译opencore-amr for iOS8并支持bitcode</title>
     <url>/2017/01/05/build-opencore-amr/</url>
     <content><![CDATA[<h1 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h1><p><code>amr</code> 是一个很适合在线传输的音频格式。但悲摧的是<code>apple</code>早就不支持它了。原因不明。</p>
@@ -63,8 +99,8 @@
 </ul>
 ]]></content>
       <tags>
-        <tag>FreeBSD</tag>
         <tag>PostgreSQL</tag>
+        <tag>FreeBSD</tag>
       </tags>
   </entry>
   <entry>
@@ -203,6 +239,23 @@
         <tag>FreeBSD</tag>
         <tag>daemontool</tag>
         <tag>supervisord</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>FFmpeg视频裁剪</title>
+    <url>/2021/02/01/ffmpeg-resize/</url>
+    <content><![CDATA[<p>视频裁剪就是选中你想要的矩形区域并只输出这个区域，去污不残留。裁剪通常和大小调整，填充和其他操作一起使用。</p>
+<h1 id="基本裁切内容"><a href="#基本裁切内容" class="headerlink" title="基本裁切内容"></a>基本裁切内容</h1><p>老版本的FFmpeg有<code>cropbottom</code>、<code>cropleft</code>、<code>cropright</code>、<code>croptop</code>几个指令，但是现在过时了。裁剪操作现在使用下表描述的<code>crop</code>滤镜。</p>
+<p><img src="https://user-images.githubusercontent.com/1764005/106429770-d9b79280-64a5-11eb-9531-c3673b9399bf.png" alt="image"></p>
+<p><code>ow</code>的值能够通过<code>oh</code>的值推导得出，反之亦然。但是不能通过<code>x</code>和y推导得出，因为它们是在<code>ow</code>和<code>oh</code>之后进行求值的。另外<code>x</code>能够通过<code>y</code>推导得出，反之亦然。</p>
+<p>好懵逼。先看人家举的栗子：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ffmpeg -i input -vf crop=iw/3:ih:0:0 output</span><br><span class="line">ffmpeg -i input -vf crop=iw/3:ih:iw/3:0 output</span><br><span class="line">ffmpeg -i input -vf crop=iw/3:ih:iw/3*2:0 output</span><br></pre></td></tr></table></figure>
+<p>结果还是没明白人家什么意思。再看个图：<br><img src="https://user-images.githubusercontent.com/1764005/106429885-09669a80-64a6-11eb-9c9c-cc4846b40487.png" alt="image"></p>
+<h1 id="中心裁剪"><a href="#中心裁剪" class="headerlink" title="中心裁剪"></a>中心裁剪</h1><p>当我们进行中心裁剪操作时，可以跳过<code>crop</code>滤镜<code>x</code>和<code>y</code>参数的输入。默认<code>x</code>和<code>y</code>的值分别是：<code>x_default = ( input width - output width)/2，y_default = ( input height - output height)/2</code><br>这意味着中心裁剪时默认值是自动设置的。那么裁剪中心区域的语法是：<code>ffmpeg -i input_file -vf crop=w:h output_file</code><br>例如<code>ffmpeg -i input.mpg -vf crop=iw/2:ih/2 output.mp4</code>表示以中心裁剪的方式裁出宽高为原视频一半的视频。</p>
+]]></content>
+      <tags>
+        <tag>FFmpeg</tag>
+        <tag>视频剪裁</tag>
       </tags>
   </entry>
   <entry>
@@ -743,6 +796,17 @@
       </tags>
   </entry>
   <entry>
+    <title>linux常用Shell命令</title>
+    <url>/2021/01/18/linux-cmd/</url>
+    <content><![CDATA[<ul>
+<li>找出指定文件夹下指定类型的所有文件，并全部删除<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find /home/user/mydir -name *.png | xargs rm -f</span><br></pre></td></tr></table></figure></li>
+</ul>
+]]></content>
+      <tags>
+        <tag>shell</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MacOS 命令查询网络端口占用情况</title>
     <url>/2019/07/13/macos-find-port-by-cmd/</url>
     <content><![CDATA[<h2 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h2><blockquote>
@@ -759,6 +823,16 @@
         <tag>MacOS</tag>
         <tag>lsof</tag>
         <tag>netstat</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>鼠标垫设计</title>
+    <url>/2021/01/26/mouse-pad/</url>
+    <content><![CDATA[<p><img src="https://user-images.githubusercontent.com/1764005/105838242-ccfcef80-600a-11eb-8a26-b07c8c7932b4.png" alt="鼠标垫"></p>
+<p><a class="link"   href="https://github.com/blusewang/blog/files/5872975/psd.zip" >鼠标垫.psd.zip<i class="fas fa-external-link-alt"></i></a></p>
+]]></content>
+      <tags>
+        <tag>设计</tag>
       </tags>
   </entry>
   <entry>
@@ -1042,7 +1116,31 @@
   <entry>
     <title>RaspberryPI上安装OpenWRT</title>
     <url>/2019/12/04/openwrt-on-raspberry-pi/</url>
-    <content><![CDATA[<h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><p>家用网络拓扑设计<br><img src="https://user-images.githubusercontent.com/1764005/70146001-3e2d6500-16dc-11ea-952c-dda05eb69029.png" alt="image"></p>
+    <content><![CDATA[<h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><p>家用网络拓扑设计</p>
+<pre class="mermaid">graph LR
+lt((联通宽带))
+subgraph Raspberry PI
+openwrt(OpenWRT)
+end
+tp(TP-Link)
+mac(Laptop)
+phone(Phone)
+subgraph Raspberry PI 2
+osmc(OSMC Dodi)
+end
+tv(TV)
+disk[(USB 硬盘)]
+
+lt ---|光猫桥接| openwrt
+openwrt ---|USB转网线| tp
+openwrt --- disk
+tp -. wifi .- mac
+tp -. wifi .- phone
+tp ---|网线| osmc
+osmc ---|HDMI| tv 
+openwrt -. wifi .- mac
+openwrt -. wifi .- phone</pre>
+
 <p>路由器连接RPI由网线接口。RPI连接电视由HDMI接口。</p>
 <h1 id="配件准备"><a href="#配件准备" class="headerlink" title="配件准备"></a>配件准备</h1><p>唯独RPI连接路由器。额外需要一个 USB转网口。<br>淘宝之：<br><img src="https://gd4.alicdn.com/imgextra/i4/4282361926/O1CN0184Ycaa1Q69NjPfQVD_!!4282361926.png_400x400.jpg" alt="image"><br><a class="link"   href="https://item.taobao.com/item.htm?spm=a1z09.2.0.0.2b562e8d64yuA7&id=597724398426&_u=416uj6v1a71" >树莓派USB2.0 HUB 网卡加hub 分线器转RJ45外置有线网卡 USB网口<i class="fas fa-external-link-alt"></i></a></p>
 <h1 id="刷OS"><a href="#刷OS" class="headerlink" title="刷OS"></a>刷OS</h1><p>OpenWRT 官方提供了详细的解说。<br><a class="link"   href="https://openwrt.org/toh/raspberry_pi_foundation/raspberry_pi" >OpenWrt Project: Raspberry Pi<i class="fas fa-external-link-alt"></i></a></p>
@@ -1209,6 +1307,13 @@
 <p>Citus 正在被很多大数据机构使用，日均更新5～10亿记录，甚至有在70个节点上，运行数据规模达1.4PB！</p>
 <p>Citus 适用于多租户、实时分析场景。（这也正是我迫切需要的！）</p>
 <p>下边介绍Citus的上手经历。</p>
+<h1 id="试验架构"><a href="#试验架构" class="headerlink" title="试验架构"></a>试验架构</h1><pre class="mermaid">graph TB
+  m[(citus0)]
+  slave1[(citus1)]
+  slave2[(citus2)]
+  m---slave1
+  m---slave2</pre>
+
 <h1 id="准备主机"><a href="#准备主机" class="headerlink" title="准备主机"></a>准备主机</h1><p>分布式，至少两台以上主机。</p>
 <ul>
 <li>协调节点，负责统筹。主机名：citus0</li>
@@ -1230,12 +1335,12 @@
 </li>
 </ul>
 <h2 id="编译参数"><a href="#编译参数" class="headerlink" title="编译参数"></a>编译参数</h2><h3 id="PostgreSQL-12-3-编译"><a href="#PostgreSQL-12-3-编译" class="headerlink" title="PostgreSQL 12.3 编译"></a>PostgreSQL 12.3 编译</h3><p>编译：</p>
-<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">kg install llvm90 gettext curl gmake</span><br><span class="line">./configure &#x27;--with-libraries=/usr/local/lib&#x27; &#x27;--with-includes=/usr/local/include&#x27; &#x27;--enable-thread-safety&#x27; &#x27;--disable-debug&#x27; &#x27;--enable-nls&#x27; &#x27;--without-pam&#x27; &#x27;--with-openssl&#x27; &#x27;--without-llvm&#x27; &#x27;--without-gssapi&#x27; &#x27;--prefix=/usr/local&#x27; &#x27;--localstatedir=/var&#x27; &#x27;--mandir=/usr/local/man&#x27; &#x27;--infodir=/usr/local/share/info/&#x27; &#x27;--build=amd64-portbld-freebsd12.1&#x27; &#x27;build_alias=amd64-portbld-freebsd12.1&#x27; &#x27;CC=cc&#x27; &#x27;CFLAGS=-O2 -pipe  -fstack-protector-strong -fno-strict-aliasing &#x27; &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; &#x27;LIBS=&#x27; &#x27;CPPFLAGS=-I/usr/local/include&#x27; &#x27;CXX=c++&#x27; &#x27;CXXFLAGS=-O2 -pipe -fstack-protector-strong -fno-strict-aliasing  &#x27; &#x27;CPP=cpp&#x27; &#x27;PKG_CONFIG=pkgconf&#x27; &#x27;LDFLAGS_SL=&#x27;</span><br><span class="line">make world</span><br><span class="line">make install-world</span><br><span class="line">adduser postgres</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kg install llvm90 gettext curl gmake</span><br><span class="line">./configure &#x27;--with-libraries=/usr/local/lib&#x27; &#x27;--with-includes=/usr/local/include&#x27; &#x27;--enable-thread-safety&#x27; &#x27;--disable-debug&#x27; &#x27;--enable-nls&#x27; &#x27;--without-pam&#x27; &#x27;--with-openssl&#x27; &#x27;--without-llvm&#x27; &#x27;--without-gssapi&#x27; &#x27;--prefix=/usr/local&#x27; &#x27;--localstatedir=/var&#x27; &#x27;--mandir=/usr/local/man&#x27; &#x27;--infodir=/usr/local/share/info/&#x27; &#x27;--build=amd64-portbld-freebsd12.1&#x27; &#x27;build_alias=amd64-portbld-freebsd12.1&#x27; &#x27;CC=cc&#x27; &#x27;CFLAGS=-O2 -pipe  -fstack-protector-strong -fno-strict-aliasing &#x27; &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; &#x27;LIBS=&#x27; &#x27;CPPFLAGS=-I/usr/local/include&#x27; &#x27;CXX=c++&#x27; &#x27;CXXFLAGS=-O2 -pipe -fstack-protector-strong -fno-strict-aliasing  &#x27; &#x27;CPP=cpp&#x27; &#x27;PKG_CONFIG=pkgconf&#x27; &#x27;LDFLAGS_SL=&#x27;</span><br><span class="line">make world</span><br><span class="line">make install-world</span><br><span class="line">adduser postgres</span><br></pre></td></tr></table></figure>
 <h3 id="Citus-9-4-0-编译"><a href="#Citus-9-4-0-编译" class="headerlink" title="Citus 9.4.0 编译"></a>Citus 9.4.0 编译</h3><p>编译</p>
-<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">./configure &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; CPPFLAGS=-I/usr/local/include</span><br><span class="line">gmake</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">./configure &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; CPPFLAGS=-I/usr/local/include</span><br><span class="line">gmake</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
 <h1 id="设置并启用Citus"><a href="#设置并启用Citus" class="headerlink" title="设置并启用Citus"></a>设置并启用Citus</h1><h2 id="所有主机上的共同操作"><a href="#所有主机上的共同操作" class="headerlink" title="所有主机上的共同操作"></a>所有主机上的共同操作</h2><p>注意：**<em>以下所有操作都在要每个节点主机上完整操作完。包括建库和启用<code>citus</code>。且一定是先建库，进入<code>main</code>库后再启动<code>citus</code>扩展**</em></p>
 <ul>
-<li>初始化数据库<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">su postgres</span><br><span class="line">initdb data</span><br></pre></td></tr></table></figure></li>
+<li>初始化数据库<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">su postgres</span><br><span class="line">initdb data</span><br></pre></td></tr></table></figure></li>
 <li>配置<code>postgresql.conf</code><blockquote>
 <p>listen_addresses = ‘*’</p>
 <p>port = 5432</p>
@@ -1248,8 +1353,8 @@
 </blockquote>
 </li>
 <li>启动PostgreSQL<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">pg_ctl -D data start</span><br></pre></td></tr></table></figure></li>
-<li>建库并启用Citus<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">psql</span><br><span class="line">create database main;</span><br><span class="line">\c main</span><br><span class="line">create extension citus;</span><br></pre></td></tr></table></figure>
-<h2 id="协调节点上的操作"><a href="#协调节点上的操作" class="headerlink" title="协调节点上的操作"></a>协调节点上的操作</h2><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="code"><pre><span class="line">psql main</span><br><span class="line">select master_add_node(&#x27;citus1&#x27;,5432);</span><br><span class="line">select master_add_node(&#x27;citus2&#x27;,5432);</span><br><span class="line"></span><br><span class="line">main=# select master_get_active_worker_nodes();</span><br><span class="line"> master_get_active_worker_nodes</span><br><span class="line">--------------------------------</span><br><span class="line"> (citus1,5432)</span><br><span class="line"> (citus2,5432)</span><br><span class="line">(2 行记录)</span><br></pre></td></tr></table></figure>
+<li>建库并启用Citus<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">psql</span><br><span class="line">create database main;</span><br><span class="line">\c main</span><br><span class="line">create extension citus;</span><br></pre></td></tr></table></figure>
+<h2 id="协调节点上的操作"><a href="#协调节点上的操作" class="headerlink" title="协调节点上的操作"></a>协调节点上的操作</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">psql main</span><br><span class="line">select master_add_node(&#x27;citus1&#x27;,5432);</span><br><span class="line">select master_add_node(&#x27;citus2&#x27;,5432);</span><br><span class="line"></span><br><span class="line">main=# select master_get_active_worker_nodes();</span><br><span class="line"> master_get_active_worker_nodes</span><br><span class="line">--------------------------------</span><br><span class="line"> (citus1,5432)</span><br><span class="line"> (citus2,5432)</span><br><span class="line">(2 行记录)</span><br></pre></td></tr></table></figure>
 <h1 id="使用Citus"><a href="#使用Citus" class="headerlink" title="使用Citus"></a>使用Citus</h1>现在只要在协调节点<code>citus0</code>上的<code>main</code>库中建表。所有工作节点都会自动创建分表。</li>
 </ul>
 <p>在协调节点上存储会将数据分发到不同的工作节点上。查询也是在多个工作节点上分布查询了。</p>
@@ -1340,6 +1445,27 @@
       </tags>
   </entry>
   <entry>
+    <title>FreeBSD 上初始化 PostgreSQL 96</title>
+    <url>/2017/07/12/postgresql-init/</url>
+    <content><![CDATA[<h2 id="疼点"><a href="#疼点" class="headerlink" title="疼点"></a>疼点</h2><ul>
+<li><code>postgres</code> 这个用户名，打起来麻烦，不及<code>pgsql</code>方便。</li>
+<li><code>initdb</code> 出来的库默认是英文的</li>
+</ul>
+<h2 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ee /etc/csh.cshrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">alias</span> ll	ls -lAF</span><br><span class="line"><span class="built_in">alias</span> ls	ls -FG</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">setenv LANG         zh_CN.UTF-8</span><br><span class="line">setenv LC_CTYPE     zh_CN.UTF-8</span><br><span class="line">setenv LC_ALL       zh_CN.UTF-8</span><br></pre></td></tr></table></figure>
+<p><code>adduser</code> pgsql</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">su pgsql</span><br><span class="line">initdb data96 -E utf8 --locale=zh_CN.UTF-8</span><br></pre></td></tr></table></figure>
+<p>注：<code>pg_upgrade -d main/ -D /var/db/postgres/data96/ -b /var/server/pgsql94/bin/ -B /usr/local/bin/ -U pgsql</code></p>
+<p>这是一个成功率低、操作复杂、过程繁琐、环境要求高 的事情。</p>
+<p>如果升级数据库，还是<code>pg_dump</code> <code>pg_restore</code>来得方便。</p>
+<p>对于复杂关系的库，<code>pg_upgrade</code>也会出现主键丢失之类的奇怪事情。</p>
+]]></content>
+      <tags>
+        <tag>PostgreSQL</tag>
+        <tag>FreeBSD</tag>
+        <tag>initdb</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>PostgreSQL SSL 加密传输配置</title>
     <url>/2019/10/26/postgresql-ssl/</url>
     <content><![CDATA[<h1 id="签名证书"><a href="#签名证书" class="headerlink" title="签名证书"></a>签名证书</h1><h2 id="快速测试证书"><a href="#快速测试证书" class="headerlink" title="快速测试证书"></a>快速测试证书</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">openssl req -new -x509 -days 365 -nodes -text -out server.crt \</span><br><span class="line">  -keyout server.key -subj &quot;&#x2F;CN&#x3D;dbhost.yourdomain.com&quot;</span><br></pre></td></tr></table></figure>
@@ -1360,27 +1486,6 @@
       <tags>
         <tag>PostgreSQL</tag>
         <tag>SSL</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>FreeBSD 上初始化 PostgreSQL 96</title>
-    <url>/2017/07/12/postgresql-init/</url>
-    <content><![CDATA[<h2 id="疼点"><a href="#疼点" class="headerlink" title="疼点"></a>疼点</h2><ul>
-<li><code>postgres</code> 这个用户名，打起来麻烦，不及<code>pgsql</code>方便。</li>
-<li><code>initdb</code> 出来的库默认是英文的</li>
-</ul>
-<h2 id="设置"><a href="#设置" class="headerlink" title="设置"></a>设置</h2><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">ee /etc/csh.cshrc</span><br><span class="line"></span><br><span class="line"><span class="built_in">alias</span> ll	ls -lAF</span><br><span class="line"><span class="built_in">alias</span> ls	ls -FG</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">setenv LANG         zh_CN.UTF-8</span><br><span class="line">setenv LC_CTYPE     zh_CN.UTF-8</span><br><span class="line">setenv LC_ALL       zh_CN.UTF-8</span><br></pre></td></tr></table></figure>
-<p><code>adduser</code> pgsql</p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">su pgsql</span><br><span class="line">initdb data96 -E utf8 --locale=zh_CN.UTF-8</span><br></pre></td></tr></table></figure>
-<p>注：<code>pg_upgrade -d main/ -D /var/db/postgres/data96/ -b /var/server/pgsql94/bin/ -B /usr/local/bin/ -U pgsql</code></p>
-<p>这是一个成功率低、操作复杂、过程繁琐、环境要求高 的事情。</p>
-<p>如果升级数据库，还是<code>pg_dump</code> <code>pg_restore</code>来得方便。</p>
-<p>对于复杂关系的库，<code>pg_upgrade</code>也会出现主键丢失之类的奇怪事情。</p>
-]]></content>
-      <tags>
-        <tag>FreeBSD</tag>
-        <tag>PostgreSQL</tag>
-        <tag>initdb</tag>
       </tags>
   </entry>
   <entry>
@@ -1661,6 +1766,11 @@
 <p>腾讯2019年5月15日公布的一季度财报显示，腾讯卖了854.65亿。二季度还没出来，且简单做x2推算吧。</p>
 <p><strong>1708亿人民币/6个月</strong></p>
 <p>腾讯一软件服务公司，收钱的能力连卖货的华为一半都不到。不过得深挖一下。</p>
+<pre class="mermaid">pie title 营收
+  "华为" : 4013
+  "腾讯" : 1708</pre>
+
+
 <h2 id="华为"><a href="#华为" class="headerlink" title="华为"></a>华为</h2><blockquote>
 <p>[中国，深圳，2019年7月30日] 2019年上半年，华为实现销售收入4013亿人民币，<br>同比增长23.2%，<u>净利润率8.7%</u>。<a class="link"   href="https://www.huawei.com/cn/press-events/news/2019/7/huawei-announces-h1-2019-revenue" >源自：官方新闻<i class="fas fa-external-link-alt"></i></a></p>
 </blockquote>
@@ -1669,6 +1779,10 @@
 <p>期内盈利为人民币 278.56 亿元（41.37 亿美元），比去年同期增长 16%；<u>净利润率与去年同期持平，为<br>  33%</u>。<a class="link"   href="http://www.tencent.com/zh-cn/articles/15000771557911821.pdf" >源自：官方财报<i class="fas fa-external-link-alt"></i></a></p>
 </blockquote>
 <p>腾讯净利润：854.65 x 0.33 / 3 = <strong>94亿/月</strong></p>
+<pre class="mermaid">pie title 净利润
+  "华为" : 58.1
+  "腾讯" : 94</pre>
+
 <h3 id="还是搞软件服务更赚钱啊！～～～"><a href="#还是搞软件服务更赚钱啊！～～～" class="headerlink" title="还是搞软件服务更赚钱啊！～～～"></a>还是搞软件服务更赚钱啊！～～～</h3>]]></content>
       <tags>
         <tag>财报解读</tag>
@@ -1863,80 +1977,6 @@
 ]]></content>
       <tags>
         <tag>电子商务法</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>linux常用Shell命令</title>
-    <url>/2021/01/18/linux-cmd/</url>
-    <content><![CDATA[<ul>
-<li>找出指定文件夹下指定类型的所有文件，并全部删除<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find /home/user/mydir -name *.png | xargs rm -f</span><br></pre></td></tr></table></figure></li>
-</ul>
-]]></content>
-      <tags>
-        <tag>shell</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>鼠标垫设计</title>
-    <url>/2021/01/26/mouse-pad/</url>
-    <content><![CDATA[<p><img src="https://user-images.githubusercontent.com/1764005/105838242-ccfcef80-600a-11eb-8a26-b07c8c7932b4.png" alt="鼠标垫"></p>
-<p><a class="link"   href="https://github.com/blusewang/blog/files/5872975/psd.zip" >鼠标垫.psd.zip<i class="fas fa-external-link-alt"></i></a></p>
-]]></content>
-      <tags>
-        <tag>设计</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>FreeBSD 12 构建 mosquitto v2.0.6 + websockets + TLS + PostgreSQL认证</title>
-    <url>/2021/02/01/build-mosquitto-on-freebsd/</url>
-    <content><![CDATA[<h1 id="MQTT服务器需求"><a href="#MQTT服务器需求" class="headerlink" title="MQTT服务器需求"></a>MQTT服务器需求</h1><ul>
-<li>支持Websocket</li>
-<li>支持命令行输出json输出</li>
-<li>支持通过PostgreSQL认证用户</li>
-</ul>
-<h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><h2 id="mosquitto-资源"><a href="#mosquitto-资源" class="headerlink" title="mosquitto 资源"></a>mosquitto 资源</h2><p>官网源码包下载地址： <a class="link"   href="https://mosquitto.org/download/" >https://mosquitto.org/download/<i class="fas fa-external-link-alt"></i></a></p>
-<ul>
-<li>当前最新版本2.0.6： <a class="link"   href="https://mosquitto.org/files/source/mosquitto-2.0.6.tar.gz" >https://mosquitto.org/files/source/mosquitto-2.0.6.tar.gz<i class="fas fa-external-link-alt"></i></a></li>
-</ul>
-<h2 id="官方推荐认证扩展"><a href="#官方推荐认证扩展" class="headerlink" title="官方推荐认证扩展"></a>官方推荐认证扩展</h2><p><a class="link"   href="https://github.com/iegomez/mosquitto-go-auth" >https://github.com/iegomez/mosquitto-go-auth<i class="fas fa-external-link-alt"></i></a></p>
-<h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><h2 id="编译-mosquitto"><a href="#编译-mosquitto" class="headerlink" title="编译 mosquitto"></a>编译 mosquitto</h2><h3 id="安装依赖："><a href="#安装依赖：" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
-<li><code>gmake</code> 编译工具</li>
-<li><code>libcjson</code> 命令行支持json格式输出依赖</li>
-<li><code>libwebsockets</code> websocket依赖</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pkg install gmake libcjson libwebsockets</span><br></pre></td></tr></table></figure>
-<h3 id="解压源码包。配置config-mk"><a href="#解压源码包。配置config-mk" class="headerlink" title="解压源码包。配置config.mk"></a>解压源码包。配置<code>config.mk</code></h3><ul>
-<li>WITH_WEBSOCKETS:=no -&gt; yes</li>
-<li>WITH_CJSON:=yes</li>
-</ul>
-<h3 id="编译-1"><a href="#编译-1" class="headerlink" title="编译"></a>编译</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gmake CFLAGS=&quot;-I/usr/local/include&quot; LDFLAGS=&quot;-L/usr/local/lib&quot;</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
-<h2 id="编译-mosquitto-go-auth"><a href="#编译-mosquitto-go-auth" class="headerlink" title="编译 mosquitto-go-auth"></a>编译 mosquitto-go-auth</h2><h3 id="安装依赖：-1"><a href="#安装依赖：-1" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
-<li><code>go</code> 编译工具，此为<code>golang</code>源码</li>
-</ul>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">pkg install go</span><br></pre></td></tr></table></figure>
-<h3 id="配置国内源"><a href="#配置国内源" class="headerlink" title="配置国内源"></a>配置国内源</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">go env -w GO111MODULE=on</span><br><span class="line">go env -w GOPROXY=https://goproxy.cn,direct</span><br></pre></td></tr></table></figure>
-<h3 id="编译-2"><a href="#编译-2" class="headerlink" title="编译"></a>编译</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">gmake</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>PostgreSQL</tag>
-        <tag>mosquitto</tag>
-        <tag>mqtt</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>FFmpeg视频裁剪</title>
-    <url>/2021/02/01/ffmpeg-resize/</url>
-    <content><![CDATA[<p>视频裁剪就是选中你想要的矩形区域并只输出这个区域，去污不残留。裁剪通常和大小调整，填充和其他操作一起使用。</p>
-<h1 id="基本裁切内容"><a href="#基本裁切内容" class="headerlink" title="基本裁切内容"></a>基本裁切内容</h1><p>老版本的FFmpeg有<code>cropbottom</code>、<code>cropleft</code>、<code>cropright</code>、<code>croptop</code>几个指令，但是现在过时了。裁剪操作现在使用下表描述的<code>crop</code>滤镜。</p>
-<p><img src="https://user-images.githubusercontent.com/1764005/106429770-d9b79280-64a5-11eb-9531-c3673b9399bf.png" alt="image"></p>
-<p><code>ow</code>的值能够通过<code>oh</code>的值推导得出，反之亦然。但是不能通过<code>x</code>和y推导得出，因为它们是在<code>ow</code>和<code>oh</code>之后进行求值的。另外<code>x</code>能够通过<code>y</code>推导得出，反之亦然。</p>
-<p>好懵逼。先看人家举的栗子：</p>
-<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">ffmpeg -i input -vf crop=iw/3:ih:0:0 output</span><br><span class="line">ffmpeg -i input -vf crop=iw/3:ih:iw/3:0 output</span><br><span class="line">ffmpeg -i input -vf crop=iw/3:ih:iw/3*2:0 output</span><br></pre></td></tr></table></figure>
-<p>结果还是没明白人家什么意思。再看个图：<br><img src="https://user-images.githubusercontent.com/1764005/106429885-09669a80-64a6-11eb-9c9c-cc4846b40487.png" alt="image"></p>
-<h1 id="中心裁剪"><a href="#中心裁剪" class="headerlink" title="中心裁剪"></a>中心裁剪</h1><p>当我们进行中心裁剪操作时，可以跳过<code>crop</code>滤镜<code>x</code>和<code>y</code>参数的输入。默认<code>x</code>和<code>y</code>的值分别是：<code>x_default = ( input width - output width)/2，y_default = ( input height - output height)/2</code><br>这意味着中心裁剪时默认值是自动设置的。那么裁剪中心区域的语法是：<code>ffmpeg -i input_file -vf crop=w:h output_file</code><br>例如<code>ffmpeg -i input.mpg -vf crop=iw/2:ih/2 output.mp4</code>表示以中心裁剪的方式裁出宽高为原视频一半的视频。</p>
-]]></content>
-      <tags>
-        <tag>FFmpeg</tag>
-        <tag>视频剪裁</tag>
       </tags>
   </entry>
 </search>

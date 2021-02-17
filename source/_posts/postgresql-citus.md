@@ -13,6 +13,16 @@ Citus 适用于多租户、实时分析场景。（这也正是我迫切需要�
 
 下边介绍Citus的上手经历。
 
+# 试验架构
+```mermaid
+graph TB
+  m[(citus0)]
+  slave1[(citus1)]
+  slave2[(citus2)]
+  m---slave1
+  m---slave2
+```
+
 # 准备主机
 分布式，至少两台以上主机。
 - 协调节点，负责统筹。主机名：citus0
@@ -31,7 +41,7 @@ Citus 适用于多租户、实时分析场景。（这也正是我迫切需要�
 ## 编译参数
 ### PostgreSQL 12.3 编译
 编译：
-```shell script
+```shell
 kg install llvm90 gettext curl gmake
 ./configure '--with-libraries=/usr/local/lib' '--with-includes=/usr/local/include' '--enable-thread-safety' '--disable-debug' '--enable-nls' '--without-pam' '--with-openssl' '--without-llvm' '--without-gssapi' '--prefix=/usr/local' '--localstatedir=/var' '--mandir=/usr/local/man' '--infodir=/usr/local/share/info/' '--build=amd64-portbld-freebsd12.1' 'build_alias=amd64-portbld-freebsd12.1' 'CC=cc' 'CFLAGS=-O2 -pipe  -fstack-protector-strong -fno-strict-aliasing ' 'LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong ' 'LIBS=' 'CPPFLAGS=-I/usr/local/include' 'CXX=c++' 'CXXFLAGS=-O2 -pipe -fstack-protector-strong -fno-strict-aliasing  ' 'CPP=cpp' 'PKG_CONFIG=pkgconf' 'LDFLAGS_SL='
 make world
@@ -41,7 +51,7 @@ adduser postgres
 
 ### Citus 9.4.0 编译
 编译
-```shell script
+```shell
 ./configure 'LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong ' CPPFLAGS=-I/usr/local/include
 gmake
 gmake install
@@ -51,7 +61,7 @@ gmake install
 ## 所有主机上的共同操作
 注意：***以下所有操作都在要每个节点主机上完整操作完。包括建库和启用`citus`。且一定是先建库，进入`main`库后再启动`citus`扩展***
 - 初始化数据库
-```shell script
+```shell
 su postgres
 initdb data
 ```
@@ -72,7 +82,7 @@ initdb data
 pg_ctl -D data start
 ```
 - 建库并启用Citus
-```shell script
+```shell
 psql
 create database main;
 \c main
@@ -80,7 +90,7 @@ create extension citus;
 ```
 
 ## 协调节点上的操作
-```shell script
+```shell
 psql main
 select master_add_node('citus1',5432);
 select master_add_node('citus2',5432);

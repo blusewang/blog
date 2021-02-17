@@ -26,4 +26,12 @@
             <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">京ICP备13038498号-1</a> | <%- __('powered_by', '<a target="_blank" href="https://hexo.io">Hexo</a>') %> | <%- __('theme') %> <a class="theme-version" target="_blank"></a>
         </div>
     </div>
+    <% if (theme.mermaid.enable) { %>
+        <script src='http://unpkg.zhimg.com/mermaid@<%= theme.mermaid.version %>/dist/mermaid.min.js'></script>
+        <script>
+            if (window.mermaid) {
+                mermaid.initialize({theme: '<%= theme.mermaid.theme %>'});
+            }
+        </script>
+    <% } %>
 </footer>

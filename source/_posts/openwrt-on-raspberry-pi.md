@@ -6,7 +6,31 @@ tags: [RaspberryPi, OpenWRT]
 
 # 设计
 家用网络拓扑设计
-![image](https://user-images.githubusercontent.com/1764005/70146001-3e2d6500-16dc-11ea-952c-dda05eb69029.png)
+```mermaid
+graph LR
+lt((联通宽带))
+subgraph Raspberry PI
+openwrt(OpenWRT)
+end
+tp(TP-Link)
+mac(Laptop)
+phone(Phone)
+subgraph Raspberry PI 2
+osmc(OSMC Dodi)
+end
+tv(TV)
+disk[(USB 硬盘)]
+
+lt ---|光猫桥接| openwrt
+openwrt ---|USB转网线| tp
+openwrt --- disk
+tp -. wifi .- mac
+tp -. wifi .- phone
+tp ---|网线| osmc
+osmc ---|HDMI| tv 
+openwrt -. wifi .- mac
+openwrt -. wifi .- phone
+```
 
 路由器连接RPI由网线接口。RPI连接电视由HDMI接口。
 

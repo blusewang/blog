@@ -204,3 +204,13 @@ footer:
 # Keep version (Please don't modify)
 # ---------------------------------------------------------------------------------------
 version: 3.1.0
+
+
+# ---------------------------------------------------------------------------------------
+# Mermaid chart
+# ---------------------------------------------------------------------------------------
+mermaid:
+  enable: true  # default true
+  version: "8.9.0" # default v8.9.0
+  options:  # find more api options from https://github.com/knsv/mermaid/blob/master/src/mermaidAPI.js
+  theme: forest #forest dark neutral default

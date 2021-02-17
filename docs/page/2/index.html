@@ -345,9 +345,15 @@
                 <div class="home-article-content markdown-body">
                     
                         设计家用网络拓扑设计
-路由器连接RPI由网线接口。RPI连接电视由HDMI接口。
-配件准备唯独RPI连接路由器。额外需要一个 USB转网口。淘宝之：树莓派USB2.0 HUB 网卡加hub 分线器转RJ45外置有线网卡 USB网口
-刷OSOpenWR...
+graph LR
+lt((联通宽带))
+subgraph Raspberry PI
+openwrt(OpenWRT)
+end
+tp(TP-Link)
+mac(Laptop)
+phone(Phone)
+subgraph Raspb...
                     
                 </div>
 
@@ -540,12 +546,12 @@
                     
                         <li>
                             
-                            <a href="/tags/FreeBSD/">FreeBSD</a>
+                            <a href="/tags/PostgreSQL/">PostgreSQL</a>
                         </li>
                     
                         <li>
                             | 
-                            <a href="/tags/PostgreSQL/">PostgreSQL</a>
+                            <a href="/tags/FreeBSD/">FreeBSD</a>
                         </li>
                     
                 </ul>
@@ -645,6 +651,14 @@
             <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">京ICP备13038498号-1</a> | 由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
         </div>
     </div>
+    
+        <script src='http://unpkg.zhimg.com/mermaid@8.9.0/dist/mermaid.min.js'></script>
+        <script>
+            if (window.mermaid) {
+                mermaid.initialize({theme: 'forest'});
+            }
+        </script>
+    
 </footer>
 
             </div>

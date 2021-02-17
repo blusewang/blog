@@ -187,7 +187,7 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i> <span>673 字</span>
+            <i class="fas fa-file-word"></i> <span>689 字</span>
         </span>
     
     
@@ -208,6 +208,13 @@
 <p>Citus 正在被很多大数据机构使用，日均更新5～10亿记录，甚至有在70个节点上，运行数据规模达1.4PB！</p>
 <p>Citus 适用于多租户、实时分析场景。（这也正是我迫切需要的！）</p>
 <p>下边介绍Citus的上手经历。</p>
+<h1 id="试验架构"><a href="#试验架构" class="headerlink" title="试验架构"></a>试验架构</h1><pre class="mermaid">graph TB
+  m[(citus0)]
+  slave1[(citus1)]
+  slave2[(citus2)]
+  m---slave1
+  m---slave2</pre>
+
 <h1 id="准备主机"><a href="#准备主机" class="headerlink" title="准备主机"></a>准备主机</h1><p>分布式，至少两台以上主机。</p>
 <ul>
 <li>协调节点，负责统筹。主机名：citus0</li>
@@ -229,12 +236,12 @@
 </li>
 </ul>
 <h2 id="编译参数"><a href="#编译参数" class="headerlink" title="编译参数"></a>编译参数</h2><h3 id="PostgreSQL-12-3-编译"><a href="#PostgreSQL-12-3-编译" class="headerlink" title="PostgreSQL 12.3 编译"></a>PostgreSQL 12.3 编译</h3><p>编译：</p>
-<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kg install llvm90 gettext curl gmake</span><br><span class="line">./configure &#x27;--with-libraries=/usr/local/lib&#x27; &#x27;--with-includes=/usr/local/include&#x27; &#x27;--enable-thread-safety&#x27; &#x27;--disable-debug&#x27; &#x27;--enable-nls&#x27; &#x27;--without-pam&#x27; &#x27;--with-openssl&#x27; &#x27;--without-llvm&#x27; &#x27;--without-gssapi&#x27; &#x27;--prefix=/usr/local&#x27; &#x27;--localstatedir=/var&#x27; &#x27;--mandir=/usr/local/man&#x27; &#x27;--infodir=/usr/local/share/info/&#x27; &#x27;--build=amd64-portbld-freebsd12.1&#x27; &#x27;build_alias=amd64-portbld-freebsd12.1&#x27; &#x27;CC=cc&#x27; &#x27;CFLAGS=-O2 -pipe  -fstack-protector-strong -fno-strict-aliasing &#x27; &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; &#x27;LIBS=&#x27; &#x27;CPPFLAGS=-I/usr/local/include&#x27; &#x27;CXX=c++&#x27; &#x27;CXXFLAGS=-O2 -pipe -fstack-protector-strong -fno-strict-aliasing  &#x27; &#x27;CPP=cpp&#x27; &#x27;PKG_CONFIG=pkgconf&#x27; &#x27;LDFLAGS_SL=&#x27;</span><br><span class="line">make world</span><br><span class="line">make install-world</span><br><span class="line">adduser postgres</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">kg install llvm90 gettext curl gmake</span><br><span class="line">./configure &#x27;--with-libraries=/usr/local/lib&#x27; &#x27;--with-includes=/usr/local/include&#x27; &#x27;--enable-thread-safety&#x27; &#x27;--disable-debug&#x27; &#x27;--enable-nls&#x27; &#x27;--without-pam&#x27; &#x27;--with-openssl&#x27; &#x27;--without-llvm&#x27; &#x27;--without-gssapi&#x27; &#x27;--prefix=/usr/local&#x27; &#x27;--localstatedir=/var&#x27; &#x27;--mandir=/usr/local/man&#x27; &#x27;--infodir=/usr/local/share/info/&#x27; &#x27;--build=amd64-portbld-freebsd12.1&#x27; &#x27;build_alias=amd64-portbld-freebsd12.1&#x27; &#x27;CC=cc&#x27; &#x27;CFLAGS=-O2 -pipe  -fstack-protector-strong -fno-strict-aliasing &#x27; &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; &#x27;LIBS=&#x27; &#x27;CPPFLAGS=-I/usr/local/include&#x27; &#x27;CXX=c++&#x27; &#x27;CXXFLAGS=-O2 -pipe -fstack-protector-strong -fno-strict-aliasing  &#x27; &#x27;CPP=cpp&#x27; &#x27;PKG_CONFIG=pkgconf&#x27; &#x27;LDFLAGS_SL=&#x27;</span><br><span class="line">make world</span><br><span class="line">make install-world</span><br><span class="line">adduser postgres</span><br></pre></td></tr></table></figure>
 <h3 id="Citus-9-4-0-编译"><a href="#Citus-9-4-0-编译" class="headerlink" title="Citus 9.4.0 编译"></a>Citus 9.4.0 编译</h3><p>编译</p>
-<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; CPPFLAGS=-I/usr/local/include</span><br><span class="line">gmake</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">./configure &#x27;LDFLAGS= -L/usr/local/lib -lpthread -L/usr/local/lib  -fstack-protector-strong &#x27; CPPFLAGS=-I/usr/local/include</span><br><span class="line">gmake</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
 <h1 id="设置并启用Citus"><a href="#设置并启用Citus" class="headerlink" title="设置并启用Citus"></a>设置并启用Citus</h1><h2 id="所有主机上的共同操作"><a href="#所有主机上的共同操作" class="headerlink" title="所有主机上的共同操作"></a>所有主机上的共同操作</h2><p>注意：**<em>以下所有操作都在要每个节点主机上完整操作完。包括建库和启用<code>citus</code>。且一定是先建库，进入<code>main</code>库后再启动<code>citus</code>扩展**</em></p>
 <ul>
-<li>初始化数据库<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su postgres</span><br><span class="line">initdb data</span><br></pre></td></tr></table></figure></li>
+<li>初始化数据库<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">su postgres</span><br><span class="line">initdb data</span><br></pre></td></tr></table></figure></li>
 <li>配置<code>postgresql.conf</code><blockquote>
 <p>listen_addresses = ‘*’</p>
 <p>port = 5432</p>
@@ -247,8 +254,8 @@
 </blockquote>
 </li>
 <li>启动PostgreSQL<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pg_ctl -D data start</span><br></pre></td></tr></table></figure></li>
-<li>建库并启用Citus<figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">psql</span><br><span class="line">create database main;</span><br><span class="line">\c main</span><br><span class="line">create extension citus;</span><br></pre></td></tr></table></figure>
-<h2 id="协调节点上的操作"><a href="#协调节点上的操作" class="headerlink" title="协调节点上的操作"></a>协调节点上的操作</h2><figure class="highlight shell"><figcaption><span>script</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">psql main</span><br><span class="line">select master_add_node(&#x27;citus1&#x27;,5432);</span><br><span class="line">select master_add_node(&#x27;citus2&#x27;,5432);</span><br><span class="line"></span><br><span class="line">main=# select master_get_active_worker_nodes();</span><br><span class="line"> master_get_active_worker_nodes</span><br><span class="line">--------------------------------</span><br><span class="line"> (citus1,5432)</span><br><span class="line"> (citus2,5432)</span><br><span class="line">(2 行记录)</span><br></pre></td></tr></table></figure>
+<li>建库并启用Citus<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">psql</span><br><span class="line">create database main;</span><br><span class="line">\c main</span><br><span class="line">create extension citus;</span><br></pre></td></tr></table></figure>
+<h2 id="协调节点上的操作"><a href="#协调节点上的操作" class="headerlink" title="协调节点上的操作"></a>协调节点上的操作</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">psql main</span><br><span class="line">select master_add_node(&#x27;citus1&#x27;,5432);</span><br><span class="line">select master_add_node(&#x27;citus2&#x27;,5432);</span><br><span class="line"></span><br><span class="line">main=# select master_get_active_worker_nodes();</span><br><span class="line"> master_get_active_worker_nodes</span><br><span class="line">--------------------------------</span><br><span class="line"> (citus1,5432)</span><br><span class="line"> (citus2,5432)</span><br><span class="line">(2 行记录)</span><br></pre></td></tr></table></figure>
 <h1 id="使用Citus"><a href="#使用Citus" class="headerlink" title="使用Citus"></a>使用Citus</h1>现在只要在协调节点<code>citus0</code>上的<code>main</code>库中建表。所有工作节点都会自动创建分表。</li>
 </ul>
 <p>在协调节点上存储会将数据分发到不同的工作节点上。查询也是在多个工作节点上分布查询了。</p>
@@ -380,6 +387,14 @@
             <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">京ICP备13038498号-1</a> | 由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
         </div>
     </div>
+    
+        <script src='http://unpkg.zhimg.com/mermaid@8.9.0/dist/mermaid.min.js'></script>
+        <script>
+            if (window.mermaid) {
+                mermaid.initialize({theme: 'forest'});
+            }
+        </script>
+    
 </footer>
 
             </div>
@@ -453,7 +468,7 @@
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E4%B8%BB%E6%9C%BA"><span class="nav-number">1.</span> <span class="nav-text">准备主机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85"><span class="nav-number">2.</span> <span class="nav-text">编译安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%88%E6%9C%AC"><span class="nav-number">2.1.</span> <span class="nav-text">版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%8F%82%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">编译参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PostgreSQL-12-3-%E7%BC%96%E8%AF%91"><span class="nav-number">2.2.1.</span> <span class="nav-text">PostgreSQL 12.3 编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Citus-9-4-0-%E7%BC%96%E8%AF%91"><span class="nav-number">2.2.2.</span> <span class="nav-text">Citus 9.4.0 编译</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%B9%B6%E5%90%AF%E7%94%A8Citus"><span class="nav-number">3.</span> <span class="nav-text">设置并启用Citus</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E4%B8%BB%E6%9C%BA%E4%B8%8A%E7%9A%84%E5%85%B1%E5%90%8C%E6%93%8D%E4%BD%9C"><span class="nav-number">3.1.</span> <span class="nav-text">所有主机上的共同操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%B0%83%E8%8A%82%E7%82%B9%E4%B8%8A%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">协调节点上的操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Citus"><span class="nav-number">4.</span> <span class="nav-text">使用Citus</span></a></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%95%E9%AA%8C%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">试验架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E4%B8%BB%E6%9C%BA"><span class="nav-number">2.</span> <span class="nav-text">准备主机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85"><span class="nav-number">3.</span> <span class="nav-text">编译安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%88%E6%9C%AC"><span class="nav-number">3.1.</span> <span class="nav-text">版本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%8F%82%E6%95%B0"><span class="nav-number">3.2.</span> <span class="nav-text">编译参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PostgreSQL-12-3-%E7%BC%96%E8%AF%91"><span class="nav-number">3.2.1.</span> <span class="nav-text">PostgreSQL 12.3 编译</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Citus-9-4-0-%E7%BC%96%E8%AF%91"><span class="nav-number">3.2.2.</span> <span class="nav-text">Citus 9.4.0 编译</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E5%B9%B6%E5%90%AF%E7%94%A8Citus"><span class="nav-number">4.</span> <span class="nav-text">设置并启用Citus</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E4%B8%BB%E6%9C%BA%E4%B8%8A%E7%9A%84%E5%85%B1%E5%90%8C%E6%93%8D%E4%BD%9C"><span class="nav-number">4.1.</span> <span class="nav-text">所有主机上的共同操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%B0%83%E8%8A%82%E7%82%B9%E4%B8%8A%E7%9A%84%E6%93%8D%E4%BD%9C"><span class="nav-number">4.2.</span> <span class="nav-text">协调节点上的操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Citus"><span class="nav-number">5.</span> <span class="nav-text">使用Citus</span></a></li></ol>
     </div>
 </div>
         </aside>
