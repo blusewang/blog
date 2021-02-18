@@ -1,5 +1,5 @@
 ---
-title: FreeBSD 12 构建 mosquitto v2.0.6 + websockets + TLS + PostgreSQL认证
+title: FreeBSD 12 构建 mosquitto v2.0.7 + websockets + TLS + PostgreSQL认证
 date: 2021-02-01 00:07:53
 tags: [mosquitto, mqtt, PostgreSQL]
 ---
@@ -9,12 +9,32 @@ tags: [mosquitto, mqtt, PostgreSQL]
 - 支持命令行输出json输出
 - 支持通过PostgreSQL认证用户
 
+```mermaid
+graph LR
+pg[(PostgreSQL)]
+auth(Auth plugin)
+mos([Mosquitto])
+ws(LibWebsockets)
+c(MQTT Client)
+b(Web Browser)
+
+click auth "https://github.com/iegomez/mosquitto-go-auth" _blank
+click pg "https://www.postgresql.org/" "PostgreSQL 官方" _blank
+click mos "https://mosquitto.org/" "mosquitto 官方" _blank
+
+pg --- auth
+auth --- mos
+mos --- ws
+ws --- b
+mos --- c
+```
+
 # 源码
 
 ## mosquitto 资源
 
 官网源码包下载地址： https://mosquitto.org/download/
-- 当前最新版本2.0.6： https://mosquitto.org/files/source/mosquitto-2.0.6.tar.gz
+- 当前最新版本2.0.6： https://mosquitto.org/files/source/mosquitto-2.0.7.tar.gz
 
 ## 官方推荐认证扩展
 https://github.com/iegomez/mosquitto-go-auth

@@ -275,7 +275,7 @@
 
                 <h3 class="home-article-title">
                     <a href="/2021/02/01/build-mosquitto-on-freebsd/">
-                        FreeBSD 12 构建 mosquitto v2.0.6 + websockets + TLS + PostgreSQL认证
+                        FreeBSD 12 构建 mosquitto v2.0.7 + websockets + TLS + PostgreSQL认证
                     </a>
                 </h3>
 
@@ -286,9 +286,11 @@
 支持命令行输出json输出
 支持通过PostgreSQL认证用户
 
-源码mosquitto 资源官网源码包下载地址： https://mosquitto.org/download/
-
-当前最新版本2.0.6...
+graph LR
+pg[(PostgreSQL)]
+auth(Auth plugin)
+mos([Mosquitto])
+ws(LibWe...
                     
                 </div>
 

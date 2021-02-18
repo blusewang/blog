@@ -22,16 +22,34 @@
       </tags>
   </entry>
   <entry>
-    <title>FreeBSD 12 构建 mosquitto v2.0.6 + websockets + TLS + PostgreSQL认证</title>
+    <title>FreeBSD 12 构建 mosquitto v2.0.7 + websockets + TLS + PostgreSQL认证</title>
     <url>/2021/02/01/build-mosquitto-on-freebsd/</url>
     <content><![CDATA[<h1 id="MQTT服务器需求"><a href="#MQTT服务器需求" class="headerlink" title="MQTT服务器需求"></a>MQTT服务器需求</h1><ul>
 <li>支持Websocket</li>
 <li>支持命令行输出json输出</li>
 <li>支持通过PostgreSQL认证用户</li>
 </ul>
+<pre class="mermaid">graph LR
+pg[(PostgreSQL)]
+auth(Auth plugin)
+mos([Mosquitto])
+ws(LibWebsockets)
+c(MQTT Client)
+b(Web Browser)
+
+click auth "https://github.com/iegomez/mosquitto-go-auth" _blank
+click pg "https://www.postgresql.org/" "PostgreSQL 官方" _blank
+click mos "https://mosquitto.org/" "mosquitto 官方" _blank
+
+pg --- auth
+auth --- mos
+mos --- ws
+ws --- b
+mos --- c</pre>
+
 <h1 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h1><h2 id="mosquitto-资源"><a href="#mosquitto-资源" class="headerlink" title="mosquitto 资源"></a>mosquitto 资源</h2><p>官网源码包下载地址： <a class="link"   href="https://mosquitto.org/download/" >https://mosquitto.org/download/<i class="fas fa-external-link-alt"></i></a></p>
 <ul>
-<li>当前最新版本2.0.6： <a class="link"   href="https://mosquitto.org/files/source/mosquitto-2.0.6.tar.gz" >https://mosquitto.org/files/source/mosquitto-2.0.6.tar.gz<i class="fas fa-external-link-alt"></i></a></li>
+<li>当前最新版本2.0.6： <a class="link"   href="https://mosquitto.org/files/source/mosquitto-2.0.7.tar.gz" >https://mosquitto.org/files/source/mosquitto-2.0.7.tar.gz<i class="fas fa-external-link-alt"></i></a></li>
 </ul>
 <h2 id="官方推荐认证扩展"><a href="#官方推荐认证扩展" class="headerlink" title="官方推荐认证扩展"></a>官方推荐认证扩展</h2><p><a class="link"   href="https://github.com/iegomez/mosquitto-go-auth" >https://github.com/iegomez/mosquitto-go-auth<i class="fas fa-external-link-alt"></i></a></p>
 <h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><h2 id="编译-mosquitto"><a href="#编译-mosquitto" class="headerlink" title="编译 mosquitto"></a>编译 mosquitto</h2><h3 id="安装依赖："><a href="#安装依赖：" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
