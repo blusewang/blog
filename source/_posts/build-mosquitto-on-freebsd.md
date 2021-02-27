@@ -44,6 +44,7 @@ https://github.com/iegomez/mosquitto-go-auth
 
 ### 安装依赖：
 - `gmake` 编译工具
+- `cmake` 编译工具
 - `libcjson` 命令行支持json格式输出依赖
 - `libwebsockets` websocket依赖
 
@@ -56,9 +57,19 @@ pkg install gmake libcjson libwebsockets
 - WITH_CJSON:=yes
 
 ### 编译
+* `gmake` 编译:
 ```shell
 gmake CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
 gmake install
+```
+
+* `cmake` 编译:
+```shell
+mkdir build
+cd build
+cmake -DCMAKE_INSTALL_PREFIX=/usr/loca/opt/mosquitto -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DWITH_WEBSOCKETS=ON -E env LDFLAGS="-L/usr/local/opt/cjson/lib -L/usr/local/opt/libwebsockets/lib" -DCMAKE_C_FLAGS="-I/usr/local/opt/cjson/include -I/usr/local/opt/libwebsockets/include -I/usr/local/opt/openssl/include" ../mosquitto
+make
+make install
 ```
 
 ## 编译 mosquitto-go-auth

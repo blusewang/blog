@@ -191,7 +191,7 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i> <span>249 字</span>
+            <i class="fas fa-file-word"></i> <span>315 字</span>
         </span>
     
     
@@ -238,6 +238,7 @@ mos --- c</pre>
 <h2 id="官方推荐认证扩展"><a href="#官方推荐认证扩展" class="headerlink" title="官方推荐认证扩展"></a>官方推荐认证扩展</h2><p><a class="link"   target="_blank" rel="noopener" href="https://github.com/iegomez/mosquitto-go-auth" >https://github.com/iegomez/mosquitto-go-auth<i class="fas fa-external-link-alt"></i></a></p>
 <h1 id="编译"><a href="#编译" class="headerlink" title="编译"></a>编译</h1><h2 id="编译-mosquitto"><a href="#编译-mosquitto" class="headerlink" title="编译 mosquitto"></a>编译 mosquitto</h2><h3 id="安装依赖："><a href="#安装依赖：" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
 <li><code>gmake</code> 编译工具</li>
+<li><code>cmake</code> 编译工具</li>
 <li><code>libcjson</code> 命令行支持json格式输出依赖</li>
 <li><code>libwebsockets</code> websocket依赖</li>
 </ul>
@@ -246,8 +247,12 @@ mos --- c</pre>
 <li>WITH_WEBSOCKETS:=no -&gt; yes</li>
 <li>WITH_CJSON:=yes</li>
 </ul>
-<h3 id="编译-1"><a href="#编译-1" class="headerlink" title="编译"></a>编译</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gmake CFLAGS=&quot;-I/usr/local/include&quot; LDFLAGS=&quot;-L/usr/local/lib&quot;</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure>
-<h2 id="编译-mosquitto-go-auth"><a href="#编译-mosquitto-go-auth" class="headerlink" title="编译 mosquitto-go-auth"></a>编译 mosquitto-go-auth</h2><h3 id="安装依赖：-1"><a href="#安装依赖：-1" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
+<h3 id="编译-1"><a href="#编译-1" class="headerlink" title="编译"></a>编译</h3><ul>
+<li><code>gmake</code> 编译:<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gmake CFLAGS=&quot;-I/usr/local/include&quot; LDFLAGS=&quot;-L/usr/local/lib&quot;</span><br><span class="line">gmake install</span><br></pre></td></tr></table></figure></li>
+<li><code>cmake</code> 编译:<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">mkdir build</span><br><span class="line">cd build</span><br><span class="line">cmake -DCMAKE_INSTALL_PREFIX=/usr/loca/opt/mosquitto -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DWITH_WEBSOCKETS=ON -E env LDFLAGS=&quot;-L/usr/local/opt/cjson/lib -L/usr/local/opt/libwebsockets/lib&quot; -DCMAKE_C_FLAGS=&quot;-I/usr/local/opt/cjson/include -I/usr/local/opt/libwebsockets/include -I/usr/local/opt/openssl/include&quot; ../mosquitto</span><br><span class="line">make</span><br><span class="line">make install</span><br></pre></td></tr></table></figure>
+<h2 id="编译-mosquitto-go-auth"><a href="#编译-mosquitto-go-auth" class="headerlink" title="编译 mosquitto-go-auth"></a>编译 mosquitto-go-auth</h2></li>
+</ul>
+<h3 id="安装依赖：-1"><a href="#安装依赖：-1" class="headerlink" title="安装依赖："></a>安装依赖：</h3><ul>
 <li><code>go</code> 编译工具，此为<code>golang</code>源码</li>
 </ul>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pkg install go</span><br></pre></td></tr></table></figure>
