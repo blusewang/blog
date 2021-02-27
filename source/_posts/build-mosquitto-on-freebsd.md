@@ -49,7 +49,27 @@ https://github.com/iegomez/mosquitto-go-auth
 - `libwebsockets` websocket依赖
 
 ```shell
-pkg install gmake libcjson libwebsockets
+pkg install gmake libcjson
+```
+
+根据开发者描述:https://github.com/eclipse/mosquitto/issues/2060
+`libwebsockets` 高于`v2.4.2`后会默认关闭`LWS_WITH_EXTERNAL_POLL`选项.导致`mosquitto`功能受损.
+
+所以,要么选择低版本的`libwebsockets`,要么重新手动编译高版本.
+
+这里选择重新手动编译高版本,开启`LWS_WITH_EXTERNAL_POLL`选项.
+
+* `cmake` 编译:
+```shell
+git clone https://libwebsockets.org/repo/libwebsockets
+cd libwebsockets
+git checkout v4.1.6
+cd ..
+mkdir build
+cd build
+cmake -DLWS_WITH_EXTERNAL_POLL=ON ../libwebsockets
+make
+make install
 ```
 
 ### 解压源码包。配置`config.mk`
@@ -67,7 +87,7 @@ gmake install
 ```shell
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr/loca/opt/mosquitto -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DWITH_WEBSOCKETS=ON -E env LDFLAGS="-L/usr/local/opt/cjson/lib -L/usr/local/opt/libwebsockets/lib" -DCMAKE_C_FLAGS="-I/usr/local/opt/cjson/include -I/usr/local/opt/libwebsockets/include -I/usr/local/opt/openssl/include" ../mosquitto
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DWITH_WEBSOCKETS=ON -E env LDFLAGS="-L/usr/local/lib" -DCMAKE_C_FLAGS="-I/usr/local/include" ../mosquitto
 make
 make install
 ```
