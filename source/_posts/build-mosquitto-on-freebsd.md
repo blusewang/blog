@@ -1,10 +1,10 @@
 ---
-title: FreeBSD 12 构建 mosquitto v2.0.7 + websockets + TLS + PostgreSQL认证
-date: 2021-02-01 00:07:53
+title: FreeBSD 12 构建 mosquitto v2.0.7 + websockets + TLS + PostgreSQL认证 date: 2021-02-01 00:07:53
 tags: [mosquitto, mqtt, PostgreSQL]
 ---
 
 # MQTT服务器需求
+
 - 支持Websocket
 - 支持命令行输出json输出
 - 支持通过PostgreSQL认证用户
@@ -34,15 +34,19 @@ mos --- c
 ## mosquitto 资源
 
 官网源码包下载地址： https://mosquitto.org/download/
+
 - 当前最新版本2.0.6： https://mosquitto.org/files/source/mosquitto-2.0.7.tar.gz
 
 ## 官方推荐认证扩展
+
 https://github.com/iegomez/mosquitto-go-auth
 
 # 编译
+
 ## 编译 mosquitto
 
 ### 安装依赖：
+
 - `gmake` 编译工具
 - `cmake` 编译工具
 - `libcjson` 命令行支持json格式输出依赖
@@ -60,6 +64,7 @@ pkg install gmake libcjson
 这里选择重新手动编译高版本,开启`LWS_WITH_EXTERNAL_POLL`选项.
 
 * `cmake` 编译:
+
 ```shell
 git clone https://libwebsockets.org/repo/libwebsockets
 cd libwebsockets
@@ -72,18 +77,22 @@ make
 make install
 ```
 
-### 解压源码包。配置`config.mk`
+### 编译
+
+* `gmake` 编译:
+
+配置`config.mk`
+
 - WITH_WEBSOCKETS:=no -> yes
 - WITH_CJSON:=yes
 
-### 编译
-* `gmake` 编译:
 ```shell
 gmake CFLAGS="-I/usr/local/include" LDFLAGS="-L/usr/local/lib"
 gmake install
 ```
 
 * `cmake` 编译:
+
 ```shell
 mkdir build
 cd build
@@ -95,6 +104,7 @@ make install
 ## 编译 mosquitto-go-auth
 
 ### 安装依赖：
+
 - `go` 编译工具，此为`golang`源码
 
 ```shell
@@ -102,12 +112,14 @@ pkg install go
 ```
 
 ### 配置国内源
+
 ```shell
 go env -w GO111MODULE=on
 go env -w GOPROXY=https://goproxy.cn,direct
 ```
 
 ### 编译
+
 ```shell
 gmake
 ```
