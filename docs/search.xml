@@ -2009,4 +2009,24 @@ openwrt -. wifi .- phone</pre>
         <tag>电子商务法</tag>
       </tags>
   </entry>
+  <entry>
+    <title>解决FreeBSD上的程序崩溃</title>
+    <url>/2021/02/27/freebsd-lldb-debug-programe/</url>
+    <content><![CDATA[<h2 id="第一步-开启核心转储"><a href="#第一步-开启核心转储" class="headerlink" title="第一步:开启核心转储"></a>第一步:开启核心转储</h2><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">kern.corefile=/var/db/coredump/%N.core</span><br><span class="line">kern.coredump=1</span><br><span class="line">kern.nodump_coredump=1</span><br><span class="line">kern.sugid_coredump=1</span><br></pre></td></tr></table></figure>
+<p>当前设置,会让进程崩溃后,将核心转储至<code>/var/db/coredump/</code>文件夹下.</p>
+<h2 id="第二步-等待"><a href="#第二步-等待" class="headerlink" title="第二步:等待"></a>第二步:等待</h2><p>定期检查<code>/var/log/message</code>文件,等待程序崩溃事件的到来.</p>
+<h2 id="第三步-调试"><a href="#第三步-调试" class="headerlink" title="第三步:调试"></a>第三步:调试</h2><ul>
+<li>使用<code>lldb</code>打开<code>core</code>文件<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">lldb -c /var/db/coredump/mosquitto.core -- /usr/local/sbin/mosquitto</span><br></pre></td></tr></table></figure></li>
+<li>打开,进入后执行<code>bt</code>就看到详细错误了.非常简单.</li>
+</ul>
+<p>过程如图:<br><img src="https://user-images.githubusercontent.com/1764005/109384031-354e3200-7925-11eb-802d-0ca220e55443.png" alt="image"></p>
+<p>这表明是<code>libgdb.so</code>扩展里,调用<code>strcmp</code>函数时,参数给错了!</p>
+<p>so easy!~</p>
+]]></content>
+      <tags>
+        <tag>mosquitto</tag>
+        <tag>FreeBSD</tag>
+        <tag>lldb</tag>
+      </tags>
+  </entry>
 </search>
