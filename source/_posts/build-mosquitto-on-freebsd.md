@@ -102,9 +102,14 @@ gmake install
 ```shell
 mkdir build
 cd build
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DWITH_WEBSOCKETS=ON -E env LDFLAGS="-L/usr/local/lib" -DCMAKE_C_FLAGS="-I/usr/local/include" ../mosquitto
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DOPENSSL_ROOT_DIR=/usr/local -DWITH_WEBSOCKETS=ON -E env LDFLAGS="-L/usr/local/lib" -DCMAKE_C_FLAGS="-I/usr/local/include" ../mosquitto
 make
 make install
+```
+
+- 'cmake' on MacOS
+```shell
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/Cellar/mosquitto/2.0.7 -DDOCUMENTATION=OFF -DOPENSSL_ROOT_DIR=/usr/local/opt/openssl -DWITH_WEBSOCKETS=ON -E env LDFLAGS="-L/usr/local/opt/cjson/lib -L/usr/local/opt/libwebsockets/lib" -DCMAKE_C_FLAGS="-I/usr/local/opt/cjson/include -I/usr/local/opt/libwebsockets/include -I/usr/local/opt/openssl/include" ../mosquitto
 ```
 
 ## 编译 mosquitto-go-auth
