@@ -1,5 +1,6 @@
 ---
-title: FreeBSD 12 构建 mosquitto v2.0.7 + websockets + TLS + PostgreSQL认证 date: 2021-02-01 00:07:53
+title: FreeBSD 12 构建 mosquitto v2.0.7 + websockets + TLS + PostgreSQL认证 
+date: 2021-02-01 00:07:53
 tags: [mosquitto, mqtt, PostgreSQL]
 ---
 
