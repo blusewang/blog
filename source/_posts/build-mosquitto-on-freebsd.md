@@ -77,6 +77,11 @@ make
 make install
 ```
 
+- `cmake` on MocOS
+```shell
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local/Cellar/libwebsockets/4.1.6 -DLWS_WITH_EXTERNAL_POLL=ON -DOPENSSL_INCLUDE_DIR=/usr/local/opt/openssl/include -DOPENSSL_EXECUTABLE=/usr/local/opt/openssl/bin/openssl ../libwebsockets
+```
+
 ### 编译
 
 * `gmake` 编译:
