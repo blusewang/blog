@@ -8,3 +8,8 @@ tags: [shell]
 ```shell
 find /home/user/mydir -name *.png | xargs rm -f
 ```
+
+- `cmake` 安装后,如何卸载
+```shell
+xargs rm < install_manifest.txt
+```
