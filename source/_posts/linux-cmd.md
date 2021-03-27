@@ -13,3 +13,8 @@ find /home/user/mydir -name *.png | xargs rm -f
 ```shell
 xargs rm < install_manifest.txt
 ```
+
+- `tcpdump` 取得HTTP(非HTTPS)的GET请求`header`
+```shell
+tcpdump -i br-lan tcp and host wechat.xhlroi.com and 'tcp[((tcp[12:1] &0xf0) >> 2):4] = 0x47455420' -vv
+```

@@ -821,6 +821,7 @@ mos --- c</pre>
     <content><![CDATA[<ul>
 <li>找出指定文件夹下指定类型的所有文件，并全部删除<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">find /home/user/mydir -name *.png | xargs rm -f</span><br></pre></td></tr></table></figure></li>
 <li><code>cmake</code> 安装后,如何卸载<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">xargs rm &lt; install_manifest.txt</span><br></pre></td></tr></table></figure></li>
+<li><code>tcpdump</code> 取得HTTP(非HTTPS)的GET请求<code>header</code><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">tcpdump -i br-lan tcp and host wechat.xhlroi.com and &#x27;tcp[((tcp[12:1] &amp;0xf0) &gt;&gt; 2):4] = 0x47455420&#x27; -vv</span><br></pre></td></tr></table></figure></li>
 </ul>
 ]]></content>
       <tags>
