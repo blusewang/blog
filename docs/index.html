@@ -228,6 +228,60 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2021/08/03/aliyun-freebsd-mount-cloud-disk/">
+                        阿里云 FreeBSD 挂载云盘
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        添加云盘后，重启ECS。在/dev下会多出一个/dev/vtbd1
+
+分区12gpart create -s GPT vtbd1gpart add -t freebsd-ufs vtbd1
+格式化1newfs -U /dev/vtbd1p1
+创建挂载...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Tue Aug 03 2021 16:02:25 GMT+0800">2021-08-03</span></span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/FreeBSD/">FreeBSD</a>
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/mount/">mount</a>
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91/">阿里云</a>
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2021/08/03/aliyun-freebsd-mount-cloud-disk/">阅读全文 <i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2021/03/15/mqtt5-protocol/">
                         MQTT5 协议新特性
                     </a>
@@ -646,59 +700,6 @@ Citus 正在被很多大数据机构使用，日均更新5～10亿记录，甚�
     </div>
 
     <a href="/2020/08/04/openwrt-ipv6-firewall-forward/">阅读全文 <i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2020/07/06/openwrt-on-raspberrypi-play-audio/">
-                        OpenWRT 在 RaspberryPI 播放音频
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        RaspberryPI 不只能满足路由计算需要，还能用于多媒体，如：插上音箱放音乐！
-OpenWrt编译要求内核驱动类要求：
-Kernel modules &gt; Sound Support &gt; kmod-sound-core
-Kernel ...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Mon Jul 06 2020 12:46:57 GMT+0800">2020-07-06</span></span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fas fa-tags"></i>
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/OpenWRT/">OpenWRT</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/RaspberryPi/">RaspberryPi</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/%E9%9F%B3%E9%A2%91/">音频</a>
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2020/07/06/openwrt-on-raspberrypi-play-audio/">阅读全文 <i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
