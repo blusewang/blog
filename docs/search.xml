@@ -2099,4 +2099,33 @@ openwrt -. wifi .- phone</pre>
         <tag>阿里云</tag>
       </tags>
   </entry>
+  <entry>
+    <title>golang项目的自动化部署</title>
+    <url>/2021/09/09/golang-auto-deploy/</url>
+    <content><![CDATA[<p>在Go项目中。部署可以使用<code>Makefile</code>管理编译脚本、打包上传二进制至服务器的功能。</p>
+<p>但在服务器上，如何自动在收到上传后自动停止服务，解压二进制包，替换旧二进制文件，再启动。这是个一直困扰我的问题。</p>
+<p>在<code>Debian</code>上可以使用<code>systemd</code>的<code>service</code>脚本，实现守护，并实现启动前的预检测新包功能。</p>
+<p>但<code>service</code>脚本无法感知到有新版的二进制包被上传。</p>
+<p>想了很多办法，但都不如意：</p>
+<ul>
+<li><p>采用用<code>Golang</code>写一个文件监测服务。杀鸡用了宰牛刀。</p>
+</li>
+<li><p>装自动化CI服务之类的，重且不说，业务分布在不同的主机，挨个安装部署太费精力。</p>
+</li>
+<li><p>装一个<code>git</code>服务。利用<code>git</code>的<code>Hook</code>触发部署。可将源码部署在生产主机上，不合适不说，还是要挨个主机装一个。</p>
+</li>
+</ul>
+<h1 id="理想方案"><a href="#理想方案" class="headerlink" title="理想方案"></a>理想方案</h1><p>今天偶然想到了<code>shell</code>查了一下。结果一下就通了。</p>
+<p>首先在<code>Debian</code>上安装文件监测工具。<code>inotify-tools</code></p>
+<h3 id="一个监控脚本："><a href="#一个监控脚本：" class="headerlink" title="一个监控脚本："></a>一个监控脚本：</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash">!/bin/bash</span></span><br><span class="line">filename=$1</span><br><span class="line">inotifywait -mq --format &#x27;%f&#x27; -e create $filename | while read file</span><br><span class="line">do</span><br><span class="line">	case $file in messager.tgz) service messager restart;;</span><br><span class="line">	esac</span><br><span class="line">	case $file in crmd.tgz) service crmd restart ;;</span><br><span class="line">	esac</span><br><span class="line">done</span><br></pre></td></tr></table></figure>
+<h3 id="为这个监测脚本编写守护服务："><a href="#为这个监测脚本编写守护服务：" class="headerlink" title="为这个监测脚本编写守护服务："></a>为这个监测脚本编写守护服务：</h3><figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">cat /usr/lib/systemd/system/watchdog.service</span><br><span class="line">[Unit]</span><br><span class="line">Description=Watch dog server</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=simple</span><br><span class="line">Restart=always</span><br><span class="line">User=root</span><br><span class="line">Group=root</span><br><span class="line">RestartSec=3</span><br><span class="line">ExecStart=/usr/local/bin/watchdog /usr/local/bin</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=multi-user.target</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="启动它"><a href="#启动它" class="headerlink" title="启动它"></a>启动它</h3><pre><code>`systemctl enable watchdog`
+`service watchdog start`</code></pre>
+<p>Done！现在只要在开发环境<code>make install</code>。服务器收到了二进制包，就会在无人执守的条件下，自动部署更新包。并重启！</p>
+]]></content>
+      <tags>
+        <tag>golang</tag>
+        <tag>部署</tag>
+      </tags>
+  </entry>
 </search>

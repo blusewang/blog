@@ -1,7 +1,7 @@
 ---
 title: golang项目的自动化部署
 date: 2021-09-09 17:04:31
-tags:[golang,部署]
+tags: [golang,部署]
 ---
 
 在Go项目中。部署可以使用`Makefile`管理编译脚本、打包上传二进制至服务器的功能。
