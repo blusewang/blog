@@ -29,11 +29,11 @@ tags: [golang,部署]
 ```shell
 #!/bin/bash
 filename=$1
-inotifywait -mq --format '%f' -e create $filename | while read file
+inotifywait -mq --format '%f,%e' -e close_write $filename | while read file
 do
-	case $file in messager.tgz) service messager restart;;
+	case $file in messager.tgz,CLOSE_WRITE,CLOSE) service messager restart;;
 	esac
-	case $file in crmd.tgz) service crmd restart ;;
+	case $file in crmd.tgz,CLOSE_WRITE,CLOSE) service crmd restart ;;
 	esac
 done
 ```
