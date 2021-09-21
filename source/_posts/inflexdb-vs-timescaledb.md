@@ -59,6 +59,7 @@ h5-->|mqtt|mos
 mos-->|mqtt|pro
 pro(progress)-->pdb
 pro(progress)-->influx
+influx-->grafana(仪表板)
 ```
 
 ## InfluxDB v2.x
