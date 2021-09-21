@@ -39,7 +39,7 @@ wx.api(微信接口性能)
 wx.event(微信回调性能)
 end
 
-influx(时序库 InfluxDB)
+influx(时序库)
 pdb(日志库)
 
 syslog(Syslog)
