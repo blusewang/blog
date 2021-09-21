@@ -2184,9 +2184,9 @@ influx-->grafana(仪表板)</pre>
 <h2 id="！！糟-透-了！！"><a href="#！！糟-透-了！！" class="headerlink" title="！！糟 透 了！！"></a>！！糟 透 了！！</h2><blockquote>
 <p>在压力之下，世上就没有几个好软件了！</p>
 </blockquote>
-<p>看上去<code>InfluxDB v2</code>没有优化写入的性能。我都怀疑一次提交它有可能放大了写入的次数。且过多地使用同步写，导致的。<br>这样的做法，写入确实是安全了。但是数据压力只要大一点，性能就低到没法使用了。</p>
+<p>看上去<code>InfluxDB v2</code>没有优化写入的性能。我都怀疑一次提交它有可能放大了写入磁盘的次数，同时大量地使用同步写入，才导致这样的结果。<br>这么做，写入确实是安全了，每一个数据的写操作都绝对写入到磁盘了。但是数据压力只要大一点，性能就低到没法使用了。</p>
 <p>官方的文档配置部分没有找到写入方面可调优的配置参数。google也没搜索到与此相关的内容。（不知道是不是我使用得太激进了些！）</p>
-<h1 id="TimescaleDB"><a href="#TimescaleDB" class="headerlink" title="TimescaleDB"></a>TimescaleDB</h1><p>写入方面的配置，令我想到了PostgreSQL。它在写入方面有不错的优化，也有相当细的配置力度。</p>
+<h1 id="TimescaleDB"><a href="#TimescaleDB" class="headerlink" title="TimescaleDB"></a>TimescaleDB</h1><p>写入方面的配置，令我想到了PostgreSQL。它在写入方面有不错的优化，也有相当细的配置粒度。</p>
 <p>所以TimescaleDB插件就成了不错选择。<br>初步使用感觉：</p>
 <h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ul>
 <li>安装非常简单，不论是通过APT包装器安装，还是编译安装。都非常简单，也没有什么配置要求。相比<code>InfluxDB</code> v2 配置项近百个，好省心！</li>
