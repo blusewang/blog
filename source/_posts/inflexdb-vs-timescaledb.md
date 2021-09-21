@@ -1,7 +1,7 @@
 ---
 title: 抛弃InfluxDB 2.0，转用TimescaleDB 
 date: 2021-09-21 20:55:08
-tags: [influxdb, PostgreSQL, TimescaleDB ]
+tags: [InfluxDB, PostgreSQL, TimescaleDB ]
 ---
 
 # InfluxDB 使用经历
@@ -89,10 +89,20 @@ CPU的`io wait`显著升高。如果换到机械硬盘，不只CPU的`io wait`�
 初步使用感觉：
 
 ## 优点
-- 安装非常简单，不论是通过APT包装器安装，还是编译安装。都非常简单，也没有什么配置要求。相比`InfluxDB` v2 配置项近百个，好省心！
+- 安装非常简单，不论是通过APT包装器安装，还是编译安装。都非常简单。0配置，相比`InfluxDB` v2 配置项近百个，好省心！
 - 使用也非常简单，只要在普通表上执行个函数就完成转换了。
 - 还支持分布式。
 - 数据自动转储到`_timescaledb_internal`模式下的表中。且自动为这张表建立了按时间的分段约束表。
 
 ## 挑刺
 - 侵入性大。`create extension`后，多了6个`schema`对我自己的数据库结构造成了干扰。
+
+# Grafana
+v8版
+## 优点
+- 性能比`InfluxDB`v2好多了。数据量大时，CPU不'慌'了。
+- 支持更多数据源。
+- 视觉效果方面定制性更强。
+
+## 挑刺
+- 没有找到图表中多条线累加显示的功能，这点比不上`InfluxDB`自带的图表。

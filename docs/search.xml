@@ -2189,7 +2189,7 @@ influx-->grafana(仪表板)</pre>
 <h1 id="TimescaleDB"><a href="#TimescaleDB" class="headerlink" title="TimescaleDB"></a>TimescaleDB</h1><p>写入方面的配置，令我想到了PostgreSQL。它在写入方面有不错的优化，也有相当细的配置粒度。</p>
 <p>所以TimescaleDB插件就成了不错选择。<br>初步使用感觉：</p>
 <h2 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h2><ul>
-<li>安装非常简单，不论是通过APT包装器安装，还是编译安装。都非常简单，也没有什么配置要求。相比<code>InfluxDB</code> v2 配置项近百个，好省心！</li>
+<li>安装非常简单，不论是通过APT包装器安装，还是编译安装。都非常简单。0配置，相比<code>InfluxDB</code> v2 配置项近百个，好省心！</li>
 <li>使用也非常简单，只要在普通表上执行个函数就完成转换了。</li>
 <li>还支持分布式。</li>
 <li>数据自动转储到<code>_timescaledb_internal</code>模式下的表中。且自动为这张表建立了按时间的分段约束表。</li>
@@ -2197,11 +2197,20 @@ influx-->grafana(仪表板)</pre>
 <h2 id="挑刺"><a href="#挑刺" class="headerlink" title="挑刺"></a>挑刺</h2><ul>
 <li>侵入性大。<code>create extension</code>后，多了6个<code>schema</code>对我自己的数据库结构造成了干扰。</li>
 </ul>
+<h1 id="Grafana"><a href="#Grafana" class="headerlink" title="Grafana"></a>Grafana</h1><p>v8版</p>
+<h2 id="优点-1"><a href="#优点-1" class="headerlink" title="优点"></a>优点</h2><ul>
+<li>性能比<code>InfluxDB</code>v2好多了。数据量大时，CPU不’慌’了。</li>
+<li>支持更多数据源。</li>
+<li>视觉效果方面定制性更强。</li>
+</ul>
+<h2 id="挑刺-1"><a href="#挑刺-1" class="headerlink" title="挑刺"></a>挑刺</h2><ul>
+<li>没有找到图表中多条线累加显示的功能，这点比不上<code>InfluxDB</code>自带的图表。</li>
+</ul>
 ]]></content>
       <tags>
         <tag>PostgreSQL</tag>
-        <tag>influxdb</tag>
         <tag>TimescaleDB</tag>
+        <tag>InfluxDB</tag>
       </tags>
   </entry>
 </search>
