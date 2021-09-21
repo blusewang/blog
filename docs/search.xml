@@ -2181,9 +2181,9 @@ influx-->grafana(仪表板)</pre>
 <h3 id="使用的体验"><a href="#使用的体验" class="headerlink" title="使用的体验"></a>使用的体验</h3><p>配置参数使用灵活，支持从v1升级至v2。</p>
 <p>但它的单个仪表板中的图表不能太多。数量超过5个，单表线过多，就会导致浏览器卡顿（只要打开，浏览器就让OS的CPU单核跑满，风扇呼呼叫）。<br>若表的数量超过8个，就明显影响操作，修改图表时，点击一下2～3秒后响应。</p>
 <p>当提交的数据频率从<code>60s/次</code>，变成几百个数据项<code>5s/次时</code>写入，发生了质变。<br>CPU的<code>io wait</code>显著升高。如果换到机械硬盘，不只CPU的<code>io wait</code>高到50%，<code>system load</code>跑满，<code>iotop</code>中<code>jbd2</code>的<code>IO</code>百分比跑满。<br>写入延迟过多，还进一步导致MQTT队列堵塞。</p>
-<h2>！！糟 透 了！！</h2>
-> 在压力之下，世上就没有几个好软件了！
-
+<h2 id="！！糟-透-了！！"><a href="#！！糟-透-了！！" class="headerlink" title="！！糟 透 了！！"></a>！！糟 透 了！！</h2><blockquote>
+<p>在压力之下，世上就没有几个好软件了！</p>
+</blockquote>
 <p>看上去<code>InfluxDB v2</code>没有优化写入的性能。我都怀疑一次提交它有可能放大了写入的次数。且过多地使用同步写，导致的。<br>这样的做法，写入确实是安全了。但是数据压力只要大一点，性能就低到没法使用了。</p>
 <p>官方的文档配置部分没有找到写入方面可调优的配置参数。google也没搜索到与此相关的内容。（不知道是不是我使用得太激进了些！）</p>
 <h1 id="TimescaleDB"><a href="#TimescaleDB" class="headerlink" title="TimescaleDB"></a>TimescaleDB</h1><p>写入方面的配置，令我想到了PostgreSQL。它在写入方面有不错的优化，也有相当细的配置力度。</p>
