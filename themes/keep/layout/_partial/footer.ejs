@@ -27,7 +27,7 @@
         </div>
     </div>
     <% if (theme.mermaid.enable) { %>
-        <script src='https://unpkg.zhimg.com/mermaid@<%= theme.mermaid.version %>/dist/mermaid.min.js'></script>
+        <script src='https://cdn.staticfile.org/mermaid/<%= theme.mermaid.version %>/mermaid.min.js'></script>
         <script>
             if (window.mermaid) {
                 mermaid.initialize({theme: '<%= theme.mermaid.theme %>'});
