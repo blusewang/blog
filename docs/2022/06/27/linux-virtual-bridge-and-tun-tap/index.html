@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="汪俊峰 bluse jfwang blog 博客">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="jf wang">
+    
+    <title>
+        
+            Linux bridge/tun/tap 构建虚拟网络 |
+        
+        JF Wang&#39;s Blog
+    </title>
+    <link rel="shortcut icon" href="/images/avatar.jpg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":true,"expand_all":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.jpg","favicon":"/images/avatar.jpg","article_img_align":"center","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":true,"preload":true,"trigger":"auto","unescape":false},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                JF Wang&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/ip-tool"
+                            >
+                                IP查询
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/ip-tool">IP查询</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">Linux bridge/tun/tap 构建虚拟网络</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>jf wang</span>
+                        <span class="level">Lv6</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2022-06-27 10:24:01
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/tun/">tun</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/linux/">linux</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/tap/">tap</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/bridge/">bridge</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i> <span>962 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i> <span>4 分钟</span>
+        </span>
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="私有网桥，仅-VM-到-VM"><a href="#私有网桥，仅-VM-到-VM" class="headerlink" title="私有网桥，仅 VM 到 VM"></a>私有网桥，仅 VM 到 VM</h1><p>用于两个或多个 VM 之间的通信。它们只相互通信，不能访问 Internet 或主机。</p>
+<blockquote>
+<p>添加一个名为 Gefyra0 的网桥# 为 VM 添加 2 个 tun/tap 接口# 将 tun/tap 接口与 brigde VM 的 qemu 命令行连接。每个 VM 必须具有不同的分接头接口和 MAC 地址：第 1：第2：在 VM 内部，您可以使用任意子网和每个 VM 在该子网上的 IP 配置网络接口。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">ip link add Gefyra0 type bridge</span><br><span class="line">ip link set Gefyra0 up</span><br><span class="line"></span><br><span class="line">ip tuntap add QemuTap0 mode tap user A_Username</span><br><span class="line">ip tuntap add QemuTap1 mode tap user A_Username</span><br><span class="line">ip link set QemuTap0 up</span><br><span class="line">ip link set QemuTap1 up</span><br><span class="line"></span><br><span class="line">ip link set QemuTap0 master Gefyra0</span><br><span class="line">ip link set QemuTap1 master Gefyra0</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="使用路由子网桥接，VM-lt-gt-主机"><a href="#使用路由子网桥接，VM-lt-gt-主机" class="headerlink" title="使用路由子网桥接，VM &lt;-&gt;主机"></a>使用路由子网桥接，VM &lt;-&gt;主机</h1><p>在这种情况下，主机和 VM 之间可以互相访问。</p>
+<blockquote>
+<p>添加一个名为 Gefyra0 的网桥# 为 VM 添加 2 个 tun/tap 接口# 将 tun/tap 接口与 brigde 连接与之前设置的不同之处在于第二行：将新子网中的 IP 分配给主机的网桥接口。此新子网不得在其他任何地方使用。虚拟机应使用不同的分接头接口和 MAC 地址进行配置（见上文）。每个 VM 的 IP 应与网桥的子网位于同一子网中，以便主机和 VM 进行通信。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ip link add Gefyra0 type bridge</span><br><span class="line">ip addr add 192.168.223.1/24 dev Gefyra0</span><br><span class="line">ip link set Gefyra0 up</span><br><span class="line"></span><br><span class="line">ip tuntap add QemuTap0 mode tap user A_Username</span><br><span class="line">ip tuntap add QemuTap1 mode tap user A_Username</span><br><span class="line">ip link set QemuTap0 up</span><br><span class="line">ip link set QemuTap1 up</span><br><span class="line"></span><br><span class="line">ip link set QemuTap0 master Gefyra0</span><br><span class="line">ip link set QemuTap1 master Gefyra0</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="使用路由子网桥接，VM-lt-gt-host-LAN-Internet"><a href="#使用路由子网桥接，VM-lt-gt-host-LAN-Internet" class="headerlink" title="使用路由子网桥接，VM &lt;-&gt; host-LAN-Internet"></a>使用路由子网桥接，VM &lt;-&gt; host-LAN-Internet</h1><p>是时候让 VM 访问 Internet，你不觉得吗？🙂</p>
+<blockquote>
+<p>添加一个名为 Gefyra0 的网桥# 为 VM 添加 2 个 tun/tap 接口# 将 tun/tap 接口与 brigde 连接# 启用路由# -o 将要用于路由的接口作为参数，在本例中为 enp2s0和往常一样，每个VM 必须在配置的网桥子网上有各自的 tap int、mac addr 和分配的 IP；看上面。</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">ip link add Gefyra0 type bridge</span><br><span class="line">ip addr add 192.168.223.1/24 dev Gefyra0</span><br><span class="line">ip link set Gefyra0 up</span><br><span class="line"></span><br><span class="line">ip tuntap add QemuTap0 mode tap user A_Username</span><br><span class="line">ip tuntap add QemuTap1 mode tap user A_Username</span><br><span class="line">ip link set QemuTap0 up</span><br><span class="line">ip link set QemuTap1 up</span><br><span class="line"></span><br><span class="line">ip link set QemuTap0 master Gefyra0</span><br><span class="line">ip link set QemuTap1 master Gefyra0</span><br><span class="line"></span><br><span class="line">echo &#x27;1&#x27; &gt; /proc/sys/net/ipv4/ip_forward</span><br><span class="line"></span><br><span class="line">iptables -t nat -A POSTROUTING -o enp2s0 -j MASQUERADE</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="桥接到第2层-将-VM-连接到已连接的交换机主机："><a href="#桥接到第2层-将-VM-连接到已连接的交换机主机：" class="headerlink" title="桥接到第2层 - 将 VM 连接到已连接的交换机主机："></a>桥接到第2层 - 将 VM 连接到已连接的交换机主机：</h1><p>需要更多解释性的标题，欢迎提出建议！</p>
+<p>在这种类型的连接中，VM 被插入 - 有点 - 在连接主机的同一交换机上。例如，如果网络上有 DHCP 服务器并且主机从该 DHCP 获取其 IP，则 VM 也将能够从同一 DHCP 获取 IP。这是主要用于生产 ESXi、Xen 或 HyperV 虚拟机的场景。</p>
+<p><strong>警告</strong> 当物理网卡分配给网桥时，它会失去连接。IP必须分配给网桥，而不是主机的物理网络接口。</p>
+<blockquote>
+<p>添加一个名为 Gefyra0 的网桥# 添加一个物理接口到网桥，例如 eth0：</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ip link add Gefyra0 type bridge</span><br><span class="line">ip link set Gefyra0 up</span><br><span class="line"></span><br><span class="line">ip link set eth0 master Gefyra0</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>此时主机上的网络连接丢失。如果要恢复连接：<br>dhclient -v Gefyra0 (for dhcp)<br>dhclient -v Gefyra0 -r (to release IP)<br>ip addr add 192.168.223.1/24 dev Gefyra0 (for static IP)<br>add 2 tun/tap虚拟机接口现在可以在虚拟机上配置网络。<strong>注意：</strong>如果主机上使用了network-manager，它可能会干扰。为了安全起见，请在开始之前禁用它：</p>
+</blockquote>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ip tuntap add QemuTap0 mode tap user A_Username</span><br><span class="line">ip link set QemuTap0 up</span><br><span class="line">ip link set QemuTap0 master Gefyra0</span><br><span class="line"></span><br><span class="line">sudo systemctl stop NetworkManager</span><br><span class="line">pkill nm-applet</span><br></pre></td></tr></table></figure>
+<hr>
+<h1 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h1><ul>
+<li><p>删除网桥：<br><code>ip link del Gefyra0</code></p>
+</li>
+<li><p>删除点击：<br><code>ip tuntap del tap0 mode tap</code></p>
+</li>
+<li><p>查看所有 iptables 防火墙规则和 NAT 网络过滤表<br><code>iptables -t nat -vL</code></p>
+</li>
+<li><p>没有解析<br><code>iptables -t nat -vL -n</code></p>
+</li>
+<li><p>显示行号 - 优先级：<br><code>iptables -t nat -vL --line-number</code></p>
+</li>
+<li><p>删除行，使用上面命令显示的数字：<br><code>iptables -t nat -D POSTROUTING &#123;number&#125;</code></p>
+</li>
+</ul>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：Linux bridge/tun/tap 构建虚拟网络</li>
+        <li>本文作者：jf wang</li>
+        <li>创建时间：2022-06-27 10:24:01</li>
+        <li>
+            本文链接：https://www.wangjunfeng.com.cn/2022/06/27/linux-virtual-bridge-and-tun-tap/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <div class="article-nav">
+                
+                    <div class="article-prev">
+                        <a class="prev"
+                           rel="prev"
+                           href="/2022/06/27/wget-menu/"
+                        >
+                            <span class="left arrow-icon flex-center" >
+                              <i class="fas fa-chevron-left"></i>
+                            </span>
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">wget 的妙用</span>
+                                <span class="post-nav-item">上一篇</span>
+                            </span>
+                        </a>
+                    </div>
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2021/12/18/unbearable-past/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Unbearable Past</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    
+        
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <div id="gitalk-container"></div>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+            new Gitalk({
+                clientID: '47f05f2cf146ab11f9df',
+                clientSecret: '0b256fbf6c6367af3637f96ce7d702d1eb6ca54c',
+                repo: 'blog',
+                owner: 'blusewang',
+                admin: ['blusewang'],
+                id: __gitalk__pathname,
+                language: 'zh-CN'
+            }).render('gitalk-container');
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2013</span> -
+            
+            2022 <i class="fas fa-heart icon-animate"></i> <a href="/">jf wang</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">京ICP备13038498号-1</a> | 由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+    
+        <script src='https://cdn.staticfile.org/mermaid/8.9.0/mermaid.min.js'></script>
+        <script>
+            if (window.mermaid) {
+                mermaid.initialize({theme: 'forest'});
+            }
+        </script>
+    
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+        <!-- page aside -->
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A7%81%E6%9C%89%E7%BD%91%E6%A1%A5%EF%BC%8C%E4%BB%85-VM-%E5%88%B0-VM"><span class="nav-number">1.</span> <span class="nav-text">私有网桥，仅 VM 到 VM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%B7%AF%E7%94%B1%E5%AD%90%E7%BD%91%E6%A1%A5%E6%8E%A5%EF%BC%8CVM-lt-gt-%E4%B8%BB%E6%9C%BA"><span class="nav-number">2.</span> <span class="nav-text">使用路由子网桥接，VM &lt;-&gt;主机</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%B7%AF%E7%94%B1%E5%AD%90%E7%BD%91%E6%A1%A5%E6%8E%A5%EF%BC%8CVM-lt-gt-host-LAN-Internet"><span class="nav-number">3.</span> <span class="nav-text">使用路由子网桥接，VM &lt;-&gt; host-LAN-Internet</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A1%A5%E6%8E%A5%E5%88%B0%E7%AC%AC2%E5%B1%82-%E5%B0%86-VM-%E8%BF%9E%E6%8E%A5%E5%88%B0%E5%B7%B2%E8%BF%9E%E6%8E%A5%E7%9A%84%E4%BA%A4%E6%8D%A2%E6%9C%BA%E4%B8%BB%E6%9C%BA%EF%BC%9A"><span class="nav-number">4.</span> <span class="nav-text">桥接到第2层 - 将 VM 连接到已连接的交换机主机：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E5%AE%83"><span class="nav-number">5.</span> <span class="nav-text">其它</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+    <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+<div class="post-scripts ">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

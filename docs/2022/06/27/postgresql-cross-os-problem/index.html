@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="汪俊峰 bluse jfwang blog 博客">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="jf wang">
+    
+    <title>
+        
+            PostgreSQL跨系统主从后，出现查询时文本类条件无法命中的问题 |
+        
+        JF Wang&#39;s Blog
+    </title>
+    <link rel="shortcut icon" href="/images/avatar.jpg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":true,"expand_all":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.jpg","favicon":"/images/avatar.jpg","article_img_align":"center","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":true,"preload":true,"trigger":"auto","unescape":false},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                JF Wang&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/ip-tool"
+                            >
+                                IP查询
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/ip-tool">IP查询</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">PostgreSQL跨系统主从后，出现查询时文本类条件无法命中的问题</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>jf wang</span>
+                        <span class="level">Lv6</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2022-06-27 10:48:44
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/PostgreSQL/">PostgreSQL</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i> <span>382 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i> <span>1 分钟</span>
+        </span>
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><ul>
+<li>当主服务运行在<code>FreeBSD</code>上，从服务运行在<code>Debian</code>上时，同样的编译参数，且都打开了<code>--with-icu</code>支持，连接到<code>Debian</code>上查询条件带文本的查询返回空。没有命中数据。</li>
+<li>主服务调整到<code>Debian</code>，从服务调整到<code>Alpine</code>上后，表现一样。</li>
+<li>主服务采用<code>zh_CN.UTF-8</code>编码初始化的数据库。配置中<code>lc</code>系列也同样使用的<code>zh_CN.UTF-8</code>。<br><code>lc</code>系列配置：<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">lc_messages = &#x27;zh_CN.UTF-8&#x27;			# locale for system error message</span><br><span class="line">					# strings</span><br><span class="line">lc_monetary = &#x27;zh_CN.UTF-8&#x27;			# locale for monetary formatting</span><br><span class="line">lc_numeric = &#x27;zh_CN.UTF-8&#x27;			# locale for number formatting</span><br><span class="line">lc_time = &#x27;zh_CN.UTF-8&#x27;				# locale for time formatting</span><br></pre></td></tr></table></figure>
+主服务上：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">core&#x3D;# select openid from wx.fans where openid&#x3D;&#39;oEG8Ss_yCRB315jjLfdTRK-QicdY&#39;;</span><br><span class="line">            openid</span><br><span class="line">------------------------------</span><br><span class="line"> oEG8Ss_yCRB315jjLfdTRK-QicdY</span><br><span class="line">(1 行记录)</span><br></pre></td></tr></table></figure>
+从服务上：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">core&#x3D;# select openid from wx.fans where openid&#x3D;&#39;oEG8Ss_yCRB315jjLfdTRK-QicdY&#39;;</span><br><span class="line"> openid</span><br><span class="line">--------</span><br><span class="line">(0 行记录)</span><br></pre></td></tr></table></figure>
+<h1 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h1>因为：同样是<code>zh_CN.UTF-8</code>在不同<code>OS</code>上的<code>ICU</code>支持是不一样的。但如果使用<code>C</code>一般能避免这个问题。</li>
+</ul>
+<p>从服务上没有命中，默认不报任何错误或警告。这个很诡异！如果指定条件的编码问题就能表现出来：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">core&#x3D;# select openid from wx.fans where openid&#x3D;&#39;oEG8Ss_yCRB315jjLfdTRK-QicdY&#39; COLLATE &quot;zh_CN&quot;;</span><br><span class="line">错误：排序规则&quot;zh_CN&quot;没有实际版本，但指定了版本</span><br><span class="line">core&#x3D;# select openid from wx.fans where openid&#x3D;&#39;oEG8Ss_yCRB315jjLfdTRK-QicdY&#39; COLLATE &quot;C&quot;;</span><br><span class="line">            openid</span><br><span class="line">------------------------------</span><br><span class="line"> oEG8Ss_yCRB315jjLfdTRK-QicdY</span><br><span class="line">(1 行记录)</span><br></pre></td></tr></table></figure>
+<p>至于排序规则与版本之间的关系，我还没有进一步了解。这个问题暂时就研究到这里。</p>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：PostgreSQL跨系统主从后，出现查询时文本类条件无法命中的问题</li>
+        <li>本文作者：jf wang</li>
+        <li>创建时间：2022-06-27 10:48:44</li>
+        <li>
+            本文链接：https://www.wangjunfeng.com.cn/2022/06/27/postgresql-cross-os-problem/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/06/27/wget-menu/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">wget 的妙用</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    
+        
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <div id="gitalk-container"></div>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+            new Gitalk({
+                clientID: '47f05f2cf146ab11f9df',
+                clientSecret: '0b256fbf6c6367af3637f96ce7d702d1eb6ca54c',
+                repo: 'blog',
+                owner: 'blusewang',
+                admin: ['blusewang'],
+                id: __gitalk__pathname,
+                language: 'zh-CN'
+            }).render('gitalk-container');
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2013</span> -
+            
+            2022 <i class="fas fa-heart icon-animate"></i> <a href="/">jf wang</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">京ICP备13038498号-1</a> | 由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+    
+        <script src='https://cdn.staticfile.org/mermaid/8.9.0/mermaid.min.js'></script>
+        <script>
+            if (window.mermaid) {
+                mermaid.initialize({theme: 'forest'});
+            }
+        </script>
+    
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+        <!-- page aside -->
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E5%9B%A0"><span class="nav-number">2.</span> <span class="nav-text">原因</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+    <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+<div class="post-scripts ">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>

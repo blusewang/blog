@@ -228,6 +228,146 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2022/06/27/postgresql-cross-os-problem/">
+                        PostgreSQL跨系统主从后，出现查询时文本类条件无法命中的问题
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        问题描述
+当主服务运行在FreeBSD上，从服务运行在Debian上时，同样的编译参数，且都打开了--with-icu支持，连接到Debian上查询条件带文本的查询返回空。没有命中数据。
+主服务调整到Debian，从服务调整到Alpine上后，表现一...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Mon Jun 27 2022 10:48:44 GMT+0800">2022-06-27</span></span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/PostgreSQL/">PostgreSQL</a>
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/06/27/postgresql-cross-os-problem/">阅读全文 <i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/27/wget-menu/">
+                        wget 的妙用
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        将文件下载到特定目录📁只需将PATH替换为要保存文件的输出目录位置即可。wget ‐P &lt;PATH&gt; https://example.com/sitemap.xml
+重命名下载的文件📝要重命名文件，请将FILENAME替换为您想要的名...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Mon Jun 27 2022 10:24:36 GMT+0800">2022-06-27</span></span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/wget/">wget</a>
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/06/27/wget-menu/">阅读全文 <i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
+                    <a href="/2022/06/27/linux-virtual-bridge-and-tun-tap/">
+                        Linux bridge/tun/tap 构建虚拟网络
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        私有网桥，仅 VM 到 VM用于两个或多个 VM 之间的通信。它们只相互通信，不能访问 Internet 或主机。
+
+添加一个名为 Gefyra0 的网桥# 为 VM 添加 2 个 tun/tap 接口# 将 tun/tap 接口与 brigde V...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Mon Jun 27 2022 10:24:01 GMT+0800">2022-06-27</span></span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/tun/">tun</a>
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/linux/">linux</a>
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/tap/">tap</a>
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/bridge/">bridge</a>
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2022/06/27/linux-virtual-bridge-and-tun-tap/">阅读全文 <i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2021/12/18/unbearable-past/">
                         Unbearable Past
                     </a>
@@ -550,150 +690,6 @@
     </div>
 
     <a href="/2021/02/01/ffmpeg-resize/">阅读全文 <i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2021/02/01/build-mosquitto-on-freebsd/">
-                        FreeBSD 12 构建 mosquitto v2.0.10 + websockets + TLS + PostgreSQL认证
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        MQTT服务器需求
-支持Websocket
-支持命令行输出json输出
-支持通过PostgreSQL认证用户
-
-graph LR
-pg[(PostgreSQL)]
-auth(Auth plugin)
-mos([Mosquitto])
-ws(LibWe...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Mon Feb 01 2021 00:07:53 GMT+0800">2021-02-01</span></span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fas fa-tags"></i>
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/mosquitto/">mosquitto</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/mqtt/">mqtt</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/PostgreSQL/">PostgreSQL</a>
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2021/02/01/build-mosquitto-on-freebsd/">阅读全文 <i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2021/01/26/mouse-pad/">
-                        鼠标垫设计
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        
-鼠标垫.psd.zip
-
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Tue Jan 26 2021 19:16:53 GMT+0800">2021-01-26</span></span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fas fa-tags"></i>
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/%E8%AE%BE%E8%AE%A1/">设计</a>
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2021/01/26/mouse-pad/">阅读全文 <i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2021/01/18/linux-cmd/">
-                        linux常用Shell命令
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        
-找出指定文件夹下指定类型的所有文件，并全部删除1find /home/user/mydir -name *.png | xargs rm -f
-cmake 安装后,如何卸载1xargs rm &lt; install_manifest.txt
-tc...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Mon Jan 18 2021 14:07:48 GMT+0800">2021-01-18</span></span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fas fa-tags"></i>
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/shell/">shell</a>
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2021/01/18/linux-cmd/">阅读全文 <i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
