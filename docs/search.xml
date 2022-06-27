@@ -2360,8 +2360,8 @@ shanghai.table-b -. 继承 .-> public.table-b
 shanghai -. 逻辑复制 .-> sh-db[(上海地域数据库)]
 beijing -. 逻辑复制 .-> bj-db[(北京地域数据库)]
 
-sh-db -- 流复制 --> [(上海区域后备库)]
-bj-db -- 流复制 --> [(北京区域后备库)]</pre>
+sh-db -- 流复制 --> sh-db-standby[(上海区域后备库)]
+bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
 
 <h2 id="设计缺陷"><a href="#设计缺陷" class="headerlink" title="设计缺陷"></a>设计缺陷</h2><ul>
 <li>地域之间的数据迁移</li>

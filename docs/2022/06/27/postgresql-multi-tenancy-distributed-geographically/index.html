@@ -187,12 +187,12 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i> <span>444 字</span>
+            <i class="fas fa-file-word"></i> <span>450 字</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fas fa-clock"></i> <span>1 分钟</span>
+            <i class="fas fa-clock"></i> <span>2 分钟</span>
         </span>
     
     
@@ -261,8 +261,8 @@ shanghai.table-b -. 继承 .-> public.table-b
 shanghai -. 逻辑复制 .-> sh-db[(上海地域数据库)]
 beijing -. 逻辑复制 .-> bj-db[(北京地域数据库)]
 
-sh-db -- 流复制 --> [(上海区域后备库)]
-bj-db -- 流复制 --> [(北京区域后备库)]</pre>
+sh-db -- 流复制 --> sh-db-standby[(上海区域后备库)]
+bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
 
 <h2 id="设计缺陷"><a href="#设计缺陷" class="headerlink" title="设计缺陷"></a>设计缺陷</h2><ul>
 <li>地域之间的数据迁移</li>

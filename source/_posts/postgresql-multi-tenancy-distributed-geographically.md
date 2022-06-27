@@ -67,8 +67,8 @@ shanghai.table-b -. 继承 .-> public.table-b
 shanghai -. 逻辑复制 .-> sh-db[(上海地域数据库)]
 beijing -. 逻辑复制 .-> bj-db[(北京地域数据库)]
 
-sh-db -- 流复制 --> [(上海区域后备库)]
-bj-db -- 流复制 --> [(北京区域后备库)]
+sh-db -- 流复制 --> sh-db-standby[(上海区域后备库)]
+bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]
 ```
 
 ## 设计缺陷
