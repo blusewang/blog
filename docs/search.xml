@@ -2373,4 +2373,72 @@ bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
         <tag>分布式</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Taro+VUE+TS+NutUI 开发小程序的体验</title>
+    <url>/2022/10/19/taro-mini-program/</url>
+    <content><![CDATA[<h1 id="NutUI问题"><a href="#NutUI问题" class="headerlink" title="NutUI问题"></a>NutUI问题</h1><h2 id="小程序支持不整"><a href="#小程序支持不整" class="headerlink" title="小程序支持不整"></a>小程序支持不整</h2><h3 id="有些组件没有实现"><a href="#有些组件没有实现" class="headerlink" title="有些组件没有实现"></a>有些组件没有实现</h3><p><code>barrage</code>弹幕组件，官方演示小程序的<code>slot</code>式使用就直接不能正常运行。</p>
+<p>使用官方文档，结合演示小程序的源码的写法，在Taro-cli脚手架构建的项目里使用无效，直接用不了。</p>
+<h3 id="nut-form使用报警告"><a href="#nut-form使用报警告" class="headerlink" title="nut-form使用报警告"></a>nut-form使用报警告</h3><p>使用<code>nut-form</code>后，报：<code>WXMLRT_$gwx:./base.wxml:template:149:16: Template tmpl_0_view not found.</code>警告。<br>功能可以正常使用。</p>
+<h3 id="强制使用scss"><a href="#强制使用scss" class="headerlink" title="强制使用scss"></a>强制使用<code>scss</code></h3><p>我更习惯使用<code>sass</code>。</p>
+<h1 id="Taro问题"><a href="#Taro问题" class="headerlink" title="Taro问题"></a>Taro问题</h1><h2 id="CSS不支持scoped"><a href="#CSS不支持scoped" class="headerlink" title="CSS不支持scoped"></a>CSS不支持<code>scoped</code></h2><p>官方明说了不支持。</p>
+<h2 id="缓存与编译器磨合不好"><a href="#缓存与编译器磨合不好" class="headerlink" title="缓存与编译器磨合不好"></a>缓存与编译器磨合不好</h2><p>官方文档、使用过得中都提示开发者开启：<code>config/index.js</code>中的<code>cache.enable</code>，以发挥出<code>webpack5</code>的性能优势。<br>但开启后，在多次执行<code>yarn dev:weapp</code>时，有时会出现丢失部分模板。导致小程序无法预览，或预览时部分组件不显示。<br>且控制台循环报类似：<code>WXMLRT_$gwx:./base.wxml:template:149:16: Template tmpl_0_view not found.</code>的警告。<br>导致不可用。</p>
+<p>为了可靠的编译结果。这个cache功能必须关闭。</p>
+<h2 id="小程序热启动时参数获取不到。"><a href="#小程序热启动时参数获取不到。" class="headerlink" title="小程序热启动时参数获取不到。"></a>小程序热启动时参数获取不到。</h2><p>使用官方给出的<code>getLaunchOptionsSync()</code>得到的是小程序启动时的参数。</p>
+<p>这个问题的解决方案，我在Taro官方文档里没有找到。在社区里找到了答案：使用 <code>Taro.Current</code> 它能提供准确的<code>path</code>和<code>query</code>信息。</p>
+]]></content>
+      <tags>
+        <tag>Taro</tag>
+        <tag>VUE</tag>
+        <tag>微信小程序</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>PostgreSQL 15 新特性</title>
+    <url>/2022/10/19/postgresql-15/</url>
+    <content><![CDATA[<p>2022-10-13,Postgresql 15 发布了。这一版主要提升了排序性能，支持对WAL日志压缩。为开发者增加了一些新功能提升使用体验。</p>
+<h1 id="核心业务"><a href="#核心业务" class="headerlink" title="核心业务"></a>核心业务</h1><h2 id="排序优化"><a href="#排序优化" class="headerlink" title="排序优化"></a>排序优化</h2><p>官方给出的新排序后性能提升25%～400%。窗口函数：<code>row_number()</code>、<code>rank()</code>、<code>dense_rank()</code>和<code>count()</code>也得到了性能提升。</p>
+<blockquote>
+<p><code>count()</code>是个常用的函数。</p>
+</blockquote>
+<p><code>select distinct</code>支持并行执行。</p>
+<blockquote>
+<p>只在在做分析业务时有用</p>
+</blockquote>
+<p><code>postgres_fdw</code>支持异步提交。</p>
+<h2 id="WAL日志支持压缩"><a href="#WAL日志支持压缩" class="headerlink" title="WAL日志支持压缩"></a>WAL日志支持压缩</h2><p>支持<code>LZ4</code>和<code>zstd</code>对WAL日志进行压缩。支持对WAL中引用的预取。</p>
+<blockquote>
+<p>1、能节省磁盘空间。WAL日志尺寸很大。<br>2、对于主从热备的环境下，在主节点做大数据写入、删除时减少网络开销</p>
+</blockquote>
+<p><code>pg_basebackup</code>也支持<code>lz4</code>、<code>zstd</code>压缩。</p>
+<blockquote>
+<p>全套支持</p>
+</blockquote>
+<h2 id="逻辑复制优化"><a href="#逻辑复制优化" class="headerlink" title="逻辑复制优化"></a>逻辑复制优化</h2><p>逻辑复制支持行过滤和列列表，允许复制表中的数据子集。复制过程中的冲突解决优化得更简单。</p>
+<h1 id="外围业务"><a href="#外围业务" class="headerlink" title="外围业务"></a>外围业务</h1><h2 id="新功能"><a href="#新功能" class="headerlink" title="新功能"></a>新功能</h2><ul>
+<li>支持SQL标准<code>merge</code>命令。</li>
+<li>查询字符串字段时支持正则表达式：regexp_count()、regexp_instr()、regexp_like()和 regexp_substr()。</li>
+<li>视图增加<code>security_invoker</code>选项，增加视图的安全性。</li>
+</ul>
+<blockquote>
+<p><code>merge</code>在多表合并时有用。场景也是数据计算、分析。<br>字符串查询支持正则，用处有限。小需求使用<code>~</code>运算符就解决了，复杂的需求应该使用全文索引了。</p>
+</blockquote>
+<h2 id="运维"><a href="#运维" class="headerlink" title="运维"></a>运维</h2><ul>
+<li><p>支持<code>jsonlog</code>格式日志。</p>
+<blockquote>
+<p>JSON格式日志会降低日志内容纯度。只是提高可读性。<br>其实PostgreSQL的日志我更需要可以支持自由转发的功能。当前日志要么记入文件，要么转发到<code>syslog</code>。通过<code>syslog</code>能实现转发。但只支持UDP模式，不支持TCP模式。这导致长日志会被截断甚至丢失。这个很恶心！</p>
+</blockquote>
+</li>
+<li><p>ICU排序优化。</p>
+<blockquote>
+<p>这应该能提升跨OS集群架构的稳定性。当前不同OS对ICU的支持不太一样。可能会导致跨OS集群有些OS上查询字符条件时无法命中。</p>
+</blockquote>
+</li>
+<li><p>删除了过时业务的支持，放弃Python 2的支持。</p>
+</li>
+</ul>
+]]></content>
+      <tags>
+        <tag>PostgreSQL</tag>
+      </tags>
+  </entry>
 </search>

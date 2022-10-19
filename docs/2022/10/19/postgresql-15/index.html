@@ -9,7 +9,7 @@
     
     <title>
         
-            PostgreSQL多租户按地域的分布式架构设计 |
+            PostgreSQL 15 新特性 |
         
         JF Wang&#39;s Blog
     </title>
@@ -148,7 +148,7 @@
     <div class="article-content-container">
 
         <div class="article-title">
-            <span class="title-hover-animation">PostgreSQL多租户按地域的分布式架构设计</span>
+            <span class="title-hover-animation">PostgreSQL 15 新特性</span>
         </div>
 
         
@@ -164,7 +164,7 @@
                     <div class="meta-info">
                         <div class="article-meta-info">
     <span class="article-date article-meta-item">
-        <i class="fas fa-calendar"></i> 2022-06-27 11:32:33
+        <i class="fas fa-calendar"></i> 2022-10-19 13:07:34
     </span>
     
     
@@ -176,10 +176,6 @@
                         <a href="/tags/PostgreSQL/">PostgreSQL</a>
                     </li>
                 
-                    <li>
-                        | <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a>
-                    </li>
-                
             </ul>
         </span>
     
@@ -187,12 +183,12 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i> <span>450 字</span>
+            <i class="fas fa-file-word"></i> <span>537 字</span>
         </span>
     
     
         <span class="article-min2read article-meta-item">
-            <i class="fas fa-clock"></i> <span>2 分钟</span>
+            <i class="fas fa-clock"></i> <span>1 分钟</span>
         </span>
     
     
@@ -204,69 +200,46 @@
         
 
         <div class="article-content markdown-body">
-            <h1 id="设计目标"><a href="#设计目标" class="headerlink" title="设计目标"></a>设计目标</h1><ul>
-<li>按用户所在地把用户按区域分组，将同一个区域的用户数据集中在当地的数据库中。</li>
-<li>数据要按时间分表。能按月或按年，方便地处理数据，也能提高查询效率。</li>
-<li>数据要集中化管理。不能把业务数据弄到不同的库中。最终要有个库中包括平台的所有数据。</li>
+            <p>2022-10-13,Postgresql 15 发布了。这一版主要提升了排序性能，支持对WAL日志压缩。为开发者增加了一些新功能提升使用体验。</p>
+<h1 id="核心业务"><a href="#核心业务" class="headerlink" title="核心业务"></a>核心业务</h1><h2 id="排序优化"><a href="#排序优化" class="headerlink" title="排序优化"></a>排序优化</h2><p>官方给出的新排序后性能提升25%～400%。窗口函数：<code>row_number()</code>、<code>rank()</code>、<code>dense_rank()</code>和<code>count()</code>也得到了性能提升。</p>
+<blockquote>
+<p><code>count()</code>是个常用的函数。</p>
+</blockquote>
+<p><code>select distinct</code>支持并行执行。</p>
+<blockquote>
+<p>只在在做分析业务时有用</p>
+</blockquote>
+<p><code>postgres_fdw</code>支持异步提交。</p>
+<h2 id="WAL日志支持压缩"><a href="#WAL日志支持压缩" class="headerlink" title="WAL日志支持压缩"></a>WAL日志支持压缩</h2><p>支持<code>LZ4</code>和<code>zstd</code>对WAL日志进行压缩。支持对WAL中引用的预取。</p>
+<blockquote>
+<p>1、能节省磁盘空间。WAL日志尺寸很大。<br>2、对于主从热备的环境下，在主节点做大数据写入、删除时减少网络开销</p>
+</blockquote>
+<p><code>pg_basebackup</code>也支持<code>lz4</code>、<code>zstd</code>压缩。</p>
+<blockquote>
+<p>全套支持</p>
+</blockquote>
+<h2 id="逻辑复制优化"><a href="#逻辑复制优化" class="headerlink" title="逻辑复制优化"></a>逻辑复制优化</h2><p>逻辑复制支持行过滤和列列表，允许复制表中的数据子集。复制过程中的冲突解决优化得更简单。</p>
+<h1 id="外围业务"><a href="#外围业务" class="headerlink" title="外围业务"></a>外围业务</h1><h2 id="新功能"><a href="#新功能" class="headerlink" title="新功能"></a>新功能</h2><ul>
+<li>支持SQL标准<code>merge</code>命令。</li>
+<li>查询字符串字段时支持正则表达式：regexp_count()、regexp_instr()、regexp_like()和 regexp_substr()。</li>
+<li>视图增加<code>security_invoker</code>选项，增加视图的安全性。</li>
 </ul>
-<h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><h2 id="服务实例设计"><a href="#服务实例设计" class="headerlink" title="服务实例设计"></a>服务实例设计</h2><pre class="mermaid">graph LR
-master[(主库)]
-master-standby[(主库后备库)]
-bj-item[(北京区域库)]
-bj-item-standby[(北京区域后备库)]
-sh-item[(上海区域库)]
-sh-item-standby[(上海区域后备库)]
-
-master -- 逻辑复制 --> bj-item
-master -- 逻辑复制 --> sh-item
-master -- 流复制 --> master-standby
-bj-item -- 流复制 --> bj-item-standby
-sh-item -- 流复制 --> sh-item-standby</pre>
-
-<h2 id="数据库结构设计"><a href="#数据库结构设计" class="headerlink" title="数据库结构设计"></a>数据库结构设计</h2><pre class="mermaid">graph LR
-db[(主数据库)]
-db --- public
-db --- beijing
-db --- shanghai
-
-subgraph schema public
-public --- public.table-a
-public --- public.table-b
-end
-
-subgraph schema bejing
-beijing --- beijing.table-a
-beijing --- beijing.table-b
-beijing.table-a --- beijing.table-a-2020-01
-beijing.table-a --- beijing.table-a-2020-02
-beijing.table-b --- beijing.table-b-2020-01
-beijing.table-b --- beijing.table-b-2020-02
-end
-
-subgraph schema shanghai
-shanghai --- shanghai.table-a
-shanghai --- shanghai.table-b
-shanghai.table-a --- shanghai.table-a-2020-01
-shanghai.table-a --- shanghai.table-a-2020-02
-shanghai.table-b --- shanghai.table-b-2020-01
-shanghai.table-b --- shanghai.table-b-2020-02
-end
-
-beijing.table-a -. 继承 .-> public.table-a
-beijing.table-b -. 继承 .-> public.table-b
-
-shanghai.table-a -. 继承 .-> public.table-a
-shanghai.table-b -. 继承 .-> public.table-b
-
-shanghai -. 逻辑复制 .-> sh-db[(上海地域数据库)]
-beijing -. 逻辑复制 .-> bj-db[(北京地域数据库)]
-
-sh-db -- 流复制 --> sh-db-standby[(上海区域后备库)]
-bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
-
-<h2 id="设计缺陷"><a href="#设计缺陷" class="headerlink" title="设计缺陷"></a>设计缺陷</h2><ul>
-<li>地域之间的数据迁移</li>
-<li>地域数据分裂（比如：把上海地区数据库的数据，分裂成：上海、杭州两个子地区）</li>
+<blockquote>
+<p><code>merge</code>在多表合并时有用。场景也是数据计算、分析。<br>字符串查询支持正则，用处有限。小需求使用<code>~</code>运算符就解决了，复杂的需求应该使用全文索引了。</p>
+</blockquote>
+<h2 id="运维"><a href="#运维" class="headerlink" title="运维"></a>运维</h2><ul>
+<li><p>支持<code>jsonlog</code>格式日志。</p>
+<blockquote>
+<p>JSON格式日志会降低日志内容纯度。只是提高可读性。<br>其实PostgreSQL的日志我更需要可以支持自由转发的功能。当前日志要么记入文件，要么转发到<code>syslog</code>。通过<code>syslog</code>能实现转发。但只支持UDP模式，不支持TCP模式。这导致长日志会被截断甚至丢失。这个很恶心！</p>
+</blockquote>
+</li>
+<li><p>ICU排序优化。</p>
+<blockquote>
+<p>这应该能提升跨OS集群架构的稳定性。当前不同OS对ICU的支持不太一样。可能会导致跨OS集群有些OS上查询字符条件时无法命中。</p>
+</blockquote>
+</li>
+<li><p>删除了过时业务的支持，放弃Python 2的支持。</p>
+</li>
 </ul>
 
         </div>
@@ -275,11 +248,11 @@ bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
             <div class="post-copyright-info">
                 <div class="article-copyright-info-container">
     <ul>
-        <li>本文标题：PostgreSQL多租户按地域的分布式架构设计</li>
+        <li>本文标题：PostgreSQL 15 新特性</li>
         <li>本文作者：jf wang</li>
-        <li>创建时间：2022-06-27 11:32:33</li>
+        <li>创建时间：2022-10-19 13:07:34</li>
         <li>
-            本文链接：https://www.wangjunfeng.com.cn/2022/06/27/postgresql-multi-tenancy-distributed-geographically/
+            本文链接：https://www.wangjunfeng.com.cn/2022/10/19/postgresql-15/
         </li>
         <li>
             版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -296,13 +269,13 @@ bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
                     <div class="article-prev">
                         <a class="prev"
                            rel="prev"
-                           href="/2022/10/19/postgresql-15/"
+                           href="/2022/10/19/taro-mini-program/"
                         >
                             <span class="left arrow-icon flex-center" >
                               <i class="fas fa-chevron-left"></i>
                             </span>
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">PostgreSQL 15 新特性</span>
+                                <span class="post-nav-title-item">Taro+VUE+TS+NutUI 开发小程序的体验</span>
                                 <span class="post-nav-item">上一篇</span>
                             </span>
                         </a>
@@ -312,10 +285,10 @@ bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
                     <div class="article-next">
                         <a class="next"
                            rel="next"
-                           href="/2022/06/27/postgresql-cross-os-problem/"
+                           href="/2022/06/27/postgresql-multi-tenancy-distributed-geographically/"
                         >
                             <span class="title flex-center">
-                                <span class="post-nav-title-item">PostgreSQL跨系统主从后，出现查询时文本类条件无法命中的问题</span>
+                                <span class="post-nav-title-item">PostgreSQL多租户按地域的分布式架构设计</span>
                                 <span class="post-nav-item">下一篇</span>
                             </span>
                             <span class="right arrow-icon flex-center" >
@@ -477,7 +450,7 @@ bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
         <aside class="page-aside">
             <div class="post-toc-wrap">
     <div class="post-toc">
-        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%9B%AE%E6%A0%87"><span class="nav-number">1.</span> <span class="nav-text">设计目标</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%AE%9E%E4%BE%8B%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.1.</span> <span class="nav-text">服务实例设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BB%93%E6%9E%84%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.2.</span> <span class="nav-text">数据库结构设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E7%BC%BA%E9%99%B7"><span class="nav-number">2.3.</span> <span class="nav-text">设计缺陷</span></a></li></ol></li></ol>
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E4%B8%9A%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">核心业务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E4%BC%98%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">排序优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WAL%E6%97%A5%E5%BF%97%E6%94%AF%E6%8C%81%E5%8E%8B%E7%BC%A9"><span class="nav-number">1.2.</span> <span class="nav-text">WAL日志支持压缩</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%BB%E8%BE%91%E5%A4%8D%E5%88%B6%E4%BC%98%E5%8C%96"><span class="nav-number">1.3.</span> <span class="nav-text">逻辑复制优化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%96%E5%9B%B4%E4%B8%9A%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">外围业务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E5%8A%9F%E8%83%BD"><span class="nav-number">2.1.</span> <span class="nav-text">新功能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E7%BB%B4"><span class="nav-number">2.2.</span> <span class="nav-text">运维</span></a></li></ol></li></ol>
     </div>
 </div>
         </aside>
