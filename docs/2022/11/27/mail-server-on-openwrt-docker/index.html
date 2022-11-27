@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="汪俊峰 bluse jfwang blog 博客">
+    <meta name="description" content="JF Wang">
+    <meta name="author" content="jf wang">
+    
+    <title>
+        
+            如何在自家的路由器器上部署一个自己的邮箱服务 |
+        
+        JF Wang&#39;s Blog
+    </title>
+    <link rel="shortcut icon" href="/images/avatar.jpg">
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    
+<link rel="stylesheet" href="/css/font-awesome.min.css">
+
+    <script id="hexo-configurations">
+    let KEEP = window.KEEP || {};
+    KEEP.hexo_config = {"hostname":"www.wangjunfeng.com.cn","root":"/","path":"search.xml"};
+    KEEP.theme_config = {"toc":{"enable":true,"number":true,"expand_all":true},"style":{"primary_color":"#0066CC","avatar":"/images/avatar.jpg","favicon":"/images/avatar.jpg","article_img_align":"center","left_side_width":"260px","content_max_width":"920px","hover":{"shadow":false,"scale":false},"first_screen":{"enable":true,"background_img":"/images/bg.svg","description":"Keep writing and Keep loving."}},"local_search":{"enable":true,"preload":true,"trigger":"auto","unescape":false},"code_copy":{"enable":true,"style":"default"},"pjax":{"enable":false},"version":"3.1.0"};
+    KEEP.language_ago = {"second":"%s 秒前","minute":"%s 分钟前","hour":"%s 小时前","day":"%s 天前","week":"%s 周前","month":"%s 月前","year":"%s 年前"};
+  </script>
+<meta name="generator" content="Hexo 5.3.0"></head>
+
+
+<body>
+<div class="page-container">
+
+    
+
+    <header class="page-header">
+        <div class="header-progress"></div>
+    </header>
+
+    <main class="page-main">
+
+        <div class="page-main-content">
+
+            <div class="page-main-content-top">
+                <header class="header-wrapper">
+
+    <div class="header-content">
+        <div class="left">
+            <a class="logo-title" href="/">
+                JF Wang&#39;s Blog
+            </a>
+        </div>
+
+        <div class="right">
+            <div class="pc">
+                <ul class="menu-list">
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/"
+                            >
+                                首页
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/archives"
+                            >
+                                归档
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/tags"
+                            >
+                                标签
+                            </a>
+                        </li>
+                    
+                        <li class="menu-item">
+                            <a class=""
+                               href="/ip-tool"
+                            >
+                                IP查询
+                            </a>
+                        </li>
+                    
+                    
+                        <li class="menu-item search search-popup-trigger">
+                            <i class="fas fa-search"></i>
+                        </li>
+                    
+                </ul>
+            </div>
+            <div class="mobile">
+                
+                    <div class="icon-item search search-popup-trigger"><i class="fas fa-search"></i></div>
+                
+                <div class="icon-item menu-bar">
+                    <div class="menu-bar-middle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="header-drawer">
+        <ul class="drawer-menu-list">
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/">首页</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/archives">归档</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/tags">标签</a>
+                </li>
+            
+                <li class="drawer-menu-item flex-center">
+                    <a class=""
+                       href="/ip-tool">IP查询</a>
+                </li>
+            
+        </ul>
+    </div>
+
+    <div class="window-mask"></div>
+
+</header>
+
+
+            </div>
+
+            <div class="page-main-content-middle">
+
+                <main class="main-content normal-code-theme">
+
+                    
+                        <div class="fade-in-down-animation">
+    <div class="article-content-container">
+
+        <div class="article-title">
+            <span class="title-hover-animation">如何在自家的路由器器上部署一个自己的邮箱服务</span>
+        </div>
+
+        
+            <div class="article-header">
+                <div class="avatar">
+                    <img src="/images/avatar.jpg">
+                </div>
+                <div class="info">
+                    <div class="author">
+                        <span>jf wang</span>
+                        <span class="level">Lv6</span>
+                    </div>
+                    <div class="meta-info">
+                        <div class="article-meta-info">
+    <span class="article-date article-meta-item">
+        <i class="fas fa-calendar"></i> 2022-11-27 22:38:06
+    </span>
+    
+    
+        <span class="article-tags article-meta-item">
+            <i class="fas fa-tags"></i>
+            <ul>
+                
+                    <li>
+                        <a href="/tags/postfix/">postfix</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/docker/">docker</a>
+                    </li>
+                
+                    <li>
+                        | <a href="/tags/openwrt/">openwrt</a>
+                    </li>
+                
+            </ul>
+        </span>
+    
+
+    
+    
+        <span class="article-wordcount article-meta-item">
+            <i class="fas fa-file-word"></i> <span>1.1k 字</span>
+        </span>
+    
+    
+        <span class="article-min2read article-meta-item">
+            <i class="fas fa-clock"></i> <span>5 分钟</span>
+        </span>
+    
+    
+</div>
+
+                    </div>
+                </div>
+            </div>
+        
+
+        <div class="article-content markdown-body">
+            <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><ul>
+<li>注册线上的邮箱，对个人信息的绑定越来越多。国内很多邮箱，没有手机号注册不了。公司业务一般需要十几二十多个邮箱用于注册线上账号，这就需要几十个手机号。长年备用。</li>
+<li>且现在注册邮箱时密码安全等级要求高。密码维护繁琐，一个没记录好。下次登录就很麻烦。</li>
+<li>邮箱附带更多的广告、平台方各种植入自己的产品。</li>
+</ul>
+<p>自建邮箱服务，就成了很好的选择。但搭建邮箱服务过去很困难。配置非常繁杂！</p>
+<p>好在时过境迁，如果我们有了Docker，专治繁杂的配置！如今，可以在自己家路由器上，部署一个自己的邮箱服务了。</p>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><ul>
+<li>路由器系统：OpenWrt 21.02.3</li>
+<li>Docker管理包：<a class="link"   target="_blank" rel="noopener" href="https://github.com/lisaac/luci-app-dockerman" >luci-app-dockerman(20.10.17-1)<i class="fas fa-external-link-alt"></i></a>、docker-compose(1.28.2-1)</li>
+<li>邮件服务镜像：<a class="link"   target="_blank" rel="noopener" href="https://github.com/docker-mailserver/docker-mailserver" >docker-mailserver(v11.2.0)<i class="fas fa-external-link-alt"></i></a></li>
+<li>Let’s Encrypt 自动签发工具：<a class="link"   target="_blank" rel="noopener" href="https://github.com/acmesh-official/acme.sh" >acme.sh<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+<p><code>docker-mailserver</code>包下了一套完整的邮件系列服务。其中重点的服务有：</p>
+<table>
+<thead>
+<tr>
+<th>服务名</th>
+<th>简介</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a class="link"   target="_blank" rel="noopener" href="http://www.postfix.org/" >Postfix<i class="fas fa-external-link-alt"></i></a></td>
+<td>不错的MTA服务</td>
+</tr>
+<tr>
+<td><a class="link"   target="_blank" rel="noopener" href="https://www.dovecot.org/" >Dovecot<i class="fas fa-external-link-alt"></i></a></td>
+<td>提供IMAP、POP3协议的收邮件服务</td>
+</tr>
+<tr>
+<td><a class="link"   target="_blank" rel="noopener" href="https://www.amavis.org/" >Amavis<i class="fas fa-external-link-alt"></i></a></td>
+<td>高性能内容过滤器</td>
+</tr>
+<tr>
+<td><a class="link"   target="_blank" rel="noopener" href="http://spamassassin.apache.org/" >SpamAssassin<i class="fas fa-external-link-alt"></i></a></td>
+<td>垃圾邮件过滤服务</td>
+</tr>
+<tr>
+<td><a class="link"   target="_blank" rel="noopener" href="https://www.clamav.net/" >ClamAV<i class="fas fa-external-link-alt"></i></a></td>
+<td>邮件杀毒服务</td>
+</tr>
+<tr>
+<td><a class="link"   target="_blank" rel="noopener" href="http://www.opendkim.org/" >OpenDKIM<i class="fas fa-external-link-alt"></i></a></td>
+<td>DKIM签名服务</td>
+</tr>
+<tr>
+<td><a class="link"   target="_blank" rel="noopener" href="https://www.fail2ban.org/wiki/index.php/Main_Page" >Fail2ban<i class="fas fa-external-link-alt"></i></a></td>
+<td>防暴力破解服务</td>
+</tr>
+</tbody></table>
+<h1 id="部署"><a href="#部署" class="headerlink" title="部署"></a>部署</h1><h2 id="域名设置"><a href="#域名设置" class="headerlink" title="域名设置"></a>域名设置</h2><p>几点说明：</p>
+<ul>
+<li>家用动态ADSL，设置不了rDNS。所以略过。</li>
+<li>DNS的SPF记录：将域名标记为发邮件服务。</li>
+<li>DNS的DMARC记录：将域名标记为已受SPF/KDIM等保护。</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>设置</th>
+<th>记录类型</th>
+<th>记录名</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>邮件服务</td>
+<td>MX</td>
+<td>home.my.domain.name</td>
+<td>home.ddns.domain</td>
+</tr>
+<tr>
+<td>SPF标记</td>
+<td>TXT</td>
+<td>home.my.domain.name</td>
+<td>v=spf1 mx ~all</td>
+</tr>
+<tr>
+<td>DMARC标记</td>
+<td>TXT</td>
+<td>_dmarc.home.my.domain.name</td>
+<td>v=DMARC1; p=quarantine; rua=mailto:<a class="link"   href="mailto:&#x70;&#x6f;&#115;&#x74;&#x6d;&#x61;&#x73;&#x74;&#x65;&#x72;&#x40;&#104;&#x6f;&#x6d;&#101;&#x2e;&#109;&#x79;&#46;&#x64;&#x6f;&#109;&#x61;&#x69;&#110;&#46;&#99;&#110;" >&#x70;&#x6f;&#115;&#x74;&#x6d;&#x61;&#x73;&#x74;&#x65;&#x72;&#x40;&#104;&#x6f;&#x6d;&#101;&#x2e;&#109;&#x79;&#46;&#x64;&#x6f;&#109;&#x61;&#x69;&#110;&#46;&#99;&#110;<i class="fas fa-external-link-alt"></i></a>; ruf=mailto:<a class="link"   href="mailto:&#x70;&#111;&#115;&#x74;&#109;&#x61;&#x73;&#x74;&#101;&#114;&#x40;&#104;&#x6f;&#x6d;&#101;&#x2e;&#109;&#121;&#x2e;&#100;&#x6f;&#109;&#97;&#105;&#x6e;&#x2e;&#x63;&#110;" >&#x70;&#111;&#115;&#x74;&#109;&#x61;&#x73;&#x74;&#101;&#114;&#x40;&#104;&#x6f;&#x6d;&#101;&#x2e;&#109;&#121;&#x2e;&#100;&#x6f;&#109;&#97;&#105;&#x6e;&#x2e;&#x63;&#110;<i class="fas fa-external-link-alt"></i></a>; fo=0; adkim=r; aspf=r; pct=100; rf=afrf; ri=86400; sp=quarantine</td>
+</tr>
+</tbody></table>
+<h2 id="自动签发证书"><a href="#自动签发证书" class="headerlink" title="自动签发证书"></a>自动签发证书</h2><p>虽然<code>docker-mailserver</code>自己带了<code>letsencrypt</code>功能，只要配置好，自动签！但家用宽带没有80端口。只能自己搞定。</p>
+<p>采用<code>acme.sh</code>自动签发。操作参考<a class="link"   target="_blank" rel="noopener" href="https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E" >acme说明书<i class="fas fa-external-link-alt"></i></a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://get.acme.sh | sh -s email=your@email.com</span><br></pre></td></tr></table></figure>
+<p>将<code>acme.sh</code>安装到<code>/root/.acme.sh/</code>下。</p>
+<p>先获取到手动验证DNS的challenge值：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/root/.acme.sh/acme.sh --issue --dns -d home.my.domain.name --yes-I-know-dns-manual-mode-enough-go-ahead-please</span><br></pre></td></tr></table></figure>
+<p>获取到值后，把challenge值设置到DNS中。如：</p>
+<table>
+<thead>
+<tr>
+<th>设置</th>
+<th>记录类型</th>
+<th>记录名</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>手动验证</td>
+<td>TXT</td>
+<td>_acme-challenge.home.my.domain.name</td>
+<td>challenge值</td>
+</tr>
+</tbody></table>
+<p>然后通过<code>renew</code>生成证书，注意：一定要带上<code>--server letsencrypt</code>这个参数。<a target="_blank" rel="noopener" href="https://github.com/acmesh-official/acme.sh/issues/3775">不然默认连接<code>acme.zerossl.com</code>要么超时，要么503</a>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/root/.acme.sh/acme.sh --renew -d home.my.domain.namen --yes-I-know-dns-manual-mode-enough-go-ahead-please --server letsencrypt</span><br></pre></td></tr></table></figure>
+<p>最后，通过<code>crontab</code>让证书续期自动化</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line">0 5 * * 1 /root/.acme.sh/acme.sh --renew -d home.my.domain.name --yes-I-know-dns-manual-mode-enough-go-ahead-please --server letsencrypt</span><br></pre></td></tr></table></figure>
+<h2 id="准备环境"><a href="#准备环境" class="headerlink" title="准备环境"></a>准备环境</h2><p>将 <a class="link"   target="_blank" rel="noopener" href="https://github.com/docker-mailserver/docker-mailserver" >docker-mailserver<i class="fas fa-external-link-alt"></i></a> 项目中的 <code>setup.sh</code>、<code>docker-compose.yml</code>、<code>mailserver.env</code>下载到本地目录中。通过shell进入目录。</p>
+<h2 id="配置docker-compose-yml"><a href="#配置docker-compose-yml" class="headerlink" title="配置docker-compose.yml"></a>配置<code>docker-compose.yml</code></h2><ul>
+<li>hostname: home</li>
+<li>domainname: my.domain.name</li>
+<li>volumes中添加： - /root/.acme.sh/home.my.domain.name/:/tmp/cert/</li>
+</ul>
+<h2 id="配置mailserver-env"><a href="#配置mailserver-env" class="headerlink" title="配置mailserver.env"></a>配置<code>mailserver.env</code></h2><ul>
+<li>POSTMASTER_ADDRESS=postmaster@home.my.domain.name</li>
+<li>SSL_TYPE=manual</li>
+<li>SSL_CERT_PATH=/tmp/cert/home.my.domain.name.cer</li>
+<li>SSL_KEY_PATH=/tmp/cert/home.my.domain.name.key</li>
+</ul>
+<h2 id="生成DKIM签名"><a href="#生成DKIM签名" class="headerlink" title="生成DKIM签名"></a>生成<code>DKIM</code>签名</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">./setup.sh config dkim keysize 2048</span><br><span class="line">[   INF   ]  Creating DKIM private key <span class="string">&#x27;/tmp/docker-mailserver/opendkim/keys/home.domain.name/mail.private&#x27;</span></span><br><span class="line">cat ./docker-data/dms/config/opendkim/keys/home.domain.name/mail.txt</span><br><span class="line">mail._domainkey	IN	TXT	( <span class="string">&quot;v=DKIM1; h=sha256; k=rsa; &quot;</span></span><br><span class="line">	  <span class="string">&quot;p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8Tr2JFyWXLMKcxY9j/1IjR6me2EjdyI4K97wAGoPUWK9ZmFewpSZ8DAEKphWV79k+w61BwLTLdpDLR6HpqsVOV7tGDGdK8sUG7tqfWQhN4Vudy9VUmQ1WOrcUE3o5nUfeh8jwjiO5/exWBiTmAJ78p54hSkzMalmCOQCXWcCbJbUN+jrmV8WUEHx+6M7MP0Z7KQSJY3bW6ujm9&quot;</span></span><br><span class="line">	  <span class="string">&quot;3O1yOnzMgJy1VBJvLSbyDrjtxXJGrPbTCRaig09I5WFxZXwROispL1xiTNgUGv9/1fDeUqoIPPXCw6z4l6x20aRl+Sog+WH2qLLyY+PdIFaTfJ8MBysrZF6yhJ5rx4THZmu8CtUQIDAQAB&quot;</span> )  ; ----- DKIM key mail <span class="keyword">for</span> home.domain.name</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>这一般是设置在主域上的。我在这里设置在二级域上，不知道是否有效。不过能确定不太影响功能。</p>
+</blockquote>
+<p>设置DNS：</p>
+<table>
+<thead>
+<tr>
+<th>设置</th>
+<th>记录类型</th>
+<th>记录名</th>
+<th>记录值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>DKIM</td>
+<td>TXT</td>
+<td>mail._domainkey.home.my.domain.name</td>
+<td>v=DKIM1; h=sha256; k=rsa; p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA8Tr2JFyWXLMKcxY9j/1IjR6me2EjdyI4K97wAGoPUWK9ZmFewpSZ8DAEKphWV79k+w61BwLTLdpDLR6HpqsVOV7tGDGdK8sUG7tqfWQhN4Vudy9VUmQ1WOrcUE3o5nUfeh8jwjiO5/exWBiTmAJ78p54hSkzMalmCOQCXWcCbJbUN+jrmV8WUEHx+6M7MP0Z7KQSJY3bW6ujm93O1yOnzMgJy1VBJvLSbyDrjtxXJGrPbTCRaig09I5WFxZXwROispL1xiTNgUGv9/1fDeUqoIPPXCw6z4l6x20aRl+Sog+WH2qLLyY+PdIFaTfJ8MBysrZF6yhJ5rx4THZmu8CtUQIDAQAB</td>
+</tr>
+</tbody></table>
+<h2 id="验证TLS"><a href="#验证TLS" class="headerlink" title="验证TLS"></a>验证TLS</h2><p>前往：<a class="link"   target="_blank" rel="noopener" href="https://www.checktls.com/" >checktls<i class="fas fa-external-link-alt"></i></a> 测试一下TLS的支持情况。</p>
+<h2 id="添加用户"><a href="#添加用户" class="headerlink" title="添加用户"></a>添加用户</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./setup.sh email add postmaster@home.domain.name <span class="string">&quot;password type here&quot;</span></span><br></pre></td></tr></table></figure>
+<h1 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker-compose up -d <span class="comment"># 启动</span></span><br><span class="line">docker-compose logs -f <span class="comment"># 看日志</span></span><br></pre></td></tr></table></figure>
+<h2 id="开放端口"><a href="#开放端口" class="headerlink" title="开放端口"></a>开放端口</h2><p>进入openwrt后台，在[网络]-&gt;[防火墙]-&gt;[端口转发]中添加993、645两个端口映射到路由器IP上。</p>
+<h1 id="参考文档"><a href="#参考文档" class="headerlink" title="参考文档"></a>参考文档</h1><ul>
+<li><a class="link"   target="_blank" rel="noopener" href="https://www.treesir.pub/post/docker-deploy-mailserver/" >https://www.treesir.pub/post/docker-deploy-mailserver/<i class="fas fa-external-link-alt"></i></a></li>
+<li><a class="link"   target="_blank" rel="noopener" href="https://docker-mailserver.github.io/docker-mailserver/edge/config/setup.sh/" >https://docker-mailserver.github.io/docker-mailserver/edge/config/setup.sh/<i class="fas fa-external-link-alt"></i></a></li>
+<li><a class="link"   target="_blank" rel="noopener" href="https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E" >https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E<i class="fas fa-external-link-alt"></i></a></li>
+<li><a class="link"   target="_blank" rel="noopener" href="https://github.com/acmesh-official/acme.sh/issues/3775" >https://github.com/acmesh-official/acme.sh/issues/3775<i class="fas fa-external-link-alt"></i></a></li>
+</ul>
+
+        </div>
+
+        
+            <div class="post-copyright-info">
+                <div class="article-copyright-info-container">
+    <ul>
+        <li>本文标题：如何在自家的路由器器上部署一个自己的邮箱服务</li>
+        <li>本文作者：jf wang</li>
+        <li>创建时间：2022-11-27 22:38:06</li>
+        <li>
+            本文链接：https://www.wangjunfeng.com.cn/2022/11/27/mail-server-on-openwrt-docker/
+        </li>
+        <li>
+            版权声明：本博客所有文章除特别声明外，均采用 <a class="license" target="_blank" rel="noopener" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">BY-NC-SA</a> 许可协议。转载请注明出处！
+        </li>
+    </ul>
+</div>
+
+            </div>
+        
+
+        
+            <div class="article-nav">
+                
+                
+                    <div class="article-next">
+                        <a class="next"
+                           rel="next"
+                           href="/2022/10/19/taro-mini-program/"
+                        >
+                            <span class="title flex-center">
+                                <span class="post-nav-title-item">Taro+VUE+TS+NutUI 开发小程序的体验</span>
+                                <span class="post-nav-item">下一篇</span>
+                            </span>
+                            <span class="right arrow-icon flex-center" >
+                              <i class="fas fa-chevron-right"></i>
+                            </span>
+                        </a>
+                    </div>
+                
+            </div>
+        
+
+        
+            <div class="comment-container">
+                <div class="comments-container">
+    <div id="comment-anchor"></div>
+    
+        
+    <script 
+            src="//cdn.jsdelivr.net/npm/gitalk/dist/gitalk.min.js"></script>
+    <div id="gitalk-container"></div>
+    <script >
+
+        function loadGitalk() {
+            let __gitalk__pathname = decodeURI(location.pathname);
+            const __gitalk__pathnameLength = __gitalk__pathname.length;
+            const __gitalk__pathnameMaxLength = 50;
+            if (__gitalk__pathnameLength > __gitalk__pathnameMaxLength) {
+                __gitalk__pathname = __gitalk__pathname.substring(0, __gitalk__pathnameMaxLength - 3) + '...';
+            }
+            new Gitalk({
+                clientID: '47f05f2cf146ab11f9df',
+                clientSecret: '0b256fbf6c6367af3637f96ce7d702d1eb6ca54c',
+                repo: 'blog',
+                owner: 'blusewang',
+                admin: ['blusewang'],
+                id: __gitalk__pathname,
+                language: 'zh-CN'
+            }).render('gitalk-container');
+        }
+
+        if ('false') {
+            const loadGitalkTimeout = setTimeout(() => {
+                loadGitalk();
+                clearTimeout(loadGitalkTimeout);
+            }, 1000);
+        } else {
+            window.addEventListener('DOMContentLoaded', loadGitalk);
+        }
+    </script>
+
+
+    
+</div>
+
+            </div>
+        
+    </div>
+</div>
+
+
+                    
+                </main>
+
+            </div>
+
+            <div class="page-main-content-bottom">
+                <footer class="footer">
+    <div class="info-container">
+        <div class="copyright-info info-item">
+            &copy;
+            
+              <span>2013</span> -
+            
+            2022 <i class="fas fa-heart icon-animate"></i> <a href="/">jf wang</a>
+        </div>
+        
+        <div class="theme-info info-item">
+            <a href="https://beian.miit.gov.cn/#/Integrated/recordQuery" target="_blank">京ICP备13038498号-1</a> | 由 <a target="_blank" href="https://hexo.io">Hexo</a> 驱动 | 主题 <a class="theme-version" target="_blank"></a>
+        </div>
+    </div>
+    
+        <script src='https://cdn.staticfile.org/mermaid/8.9.0/mermaid.min.js'></script>
+        <script>
+            if (window.mermaid) {
+                mermaid.initialize({theme: 'forest'});
+            }
+        </script>
+    
+</footer>
+
+            </div>
+        </div>
+    </main>
+
+    
+        <div class="sidebar-tools">
+            <div class="tools-container">
+    <ul class="tools-list">
+        <!-- TOC aside toggle -->
+        
+            <li class="tools-item page-aside-toggle">
+                <i class="fas fa-outdent"></i>
+            </li>
+        
+
+        <!-- go comment -->
+        
+            <li class="go-comment">
+                <i class="fas fa-comment"></i>
+            </li>
+        
+    </ul>
+</div>
+
+        </div>
+    
+
+    <div class="right-bottom-side-tools">
+        <div class="side-tools-container">
+
+    <ul class="side-tools-list">
+        <li class="tools-item tool-font-adjust-plus flex-center">
+            <i class="fas fa-search-plus"></i>
+        </li>
+
+        <li class="tools-item tool-font-adjust-minus flex-center">
+            <i class="fas fa-search-minus"></i>
+        </li>
+
+        <li class="tools-item tool-expand-width flex-center">
+            <i class="fas fa-arrows-alt-h"></i>
+        </li>
+
+        <li class="tools-item tool-dark-light-toggle flex-center">
+            <i class="fas fa-moon"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-top flex-center">
+            <i class="fas fa-arrow-up"></i>
+        </li>
+
+        <li class="tools-item tool-scroll-to-bottom flex-center">
+            <i class="fas fa-arrow-down"></i>
+        </li>
+    </ul>
+
+    <ul class="tools-ul-1">
+        <li class="tools-item tool-toggle-show flex-center">
+            <i class="fas fa-cog fa-spin"></i>
+        </li>
+
+    </ul>
+</div>
+
+    </div>
+
+    
+        <!-- page aside -->
+        <aside class="page-aside">
+            <div class="post-toc-wrap">
+    <div class="post-toc">
+        <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">环境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2"><span class="nav-number">3.</span> <span class="nav-text">部署</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%9F%E5%90%8D%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.1.</span> <span class="nav-text">域名设置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E7%AD%BE%E5%8F%91%E8%AF%81%E4%B9%A6"><span class="nav-number">3.2.</span> <span class="nav-text">自动签发证书</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E7%8E%AF%E5%A2%83"><span class="nav-number">3.3.</span> <span class="nav-text">准备环境</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEdocker-compose-yml"><span class="nav-number">3.4.</span> <span class="nav-text">配置docker-compose.yml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEmailserver-env"><span class="nav-number">3.5.</span> <span class="nav-text">配置mailserver.env</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90DKIM%E7%AD%BE%E5%90%8D"><span class="nav-number">3.6.</span> <span class="nav-text">生成DKIM签名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81TLS"><span class="nav-number">3.7.</span> <span class="nav-text">验证TLS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E7%94%A8%E6%88%B7"><span class="nav-number">3.8.</span> <span class="nav-text">添加用户</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8"><span class="nav-number">4.</span> <span class="nav-text">启动</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%80%E6%94%BE%E7%AB%AF%E5%8F%A3"><span class="nav-number">4.1.</span> <span class="nav-text">开放端口</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E6%96%87%E6%A1%A3"><span class="nav-number">5.</span> <span class="nav-text">参考文档</span></a></li></ol>
+    </div>
+</div>
+        </aside>
+    
+
+    <!-- image viewer -->
+    <div class="image-viewer-container">
+    <img src="">
+</div>
+
+
+</div>
+
+
+    <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+          <span class="search-input-field-pre">
+            <i class="fas fa-keyboard"></i>
+          </span>
+            <div class="search-input-container">
+                <input autocomplete="off"
+                       autocorrect="off"
+                       autocapitalize="off"
+                       placeholder="搜索..."
+                       spellcheck="false"
+                       type="search"
+                       class="search-input"
+                >
+            </div>
+            <span class="popup-btn-close">
+                <i class="fas fa-times"></i>
+            </span>
+        </div>
+        <div id="search-result">
+            <div id="no-result">
+                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/main.js"></script>
+
+<script src="/js/header-shrink.js"></script>
+
+<script src="/js/back2top.js"></script>
+
+<script src="/js/dark-light-toggle.js"></script>
+
+
+
+    
+<script src="/js/local-search.js"></script>
+
+
+
+
+    
+<script src="/js/code-copy.js"></script>
+
+
+
+<div class="post-scripts ">
+    
+        
+<script src="/js/left-side-toggle.js"></script>
+
+<script src="/js/libs/anime.min.js"></script>
+
+<script src="/js/toc.js"></script>
+
+    
+</div>
+
+
+
+</body>
+</html>
