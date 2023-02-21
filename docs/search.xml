@@ -2605,4 +2605,15 @@ bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
         <tag>openwrt</tag>
       </tags>
   </entry>
+  <entry>
+    <title>使用ipset配合iptable实现多IP段白名单式开放端口</title>
+    <url>/2023/02/22/iptable-ipset/</url>
+    <content><![CDATA[<h3 id="需求"><a href="#需求" class="headerlink" title="需求"></a>需求</h3><p>总有海外及国内IDC机房的IP来源来骚扰我的数据库服务。<br>虽然配置了完善的<code>pg_hba.conf</code>规则，及要求了跨公网一律 <code>TLS</code> 安全传输。<br>但不断的来自公网的端口嗅探和骚扰。为了防止万一，这次打算通过<code>iptable</code>一次从根上解决！</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">apt install ipset</span><br></pre></td></tr></table></figure>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line"><span class="comment"># 创建集合</span></span><br><span class="line">ipset create cnip <span class="built_in">hash</span>:net</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加IP或IP段</span></span><br><span class="line">ipset add cnip 114.240.0.0/12</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置防护规则</span></span><br><span class="line"><span class="comment">## 如果有安装docker：</span></span><br><span class="line">iptable -I DOCKER -m <span class="built_in">set</span> ! --match-set cnip -p tcp --dport 5432 -j REJECT</span><br><span class="line"><span class="comment">## 如果没有安装docker</span></span><br><span class="line">iptable -I INPUT -m <span class="built_in">set</span> ! --match-set cnip -p tcp --dport 5432 -j REJECT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看集合</span></span><br><span class="line">ipset list cnip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除集合</span></span><br><span class="line">ipset desdroy cnip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除集合中的项</span></span><br><span class="line">ipset del cnip 114.240.0.0/12</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看集合中的项</span></span><br><span class="line">ipset list cnip</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>iptable</tag>
+        <tag>ipset</tag>
+      </tags>
+  </entry>
 </search>

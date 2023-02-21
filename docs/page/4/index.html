@@ -150,6 +150,48 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2019/10/28/postgresql-12/">
+                        PostgreSQL 12 变更点评
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        PostgreSQL 12 于2019年10月3日。之前只阅读了它的中文概要说明了解到了很多的性能提升。 但在阅读完整发行说明后，了解到了更多的有用的变更。 以下挑选一些我关心的，做一下介绍。
+流复制和恢复废弃了recvoery.conf。
+将其功能...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Mon Oct 28 2019 17:08:33 GMT+0800">2019-10-28</span></span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/PostgreSQL/">PostgreSQL</a>
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2019/10/28/postgresql-12/">阅读全文 <i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2019/10/26/postgresql-ssl/">
                         PostgreSQL SSL 加密传输配置
                     </a>
@@ -575,66 +617,6 @@ lsof -c nsqd
 
             </li>
         
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2019/07/10/postgresql-file-fdw-analysis-nginx-log/">
-                        使用postgresql的file-fdw扩展分析nginx日志
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        原料PostgreSQL 方面PostgreSQL的file_fdw使用说明：file_fdw 中文文档
-nginx 方面nginx 部分变量说明：
-
-$remote_addr  客户端IP
-$time_local   读起来不太舒服的时间
-$tim...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Wed Jul 10 2019 11:58:16 GMT+0800">2019-07-10</span></span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fas fa-tags"></i>
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/PostgreSQL/">PostgreSQL</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/nginx/">nginx</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/file-fdw/">file-fdw</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/log/">log</a>
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2019/07/10/postgresql-file-fdw-analysis-nginx-log/">阅读全文 <i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
     </ul>
 
     <div class="home-paginator">
@@ -669,7 +651,7 @@ $tim...
             
               <span>2013</span> -
             
-            2022 <i class="fas fa-heart icon-animate"></i> <a href="/">jf wang</a>
+            2023 <i class="fas fa-heart icon-animate"></i> <a href="/">jf wang</a>
         </div>
         
         <div class="theme-info info-item">
@@ -742,33 +724,181 @@ $tim...
 </div>
 
 
-    <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-          <span class="search-input-field-pre">
-            <i class="fas fa-keyboard"></i>
-          </span>
-            <div class="search-input-container">
-                <input autocomplete="off"
-                       autocorrect="off"
-                       autocapitalize="off"
-                       placeholder="搜索..."
-                       spellcheck="false"
-                       type="search"
-                       class="search-input"
-                >
-            </div>
-            <span class="popup-btn-close">
-                <i class="fas fa-times"></i>
-            </span>
-        </div>
-        <div id="search-result">
-            <div id="no-result">
-                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
-            </div>
-        </div>
-    </div>
-</div>
+    $icon-size = 1.2rem;
+
+.search-pop-overlay {
+  position: fixed;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0);
+  visibility: hidden;
+  z-index: $z-index-8;
+
+  transition();
+
+  &.active {
+    background: rgba(0, 0, 0, 0.38);
+    visibility: visible;
+
+    .search-popup {
+      transform: scale(1);
+    }
+
+  }
+
+  .search-popup {
+    background: var(--background-color);
+    border-radius: 5px;
+    height: 80%;
+    width: 70%;
+    margin: auto;
+    transform: scale(0);
+    z-index: $z-index-6;
+    transition();
+
+    +keep-tablet() {
+      width: 80%;
+    }
+
+    +keep-mobile() {
+      width: 90%;
+    }
+
+    .search-header {
+      background: var(--fourth-text-color);
+      border-top-left-radius: 2px;
+      border-top-right-radius: 2px;
+      display: flex;
+      padding: 10px;
+
+      .search-input-field-pre, .popup-btn-close {
+        font-size: $icon-size;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .search-input-field-pre {
+        cursor: pointer;
+        color: var(--third-text-color);
+      }
+
+      .popup-btn-close {
+        color: var(--default-text-color);
+      }
+
+
+      .search-input-container {
+
+        flex-grow: 1;
+        padding: 2px;
+
+        .search-input {
+          background: transparent;
+          border: 0;
+          outline: 0;
+          width: 100%;
+          font-size: 1.2rem;
+          color: var(--default-text-color);
+
+          &::-webkit-search-cancel-button {
+            display: none;
+          }
+        }
+
+
+      }
+
+
+      .popup-btn-close {
+        cursor: pointer;
+
+        &:hover .fas, far, fab {
+          color: var(--first-text-color);
+        }
+      }
+
+    }
+
+
+    #search-result {
+      display: flex;
+      height: calc(100% - 55px);
+      overflow: auto;
+      padding: 5px 25px;
+
+      .search-result-list {
+        width: 100%;
+        height: 100%;
+        font-size: 1rem;
+
+        li {
+          border-bottom: 1px dashed var(--border-color);
+          padding: 10px 0;
+          margin: 10px 0;
+          box-sizing: border-box;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+
+          .search-result-title {
+            position: relative;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-left: 16px;
+            display: flex;
+            align-items: center;
+
+            &::after {
+              content: '';
+              position: absolute;
+              width: 5px;
+              height: 5px;
+              border-radius: 50%;
+              top: 50%;
+              transform: translateY(-50%);
+              left: 0;
+              background: var(--default-text-color);
+            }
+          }
+
+
+          .search-result {
+            line-height: 2rem;
+            margin: 0;
+            padding-left: 16px;
+          }
+
+          a {
+            &:hover {
+              color: var(--default-text-color);
+            }
+          }
+
+          .search-keyword {
+            border-bottom: 1px dashed var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+          }
+
+        }
+      }
+
+
+      #no-result {
+        color: var(--third-text-color);
+        margin: auto;
+      }
+
+    }
+  }
+}
+
 
 
 

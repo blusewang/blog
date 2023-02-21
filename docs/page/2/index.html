@@ -150,6 +150,53 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2021/09/09/golang-auto-deploy/">
+                        golang项目的自动化部署
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        在Go项目中。部署可以使用Makefile管理编译脚本、打包上传二进制至服务器的功能。
+但在服务器上，如何自动在收到上传后自动停止服务，解压二进制包，替换旧二进制文件，再启动。这是个一直困扰我的问题。
+在Debian上可以使用systemd的serv...
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Thu Sep 09 2021 17:04:31 GMT+0800">2021-09-09</span></span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/golang/">golang</a>
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/%E9%83%A8%E7%BD%B2/">部署</a>
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2021/09/09/golang-auto-deploy/">阅读全文 <i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2021/08/03/aliyun-freebsd-mount-cloud-disk/">
                         阿里云 FreeBSD 挂载云盘
                     </a>
@@ -573,59 +620,6 @@ Citus 正在被很多大数据机构使用，日均更新5～10亿记录，甚�
 
             </li>
         
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2020/08/04/openwrt-ipv6-firewall-forward/">
-                        OpenWRT实现内网tcp连接请求整形 搭建逼真开发环境
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        开发环境头疼的配置开发者本地开发一款网络应用时，一般是在测试时，使用测试域名/IP。发布时使用正式域名/IP。
-看似简单的小操作。但在多轮迭代时，这个小操作一但出错，会出大问题。
-如果开发环境配置与生产环境完全一样，那就省事许多。
-在有自己可控的内网...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Tue Aug 04 2020 17:20:41 GMT+0800">2020-08-04</span></span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fas fa-tags"></i>
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/ipv6/">ipv6</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/ip6tables/">ip6tables</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/OpenWRT/">OpenWRT</a>
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2020/08/04/openwrt-ipv6-firewall-forward/">阅读全文 <i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
     </ul>
 
     <div class="home-paginator">
@@ -660,7 +654,7 @@ Citus 正在被很多大数据机构使用，日均更新5～10亿记录，甚�
             
               <span>2013</span> -
             
-            2022 <i class="fas fa-heart icon-animate"></i> <a href="/">jf wang</a>
+            2023 <i class="fas fa-heart icon-animate"></i> <a href="/">jf wang</a>
         </div>
         
         <div class="theme-info info-item">
@@ -733,33 +727,181 @@ Citus 正在被很多大数据机构使用，日均更新5～10亿记录，甚�
 </div>
 
 
-    <div class="search-pop-overlay">
-    <div class="popup search-popup">
-        <div class="search-header">
-          <span class="search-input-field-pre">
-            <i class="fas fa-keyboard"></i>
-          </span>
-            <div class="search-input-container">
-                <input autocomplete="off"
-                       autocorrect="off"
-                       autocapitalize="off"
-                       placeholder="搜索..."
-                       spellcheck="false"
-                       type="search"
-                       class="search-input"
-                >
-            </div>
-            <span class="popup-btn-close">
-                <i class="fas fa-times"></i>
-            </span>
-        </div>
-        <div id="search-result">
-            <div id="no-result">
-                <i class="fas fa-spinner fa-pulse fa-5x fa-fw"></i>
-            </div>
-        </div>
-    </div>
-</div>
+    $icon-size = 1.2rem;
+
+.search-pop-overlay {
+  position: fixed;
+  display: flex;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  background: rgba(0, 0, 0, 0);
+  visibility: hidden;
+  z-index: $z-index-8;
+
+  transition();
+
+  &.active {
+    background: rgba(0, 0, 0, 0.38);
+    visibility: visible;
+
+    .search-popup {
+      transform: scale(1);
+    }
+
+  }
+
+  .search-popup {
+    background: var(--background-color);
+    border-radius: 5px;
+    height: 80%;
+    width: 70%;
+    margin: auto;
+    transform: scale(0);
+    z-index: $z-index-6;
+    transition();
+
+    +keep-tablet() {
+      width: 80%;
+    }
+
+    +keep-mobile() {
+      width: 90%;
+    }
+
+    .search-header {
+      background: var(--fourth-text-color);
+      border-top-left-radius: 2px;
+      border-top-right-radius: 2px;
+      display: flex;
+      padding: 10px;
+
+      .search-input-field-pre, .popup-btn-close {
+        font-size: $icon-size;
+        padding: 0 10px;
+        display: flex;
+        align-items: center;
+      }
+
+      .search-input-field-pre {
+        cursor: pointer;
+        color: var(--third-text-color);
+      }
+
+      .popup-btn-close {
+        color: var(--default-text-color);
+      }
+
+
+      .search-input-container {
+
+        flex-grow: 1;
+        padding: 2px;
+
+        .search-input {
+          background: transparent;
+          border: 0;
+          outline: 0;
+          width: 100%;
+          font-size: 1.2rem;
+          color: var(--default-text-color);
+
+          &::-webkit-search-cancel-button {
+            display: none;
+          }
+        }
+
+
+      }
+
+
+      .popup-btn-close {
+        cursor: pointer;
+
+        &:hover .fas, far, fab {
+          color: var(--first-text-color);
+        }
+      }
+
+    }
+
+
+    #search-result {
+      display: flex;
+      height: calc(100% - 55px);
+      overflow: auto;
+      padding: 5px 25px;
+
+      .search-result-list {
+        width: 100%;
+        height: 100%;
+        font-size: 1rem;
+
+        li {
+          border-bottom: 1px dashed var(--border-color);
+          padding: 10px 0;
+          margin: 10px 0;
+          box-sizing: border-box;
+
+          &:last-child {
+            border-bottom: none;
+          }
+
+
+          .search-result-title {
+            position: relative;
+            font-weight: bold;
+            margin-bottom: 10px;
+            padding-left: 16px;
+            display: flex;
+            align-items: center;
+
+            &::after {
+              content: '';
+              position: absolute;
+              width: 5px;
+              height: 5px;
+              border-radius: 50%;
+              top: 50%;
+              transform: translateY(-50%);
+              left: 0;
+              background: var(--default-text-color);
+            }
+          }
+
+
+          .search-result {
+            line-height: 2rem;
+            margin: 0;
+            padding-left: 16px;
+          }
+
+          a {
+            &:hover {
+              color: var(--default-text-color);
+            }
+          }
+
+          .search-keyword {
+            border-bottom: 1px dashed var(--primary-color);
+            color: var(--primary-color);
+            font-weight: bold;
+          }
+
+        }
+      }
+
+
+      #no-result {
+        color: var(--third-text-color);
+        margin: auto;
+      }
+
+    }
+  }
+}
+
 
 
 
