@@ -40,3 +40,8 @@ ipset del cnip 114.240.0.0/12
 # 查看集合中的项
 ipset list cnip
 ```
+
+### 附加资源
+如果要按国家地区建立集合。各国的IP段数据源：
+
+https://www.ipdeny.com/ipblocks/
