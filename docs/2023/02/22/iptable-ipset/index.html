@@ -187,7 +187,7 @@
     
     
         <span class="article-wordcount article-meta-item">
-            <i class="fas fa-file-word"></i> <span>230 字</span>
+            <i class="fas fa-file-word"></i> <span>280 字</span>
         </span>
     
     
@@ -209,7 +209,8 @@
 <h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建集合</span></span><br><span class="line">ipset create cnip <span class="built_in">hash</span>:net</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加IP或IP段</span></span><br><span class="line">ipset add cnip 114.240.0.0/12</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置防护规则</span></span><br><span class="line"><span class="comment">## 如果有安装docker：</span></span><br><span class="line">iptable -I DOCKER -m <span class="built_in">set</span> ! --match-set cnip -p tcp --dport 5432 -j REJECT</span><br><span class="line"><span class="comment">## 如果没有安装docker</span></span><br><span class="line">iptable -I INPUT -m <span class="built_in">set</span> ! --match-set cnip -p tcp --dport 5432 -j REJECT</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看集合</span></span><br><span class="line">ipset list cnip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除集合</span></span><br><span class="line">ipset desdroy cnip</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除集合中的项</span></span><br><span class="line">ipset del cnip 114.240.0.0/12</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看集合中的项</span></span><br><span class="line">ipset list cnip</span><br></pre></td></tr></table></figure>
 <h3 id="附加资源"><a href="#附加资源" class="headerlink" title="附加资源"></a>附加资源</h3><p>如果要按国家地区建立集合。各国的IP段数据源：</p>
 <p><a class="link"   target="_blank" rel="noopener" href="https://www.ipdeny.com/ipblocks/" >https://www.ipdeny.com/ipblocks/<i class="fas fa-external-link-alt"></i></a></p>
-
+<p>使用方式：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#下载国家IP段，这里以中国为例</span></span><br><span class="line">wget -P . http://www.ipdeny.com/ipblocks/data/countries/cn.zone</span><br><span class="line"><span class="comment">#将IP段添加到cnip规则中</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> $(cat /root/cn.zone ); <span class="keyword">do</span> ipset -A cnip <span class="variable">$i</span>; <span class="keyword">done</span></span><br></pre></td></tr></table></figure>
         </div>
 
         

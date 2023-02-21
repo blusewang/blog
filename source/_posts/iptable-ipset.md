@@ -45,3 +45,11 @@ ipset list cnip
 如果要按国家地区建立集合。各国的IP段数据源：
 
 https://www.ipdeny.com/ipblocks/
+
+使用方式：
+```bash
+#下载国家IP段，这里以中国为例
+wget -P . http://www.ipdeny.com/ipblocks/data/countries/cn.zone
+#将IP段添加到cnip规则中
+for i in $(cat /root/cn.zone ); do ipset -A cnip $i; done
+```
