@@ -2620,4 +2620,69 @@ bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
         <tag>ipset</tag>
       </tags>
   </entry>
+  <entry>
+    <title>coredns 从零开始配置一个权威域名服务</title>
+    <url>/2023/02/23/coredns-server-configure/</url>
+    <content><![CDATA[<p>这里以阿里云为例</p>
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><h2 id="购买一个域名"><a href="#购买一个域名" class="headerlink" title="购买一个域名"></a>购买一个域名</h2><p>不同的域名在国内的解析速度是不一样的。如<code>.asia</code>在国内的解析基本有200ms+的延迟。而<code>.cn</code>只会在50ms左右。</p>
+<p>实名之类的就不介绍了。</p>
+<h2 id="安装coredns服务"><a href="#安装coredns服务" class="headerlink" title="安装coredns服务"></a>安装coredns服务</h2><p><code>coredns</code>是一个使用<code>Go</code>语言写的DNS服务器，它的特色是：一切功能皆插件，这让它特别灵活。</p>
+<p>官网：<a class="link"   href="https://coredns.io/" >https://coredns.io/<i class="fas fa-external-link-alt"></i></a></p>
+<p>二进制下载：<a class="link"   href="https://github.com/coredns/coredns/releases/latest" >https://github.com/coredns/coredns/releases/latest<i class="fas fa-external-link-alt"></i></a></p>
+<p>Go语言特点：AllInOne！下载下来就能直接运行了！</p>
+<h2 id="生成-DNSSEC-amp-DS"><a href="#生成-DNSSEC-amp-DS" class="headerlink" title="生成 DNSSEC &amp; DS"></a>生成 DNSSEC &amp; DS</h2><h3 id="安装bind9-dnsutils。"><a href="#安装bind9-dnsutils。" class="headerlink" title="安装bind9-dnsutils。"></a>安装<code>bind9-dnsutils</code>。</h3><p>在<code>debian</code>上运行：<code>apt install bind9-dnsutils</code>即可！</p>
+<h3 id="创建-DNSSEC-KEY"><a href="#创建-DNSSEC-KEY" class="headerlink" title="创建 DNSSEC KEY"></a>创建 DNSSEC KEY</h3><p>SHELL:</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">shell#</span><span class="bash"> dnssec-keygen -a RSASHA256 -b 1024 yourdomain.com</span></span><br><span class="line">Generating key pair.........................................................+++++ .................+++++</span><br><span class="line">Kyourdomain.com.+008+38686</span><br><span class="line"><span class="meta">#</span><span class="bash"> 这会创建两个文件：Kyourdomain.com.+008+38686.key  Kyourdomain.com.+008+38686.private</span></span><br></pre></td></tr></table></figure>
+<h3 id="生成-DS"><a href="#生成-DS" class="headerlink" title="生成 DS"></a>生成 DS</h3><p>SHELL：</p>
+<figure class="highlight shell"><table><tr><td class="code"><pre><span class="line"><span class="meta">shell#</span><span class="bash"> dnssec-dsfromkey -1 Kyourdomain.com.+008+38686.key</span></span><br><span class="line">yourdomain.com. IN DS 38686 8 1 AC800C2DA62B5073E2692B46DCDDE829D1B01BD0</span><br><span class="line"><span class="meta">#</span><span class="bash"> 参数`-1` 是指使用`SHA-1`签名</span></span><br></pre></td></tr></table></figure>
+<h1 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h1><h2 id="设置阿里云DNS后台"><a href="#设置阿里云DNS后台" class="headerlink" title="设置阿里云DNS后台"></a>设置阿里云DNS后台</h2><p>进入买好的域名管理后台，<code>DNS管理</code>菜单下</p>
+<h3 id="自定义DNS-Host"><a href="#自定义DNS-Host" class="headerlink" title="自定义DNS Host"></a>自定义DNS Host</h3><p>点击<code>创建DNS服务器</code>添加两条记录：</p>
+<table>
+<thead>
+<tr>
+<th>DNS服务器</th>
+<th>服务器IP地址</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ns.yourdomain.com</td>
+<td>88.88.88.88</td>
+</tr>
+<tr>
+<td>ns2.yourdomain.com</td>
+<td>99.99.99.99</td>
+</tr>
+</tbody></table>
+<h3 id="DNS修改"><a href="#DNS修改" class="headerlink" title="DNS修改"></a>DNS修改</h3><p>点击<code>修改DNS服务器</code>，添加两个DNS服务器：</p>
+<ul>
+<li>ns.yourdomain.com</li>
+<li>ns2.yourdomain.com</li>
+</ul>
+<h3 id="DNSSEC设置"><a href="#DNSSEC设置" class="headerlink" title="DNSSEC设置"></a>DNSSEC设置</h3><p>点击<code>添加DS记录</code>。按生成<code>DNSSEC</code> &amp; <code>DS</code>的操作结果添加一条</p>
+<table>
+<thead>
+<tr>
+<th>关键标签</th>
+<th>加密算法</th>
+<th>摘要类型</th>
+<th>摘要</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>38686</td>
+<td>1-RSA/SHA-256</td>
+<td>1-SHA-1</td>
+<td>AC800C2DA62B5073E2692B46DCDDE829D1B01BD0</td>
+</tr>
+</tbody></table>
+<h2 id="配置DNS服务"><a href="#配置DNS服务" class="headerlink" title="配置DNS服务"></a>配置DNS服务</h2><p>同时在主、备服务器上做相同的配置</p>
+<h3 id="主配置文件：-etc-dns-conf"><a href="#主配置文件：-etc-dns-conf" class="headerlink" title="主配置文件： /etc/dns.conf"></a>主配置文件： /etc/dns.conf</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">yourdomain.com &#123;</span><br><span class="line">	file &#x2F;etc&#x2F;dns&#x2F;yourdomain.com.dns</span><br><span class="line">	dnssec &#123;</span><br><span class="line">		key file &#x2F;etc&#x2F;dns&#x2F;Kyourdomain.com.+008+38686</span><br><span class="line">	&#125;</span><br><span class="line">	reload</span><br><span class="line">	errors</span><br><span class="line">	log</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+<h3 id="域名数据库文件：-etc-dns-yourdomain-com-dns"><a href="#域名数据库文件：-etc-dns-yourdomain-com-dns" class="headerlink" title="域名数据库文件： /etc/dns/yourdomain.com.dns"></a>域名数据库文件： /etc/dns/yourdomain.com.dns</h3><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">$ORIGIN yourdomain.com.</span><br><span class="line">@	3600	IN	SOA	ns.yourdomain.com. master.yourdomain.com. (</span><br><span class="line">				14	;serial</span><br><span class="line">				7200	;refresh</span><br><span class="line">				3600	;retry</span><br><span class="line">				129600	;expire</span><br><span class="line">				3600	;minimum</span><br><span class="line">				)</span><br><span class="line">	3600	IN	NS	ns</span><br><span class="line">	3600	IN	NS	ns2</span><br><span class="line"></span><br><span class="line">@	3600	IN	A	8.8.8.8</span><br><span class="line">ns	3600	IN	A	88.88.88.88</span><br><span class="line">ns2	3600	IN	A	99.99.99.99</span><br><span class="line">www	600	    IN	A	8.8.8.8</span><br></pre></td></tr></table></figure>
+<h1 id="启动"><a href="#启动" class="headerlink" title="启动"></a>启动</h1><p><code>nohup coredns -conf /etc/dns.conf &gt; /tmp/dns.log 2&gt;&amp;1 &amp;</code></p>
+]]></content>
+      <tags>
+        <tag>dns</tag>
+        <tag>coredns</tag>
+      </tags>
+  </entry>
 </search>

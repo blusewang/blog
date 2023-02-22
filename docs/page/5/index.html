@@ -150,6 +150,65 @@
                 
 
                 <h3 class="home-article-title">
+                    <a href="/2019/07/13/macos-find-port-by-cmd/">
+                        MacOS 命令查询网络端口占用情况
+                    </a>
+                </h3>
+
+                <div class="home-article-content markdown-body">
+                    
+                        netstat
+netstat -an | grep 80
+
+lsof
+lsof -i:80
+
+
+lsof -c nsqd
+
+
+                    
+                </div>
+
+                <div class="home-article-meta-info-container">
+    <div class="home-article-meta-info">
+        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Sat Jul 13 2019 13:59:33 GMT+0800">2019-07-13</span></span>
+        
+        
+            <span class="home-article-tag">
+                <i class="fas fa-tags"></i>
+                <ul>
+                    
+                        <li>
+                            
+                            <a href="/tags/MacOS/">MacOS</a>
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/lsof/">lsof</a>
+                        </li>
+                    
+                        <li>
+                            | 
+                            <a href="/tags/netstat/">netstat</a>
+                        </li>
+                    
+                </ul>
+            </span>
+        
+    </div>
+
+    <a href="/2019/07/13/macos-find-port-by-cmd/">阅读全文 <i class="fas fa-angle-right"></i></a>
+</div>
+
+            </li>
+        
+            <li class="home-article-item">
+
+                
+
+                <h3 class="home-article-title">
                     <a href="/2019/07/10/postgresql-file-fdw-analysis-nginx-log/">
                         使用postgresql的file-fdw扩展分析nginx日志
                     </a>
@@ -603,57 +662,6 @@ supervisord 有个问题疼死我了。一远程管理一下它守护下的进�
     </div>
 
     <a href="/2017/06/17/daemontools/">阅读全文 <i class="fas fa-angle-right"></i></a>
-</div>
-
-            </li>
-        
-            <li class="home-article-item">
-
-                
-
-                <h3 class="home-article-title">
-                    <a href="/2017/06/12/truss-lsof-strace-ltrace/">
-                        truss lsof strace ltrace 让你知道系统运行中的进程正在干什么
-                    </a>
-                </h3>
-
-                <div class="home-article-content markdown-body">
-                    
-                        #truss这个命令一般UNIX平台自带。使用举例：
-12345678910111213141516171819202122232425[bluse@ybcz ~/vhosts/bluse]$ sudo truss -p48932clock_gett...
-                    
-                </div>
-
-                <div class="home-article-meta-info-container">
-    <div class="home-article-meta-info">
-        <span><i class="fas fa-edit"></i> <span class="home-article-date" data-date="Mon Jun 12 2017 16:32:11 GMT+0800">2017-06-12</span></span>
-        
-        
-            <span class="home-article-tag">
-                <i class="fas fa-tags"></i>
-                <ul>
-                    
-                        <li>
-                            
-                            <a href="/tags/FreeBSD/">FreeBSD</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
-                        </li>
-                    
-                        <li>
-                            | 
-                            <a href="/tags/%E6%80%A7%E8%83%BD/">性能</a>
-                        </li>
-                    
-                </ul>
-            </span>
-        
-    </div>
-
-    <a href="/2017/06/12/truss-lsof-strace-ltrace/">阅读全文 <i class="fas fa-angle-right"></i></a>
 </div>
 
             </li>
