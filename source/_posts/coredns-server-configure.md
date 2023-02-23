@@ -1,7 +1,7 @@
 ---
-title: coredns 从零开始配置一个权威域名服务
+title: CoreDNS 从零开始配置一个权威域名服务
 date: 2023-02-23 06:12:56
-tags: [dns, coredns]
+tags: [dns, CoreDNS]
 ---
 
 这里以阿里云为例
@@ -14,9 +14,9 @@ tags: [dns, coredns]
 
 实名之类的就不介绍了。
 
-## 安装coredns服务
+## 安装CoreDNS服务
 
-`coredns`是一个使用`Go`语言写的DNS服务器，它的特色是：一切功能皆插件，这让它特别灵活。
+`CoreDNS`是一个使用`Go`语言写的DNS服务器，它的特色是：一切功能皆插件，这让它特别灵活。
 
 官网：https://coredns.io/
 
@@ -121,4 +121,24 @@ www	600	    IN	A	8.8.8.8
 
 # 启动
 
+## 直接式启动
 `nohup coredns -conf /etc/dns.conf > /tmp/dns.log 2>&1 &`
+
+## 配置到 SystemCtl
+位置：/lib/systemd/system/coredns.service
+```conf
+[Unit]
+Description=CoreDNS Server
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+User=root
+Group=root
+RestartSec=3
+ExecStart=/usr/local/bin/coredns -conf /etc/dns.conf
+
+[Install]
+WantedBy=multi-user.target
+```
