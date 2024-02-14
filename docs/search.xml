@@ -2686,4 +2686,16 @@ bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
         <tag>CoreDNS</tag>
       </tags>
   </entry>
+  <entry>
+    <title>Apache AGE 给顶点的属性添加唯一索引</title>
+    <url>/2024/02/14/apache-age-property-unique/</url>
+    <content><![CDATA[<p>Apache AGE create 节点时，添加的属性没有主键，只能采用唯一索引来约束数据，以防止重复。</p>
+<p>添加方式不易记，特此记录成文章：</p>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">create</span> <span class="keyword">unique</span> index <span class="keyword">on</span> graph_name.&quot;label_name&quot; (ag_catalog.agtype_access_operator(properties,<span class="string">&#x27;&quot;property_name&quot;&#x27;</span>));</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>PostgreSQL</tag>
+        <tag>AGE</tag>
+        <tag>Apache</tag>
+      </tags>
+  </entry>
 </search>
