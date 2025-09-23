@@ -2769,7 +2769,7 @@ bj-db -- 流复制 --> bj-db-standby[(北京区域后备库)]</pre>
     <title>GNOME48 动态壁纸</title>
     <url>/2025/09/23/GNOME48-wall-paper/</url>
     <content><![CDATA[<p><img src="/images/77b7c595-93f9-4297-9888-826b10ffbac8.jpg" alt="image"></p>
-<p><img src="/iamges/95e8a395-2932-439b-a72a-ee37a4cea769.jpg" alt="Image"></p>
+<p><img src="/images/95e8a395-2932-439b-a72a-ee37a4cea769.jpg" alt="Image"></p>
 <figure class="highlight shell"><table><tr><td class="code"><pre><span class="line">curl -s https://wallpapers.manishk.dev/install.sh | bash -s Catalina</span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>

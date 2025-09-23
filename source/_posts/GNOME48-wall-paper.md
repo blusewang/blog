@@ -7,7 +7,7 @@ tags: [gnome, debian, linux, desktop]
 
 ![image](/images/77b7c595-93f9-4297-9888-826b10ffbac8.jpg)
 
-![Image](/iamges/95e8a395-2932-439b-a72a-ee37a4cea769.jpg)
+![Image](/images/95e8a395-2932-439b-a72a-ee37a4cea769.jpg)
 
 
 ```shell
