@@ -5,9 +5,9 @@ tags: [gnome, debian, linux, desktop]
 ---
 
 
-![image](https://github.com/user-attachments/assets/77b7c595-93f9-4297-9888-826b10ffbac8)
+![image](/images/77b7c595-93f9-4297-9888-826b10ffbac8.jpg)
 
-![Image](https://github.com/user-attachments/assets/95e8a395-2932-439b-a72a-ee37a4cea769)
+![Image](/iamges/95e8a395-2932-439b-a72a-ee37a4cea769.jpg)
 
 
 ```shell
